@@ -1,0 +1,333 @@
+---
+import Base from '../../layouts/Base.astro';
+import { getCollection } from 'astro:content';
+
+const faculty = await getCollection('faculty');
+const sortedFaculty = faculty.sort((a, b) => (a.data.order ?? 99) - (b.data.order ?? 99));
+---
+
+<Base title="מחקר — מרכז AI" lang="he">
+  <section class="hero-banner">
+    <div class="hero-overlay"></div>
+  </section>
+
+  <section class="hero-text">
+    <div class="container">
+      <div class="hero-split">
+        <h1>חזית מחקר הבינה המלאכותית</h1>
+        <p>
+          פיצוח ה"קופסה השחורה" ופיתוח המודלים שיעצבו את העשורים הבאים.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <section class="vision">
+    <div class="container">
+      <div class="vision-inner">
+        <h2>החזון המחקרי שלנו</h2>
+        <p>
+          לצד פיתוח יישומי AI קיימים, החוקרים שלנו מתמודדים עם שאלות המחר.
+          המחקר שלנו מגשר בין יסודות תיאורטיים להשפעה בעולם האמיתי — מהבנת
+          האופן שבו רשתות נוירונים לומדות, ועד בניית מערכות שתופסות, חושבות ופועלות
+          בסביבות מורכבות.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <section class="fields">
+    <div class="container">
+      <h2>תחומי מחקר</h2>
+      <div class="fields-grid">
+        <a href="/he/research" class="field-card">
+          <div class="field-img" style="background: linear-gradient(135deg, #1a3a4a 0%, #2d6b7a 100%);"></div>
+          <div class="field-label">
+            <span>תפיסה ממוחשבת</span>
+            <span class="arrow">←</span>
+          </div>
+        </a>
+        <a href="/he/research" class="field-card">
+          <div class="field-img" style="background: linear-gradient(135deg, #3a2a5a 0%, #6b5a8a 100%);"></div>
+          <div class="field-label">
+            <span>שפה וקוגניציה</span>
+            <span class="arrow">←</span>
+          </div>
+        </a>
+        <a href="/he/research" class="field-card">
+          <div class="field-img" style="background: linear-gradient(135deg, #2a4a3a 0%, #4a7a5a 100%);"></div>
+          <div class="field-label">
+            <span>יסודות הלמידה</span>
+            <span class="arrow">←</span>
+          </div>
+        </a>
+        <a href="/he/research" class="field-card">
+          <div class="field-img" style="background: linear-gradient(135deg, #4a2a3a 0%, #7a5a6a 100%);"></div>
+          <div class="field-label">
+            <span>ביו-רפואה</span>
+            <span class="arrow">←</span>
+          </div>
+        </a>
+        <a href="/he/research" class="field-card">
+          <div class="field-img" style="background: linear-gradient(135deg, #2a3a4a 0%, #5a7a8a 100%);"></div>
+          <div class="field-label">
+            <span>סביבות רב-סוכניות</span>
+            <span class="arrow">←</span>
+          </div>
+        </a>
+        <a href="/he/research" class="field-card">
+          <div class="field-img" style="background: linear-gradient(135deg, #3a3a2a 0%, #6a6a4a 100%);"></div>
+          <div class="field-label">
+            <span>מערכות וסייבר</span>
+            <span class="arrow">←</span>
+          </div>
+        </a>
+        <a href="/he/research" class="field-card">
+          <div class="field-img" style="background: linear-gradient(135deg, #1a2a4a 0%, #4a5a7a 100%);"></div>
+          <div class="field-label">
+            <span>מדעי הנתונים</span>
+            <span class="arrow">←</span>
+          </div>
+        </a>
+        <a href="/he/research" class="field-card">
+          <div class="field-img" style="background: linear-gradient(135deg, #4a3a1a 0%, #7a6a4a 100%);"></div>
+          <div class="field-label">
+            <span>ממוקד אדם</span>
+            <span class="arrow">←</span>
+          </div>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <section class="labs">
+    <div class="container">
+      <h2>זרקור: המעבדות שלנו</h2>
+      <div class="labs-grid">
+        <div class="lab-card">
+          <div class="lab-img" style="background: linear-gradient(135deg, #2a4a5a 0%, #5a8a9a 100%);"></div>
+          <div class="lab-label">
+            <span>מעבדת שוורץ</span>
+            <span class="lab-desc">הנגשת טכנולוגיות הבנת טקסט</span>
+          </div>
+        </div>
+        <div class="lab-card">
+          <div class="lab-img" style="background: linear-gradient(135deg, #3a2a4a 0%, #6a5a7a 100%);"></div>
+          <div class="lab-label">
+            <span>מעבדת כץ</span>
+            <span class="lab-desc">אימות נכונות מערכות שנוצרו על ידי AI</span>
+          </div>
+        </div>
+        <div class="lab-card">
+          <div class="lab-img" style="background: linear-gradient(135deg, #2a3a3a 0%, #4a6a6a 100%);"></div>
+          <div class="lab-label">
+            <span>מעבדת CASMIP</span>
+            <span class="lab-desc">ניתוח בעזרת מחשב ועיבוד תמונות רפואיות</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="faculty-section">
+    <div class="container">
+      <h2>סגל AI</h2>
+      <div class="faculty-grid">
+        {sortedFaculty.map((member) => (
+          <a href={`/he/faculty/${member.id}`} class="faculty-card">
+            <div class="avatar">
+              {member.data.name.split(' ').map(n => n[0]).join('')}
+            </div>
+            <div class="info">
+              <h3>{member.data.name}</h3>
+              <p class="ftitle">{member.data.title}</p>
+              <p class="flab">{member.data.lab}</p>
+            </div>
+          </a>
+        ))}
+      </div>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .hero-banner {
+    height: 180px;
+    background: linear-gradient(135deg, #0d2847 0%, #1a4a6a 40%, #2a6b8a 100%);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .hero-overlay {
+    position: absolute;
+    inset: 0;
+    background:
+      radial-gradient(circle at 30% 50%, rgba(100,180,220,0.15) 0%, transparent 50%),
+      radial-gradient(circle at 70% 30%, rgba(150,200,240,0.1) 0%, transparent 40%);
+  }
+
+  .hero-text { padding: 3rem 0 2.5rem; }
+
+  .hero-split {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 3rem;
+    align-items: start;
+  }
+
+  .hero-split h1 {
+    font-size: 2.2rem;
+    font-weight: 700;
+    line-height: 1.3;
+    color: var(--text-primary);
+  }
+
+  .hero-split p {
+    font-size: 0.95rem;
+    color: var(--text-secondary);
+    line-height: 1.85;
+    padding-top: 0.3rem;
+  }
+
+  .vision {
+    background: var(--bg-secondary);
+    padding: 3rem 0;
+  }
+
+  .vision-inner { max-width: 720px; }
+
+  .vision h2 {
+    font-size: 1.3rem;
+    font-weight: 700;
+    margin-bottom: 0.75rem;
+  }
+
+  .vision p {
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+    line-height: 1.85;
+  }
+
+  .fields, .faculty-section { padding: 3.5rem 0; }
+
+  .fields h2, .labs h2, .faculty-section h2 {
+    font-size: 1.3rem;
+    font-weight: 700;
+    margin-bottom: 1.5rem;
+  }
+
+  .fields-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1.25rem;
+  }
+
+  .field-card {
+    text-decoration: none;
+    color: inherit;
+    transition: transform 0.2s;
+  }
+
+  .field-card:hover { transform: translateY(-3px); text-decoration: none; }
+
+  .field-img {
+    aspect-ratio: 4/3;
+    border-radius: var(--radius);
+    margin-bottom: 0.6rem;
+  }
+
+  .field-label {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 0.82rem;
+    font-weight: 500;
+  }
+
+  .arrow {
+    color: var(--text-muted);
+    transition: transform 0.15s;
+  }
+
+  .field-card:hover .arrow { transform: translateX(-3px); }
+
+  .labs {
+    background: var(--bg-secondary);
+    padding: 3.5rem 0;
+  }
+
+  .labs-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.25rem;
+  }
+
+  .lab-card { text-decoration: none; color: inherit; }
+
+  .lab-img {
+    aspect-ratio: 16/9;
+    border-radius: var(--radius);
+    margin-bottom: 0.6rem;
+  }
+
+  .lab-label span:first-child {
+    font-size: 0.85rem;
+    font-weight: 600;
+    display: block;
+    margin-bottom: 0.15rem;
+  }
+
+  .lab-desc {
+    font-size: 0.78rem;
+    color: var(--text-muted);
+    font-weight: 400 !important;
+  }
+
+  .faculty-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1rem;
+  }
+
+  .faculty-card {
+    display: flex;
+    gap: 0.85rem;
+    padding: 1rem;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    text-decoration: none;
+    color: inherit;
+    transition: box-shadow 0.15s, border-color 0.15s;
+  }
+
+  .faculty-card:hover {
+    box-shadow: var(--shadow-md);
+    border-color: var(--huji-teal);
+    text-decoration: none;
+  }
+
+  .avatar {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    background: var(--huji-teal);
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 600;
+    font-size: 0.9rem;
+    flex-shrink: 0;
+  }
+
+  .info h3 { font-size: 0.88rem; font-weight: 600; }
+  .ftitle { font-size: 0.78rem; color: var(--text-secondary); }
+  .flab { font-size: 0.75rem; color: var(--text-muted); margin-top: 0.1rem; }
+
+  @media (max-width: 768px) {
+    .hero-split { grid-template-columns: 1fr; gap: 1rem; }
+    .fields-grid { grid-template-columns: repeat(2, 1fr); }
+    .labs-grid, .faculty-grid { grid-template-columns: 1fr; }
+  }
+</style>

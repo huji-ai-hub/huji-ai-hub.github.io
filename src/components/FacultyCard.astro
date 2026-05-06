@@ -1,0 +1,93 @@
+---
+interface Props {
+  name: string;
+  title: string;
+  lab: string;
+  areas?: string[];
+  slug: string;
+}
+
+const { name, title, lab, areas = [], slug } = Astro.props;
+
+const initials = name.split(' ').map(n => n[0]).join('');
+---
+
+<a href={`/faculty/${slug}`} class="faculty-card">
+  <div class="avatar">{initials}</div>
+  <div class="info">
+    <h3>{name}</h3>
+    <p class="title">{title}</p>
+    <p class="lab">{lab}</p>
+    {areas.length > 0 && (
+      <div class="areas">
+        {areas.map(area => <span class="tag">{area}</span>)}
+      </div>
+    )}
+  </div>
+</a>
+
+<style>
+  .faculty-card {
+    display: flex;
+    gap: 1rem;
+    padding: 1.25rem;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    text-decoration: none;
+    color: inherit;
+    transition: box-shadow 0.15s, border-color 0.15s;
+  }
+
+  .faculty-card:hover {
+    box-shadow: var(--shadow-md);
+    border-color: var(--huji-maroon);
+    text-decoration: none;
+  }
+
+  .avatar {
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    background: var(--huji-maroon);
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 600;
+    font-size: 1.1rem;
+    flex-shrink: 0;
+  }
+
+  .info h3 {
+    font-size: 1rem;
+    font-weight: 600;
+    margin-bottom: 0.15rem;
+  }
+
+  .title {
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+  }
+
+  .lab {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    margin-top: 0.1rem;
+  }
+
+  .areas {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.35rem;
+    margin-top: 0.5rem;
+  }
+
+  .tag {
+    font-size: 0.7rem;
+    padding: 0.15rem 0.5rem;
+    background: var(--bg-secondary);
+    border-radius: 100px;
+    color: var(--text-muted);
+  }
+</style>

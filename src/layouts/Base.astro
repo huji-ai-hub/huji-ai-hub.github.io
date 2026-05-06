@@ -1,0 +1,245 @@
+---
+interface Props {
+  title: string;
+  description?: string;
+  lang?: 'en' | 'he';
+}
+
+const { title, description = '', lang = 'en' } = Astro.props;
+const isHe = lang === 'he';
+const dir = isHe ? 'rtl' : 'ltr';
+const prefix = isHe ? '/he' : '';
+const altPrefix = isHe ? '' : '/he';
+const altLabel = isHe ? 'En' : 'עב';
+
+const currentPath = Astro.url.pathname;
+const altPath = isHe
+  ? currentPath.replace(/^\/he/, '') || '/'
+  : `/he${currentPath === '/' ? '' : currentPath}`;
+
+const schoolName = isHe
+  ? 'ביה"ס להנדסה ולמדעי המחשב ע"ש רחל וסלים בנין'
+  : 'The Rachel and Selim Benin School of Computer Science and Engineering';
+const uniName = isHe
+  ? 'האוניברסיטה העברית בירושלים'
+  : 'THE HEBREW UNIVERSITY OF JERUSALEM';
+
+const navItems = isHe
+  ? [
+      { href: '/he', label: 'ראשי' },
+      { href: '/he/research', label: 'מחקר' },
+      { href: '/he/faculty', label: 'סגל' },
+      { href: '/he/about', label: 'אודות' },
+    ]
+  : [
+      { href: '/', label: 'Home' },
+      { href: '/research', label: 'Research' },
+      { href: '/faculty', label: 'Faculty' },
+      { href: '/about', label: 'About' },
+    ];
+
+const footerCopy = isHe
+  ? '© 2026 האוניברסיטה העברית בירושלים.'
+  : '© 2026 The Hebrew University of Jerusalem.';
+const footerContact = isHe
+  ? { text: 'הצעות? מידע חסר?', link: 'כתבו לנו' }
+  : { text: 'Any suggestions? Missing info?', link: 'Let us know' };
+---
+
+<!doctype html>
+<html lang={lang} dir={dir}>
+  <head>
+    <meta charset="utf-8" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content={description} />
+    <title>{title}</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Heebo:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  </head>
+  <body>
+    <header class="site-header">
+      <div class="header-top">
+        <div class="container header-top-inner">
+          <div class="school-name">{schoolName}</div>
+          <div class="uni-name">{uniName}</div>
+        </div>
+      </div>
+      <div class="header-nav">
+        <div class="container header-nav-inner">
+          <nav>
+            {navItems.map(item => (
+              <a href={item.href}>{item.label}</a>
+            ))}
+          </nav>
+          <a href={altPath} class="lang-toggle">{altLabel}</a>
+        </div>
+      </div>
+    </header>
+
+    <main>
+      <slot />
+    </main>
+
+    <footer class="site-footer">
+      <div class="container footer-inner">
+        <p set:html={footerCopy} />
+        <p class="footer-contact">{footerContact.text} <a href="mailto:webmaster@cs.huji.ac.il">{footerContact.link}</a></p>
+      </div>
+    </footer>
+
+    <style is:global>
+      :root {
+        --huji-teal: #2a6b6b;
+        --huji-teal-dark: #1f5252;
+        --huji-teal-light: #e8f4f4;
+        --huji-blue: #4a90a4;
+        --text-primary: #2c2c2c;
+        --text-secondary: #555555;
+        --text-muted: #888888;
+        --bg-primary: #ffffff;
+        --bg-secondary: #f5f6f8;
+        --bg-card: #ffffff;
+        --border: #e0e2e6;
+        --border-light: #eef0f2;
+        --radius: 6px;
+        --shadow-sm: 0 1px 3px rgba(0,0,0,0.06);
+        --shadow-md: 0 4px 16px rgba(0,0,0,0.08);
+        --shadow-lg: 0 8px 30px rgba(0,0,0,0.1);
+        --max-width: 960px;
+      }
+
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: 'Inter', system-ui, sans-serif;
+        color: var(--text-primary);
+        background: var(--bg-primary);
+        line-height: 1.65;
+        -webkit-font-smoothing: antialiased;
+      }
+
+      [dir="rtl"] body {
+        font-family: 'Heebo', system-ui, sans-serif;
+      }
+
+      .container {
+        max-width: var(--max-width);
+        margin: 0 auto;
+        padding: 0 2rem;
+      }
+
+      a {
+        color: var(--huji-teal);
+        text-decoration: none;
+      }
+
+      a:hover {
+        text-decoration: underline;
+      }
+    </style>
+
+    <style>
+      .site-header {
+        border-bottom: 1px solid var(--border);
+      }
+
+      .header-top {
+        padding: 0.75rem 0;
+        border-bottom: 1px solid var(--border-light);
+      }
+
+      .header-top-inner {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+      }
+
+      .school-name {
+        font-size: 0.75rem;
+        color: var(--text-secondary);
+        font-weight: 500;
+      }
+
+      .uni-name {
+        font-size: 0.7rem;
+        color: var(--text-secondary);
+        font-weight: 600;
+        letter-spacing: 0.04em;
+      }
+
+      [dir="ltr"] .uni-name {
+        text-transform: uppercase;
+      }
+
+      .header-nav {
+        padding: 0.6rem 0;
+      }
+
+      .header-nav-inner {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+      }
+
+      nav {
+        display: flex;
+        gap: 1.75rem;
+        align-items: center;
+      }
+
+      nav a {
+        color: var(--text-primary);
+        font-size: 0.88rem;
+        font-weight: 500;
+        text-decoration: none;
+        transition: color 0.15s;
+      }
+
+      nav a:hover {
+        color: var(--huji-teal);
+        text-decoration: none;
+      }
+
+      .lang-toggle {
+        font-size: 0.82rem;
+        font-weight: 600;
+        color: var(--text-muted);
+        border: 1px solid var(--border);
+        padding: 0.2rem 0.6rem;
+        border-radius: var(--radius);
+        transition: border-color 0.15s, color 0.15s;
+      }
+
+      .lang-toggle:hover {
+        border-color: var(--huji-teal);
+        color: var(--huji-teal);
+        text-decoration: none;
+      }
+
+      .site-footer {
+        border-top: 1px solid var(--border);
+        color: var(--text-muted);
+        padding: 2rem 0;
+        margin-top: 4rem;
+        font-size: 0.82rem;
+      }
+
+      .footer-inner {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+
+      .footer-contact a {
+        color: var(--text-muted);
+        text-decoration: underline;
+      }
+    </style>
+  </body>
+</html>

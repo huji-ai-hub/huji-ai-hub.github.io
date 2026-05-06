@@ -1,0 +1,147 @@
+---
+import Base from '../../../layouts/Base.astro';
+import { getCollection } from 'astro:content';
+
+const faculty = await getCollection('faculty');
+const sortedFaculty = faculty.sort((a, b) => (a.data.order ?? 99) - (b.data.order ?? 99));
+---
+
+<Base title="סגל — מרכז AI" lang="he">
+  <section class="hero-banner">
+    <div class="hero-overlay"></div>
+  </section>
+
+  <section class="hero-text">
+    <div class="container">
+      <div class="hero-split">
+        <h1>סגל AI</h1>
+        <p>
+          חוקרים ומרצים המעצבים את עתיד הבינה המלאכותית באוניברסיטה העברית.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <section class="listing">
+    <div class="container">
+      <div class="faculty-grid">
+        {sortedFaculty.map((member) => (
+          <a href={`/he/faculty/${member.id}`} class="faculty-card">
+            <div class="avatar">
+              {member.data.name.split(' ').map(n => n[0]).join('')}
+            </div>
+            <div class="info">
+              <h3>{member.data.name}</h3>
+              <p class="ftitle">{member.data.title}</p>
+              <p class="flab">{member.data.lab}</p>
+              {member.data.areas && member.data.areas.length > 0 && (
+                <div class="areas">
+                  {member.data.areas.map(area => <span class="tag">{area}</span>)}
+                </div>
+              )}
+            </div>
+          </a>
+        ))}
+      </div>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .hero-banner {
+    height: 160px;
+    background: linear-gradient(135deg, #0d2847 0%, #1a4a6a 40%, #2a6b8a 100%);
+    position: relative;
+  }
+
+  .hero-overlay {
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(circle at 30% 50%, rgba(100,180,220,0.15) 0%, transparent 50%);
+  }
+
+  .hero-text { padding: 3rem 0 2.5rem; }
+
+  .hero-split {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 3rem;
+    align-items: start;
+  }
+
+  .hero-split h1 {
+    font-size: 2.2rem;
+    font-weight: 700;
+    line-height: 1.3;
+  }
+
+  .hero-split p {
+    font-size: 0.95rem;
+    color: var(--text-secondary);
+    line-height: 1.85;
+  }
+
+  .listing { padding: 0 0 3rem; }
+
+  .faculty-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1rem;
+  }
+
+  .faculty-card {
+    display: flex;
+    gap: 0.85rem;
+    padding: 1rem;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    text-decoration: none;
+    color: inherit;
+    transition: box-shadow 0.15s, border-color 0.15s;
+  }
+
+  .faculty-card:hover {
+    box-shadow: var(--shadow-md);
+    border-color: var(--huji-teal);
+    text-decoration: none;
+  }
+
+  .avatar {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    background: var(--huji-teal);
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 600;
+    font-size: 0.9rem;
+    flex-shrink: 0;
+  }
+
+  .info h3 { font-size: 0.88rem; font-weight: 600; }
+  .ftitle { font-size: 0.78rem; color: var(--text-secondary); }
+  .flab { font-size: 0.75rem; color: var(--text-muted); margin-top: 0.1rem; }
+
+  .areas {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.3rem;
+    margin-top: 0.4rem;
+  }
+
+  .tag {
+    font-size: 0.65rem;
+    padding: 0.1rem 0.45rem;
+    background: var(--bg-secondary);
+    border-radius: 100px;
+    color: var(--text-muted);
+  }
+
+  @media (max-width: 768px) {
+    .hero-split { grid-template-columns: 1fr; gap: 1rem; }
+    .faculty-grid { grid-template-columns: 1fr; }
+  }
+</style>

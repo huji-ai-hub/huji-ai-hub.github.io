@@ -1,0 +1,120 @@
+---
+import Base from '../../layouts/Base.astro';
+---
+
+<Base title="אודות — מרכז AI" lang="he">
+  <section class="hero-banner">
+    <div class="hero-overlay"></div>
+  </section>
+
+  <section class="hero-text">
+    <div class="container">
+      <div class="hero-split">
+        <h1>אודות מרכז ה-AI</h1>
+        <p>
+          המרכז לבינה מלאכותית של האוניברסיטה העברית — מחקר, הוראה ושיתופי פעולה עם התעשייה.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <section class="content">
+    <div class="container">
+      <div class="prose">
+        <h2>המשימה שלנו</h2>
+        <p>
+          מרכז ה-AI בבית הספר להנדסה ולמדעי המחשב ע"ש רחל וסלים בנין משמש כצומת
+          המרכזי לפעילות בינה מלאכותית באוניברסיטה העברית בירושלים. אנו מחברים חוקרים
+          מתחומים שונים, מכשירים את הדור הבא של אנשי ה-AI, ומגשרים בין מחקר אקדמי
+          ליישומים בעולם האמיתי.
+        </p>
+
+        <h2>מה אנחנו עושים</h2>
+        <ul>
+          <li><strong>תיאום מחקר</strong> — חיבור חוקרים משמונה תחומי מחקר, מתפיסה ממוחשבת ועד AI ממוקד אדם</li>
+          <li><strong>תוכניות אקדמיות</strong> — תואר ראשון, שני ושלישי עם התמחות בבינה מלאכותית</li>
+          <li><strong>שותפויות תעשייתיות</strong> — העברת טכנולוגיה, חממת סטארטאפים ומחקר שיתופי</li>
+          <li><strong>מעורבות ציבורית</strong> — הנגשת מחקר AI והשלכותיו לציבור הרחב</li>
+        </ul>
+
+        <h2>בית הספר</h2>
+        <p>
+          בית הספר להנדסה ולמדעי המחשב ע"ש רחל וסלים בנין באוניברסיטה העברית הוא
+          אחד ממחלקות מדעי המחשב המובילות בישראל, עם עשרות שנים של תרומות יסודיות
+          ללמידת מכונה, ראייה ממוחשבת, עיבוד שפה טבעית ומדעי המחשב התיאורטיים.
+        </p>
+      </div>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .hero-banner {
+    height: 160px;
+    background: linear-gradient(135deg, #0d2847 0%, #1a4a6a 40%, #2a6b8a 100%);
+    position: relative;
+  }
+
+  .hero-overlay {
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(circle at 30% 50%, rgba(100,180,220,0.15) 0%, transparent 50%);
+  }
+
+  .hero-text { padding: 3rem 0 2.5rem; }
+
+  .hero-split {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 3rem;
+    align-items: start;
+  }
+
+  .hero-split h1 {
+    font-size: 2.2rem;
+    font-weight: 700;
+    line-height: 1.3;
+  }
+
+  .hero-split p {
+    font-size: 0.95rem;
+    color: var(--text-secondary);
+    line-height: 1.85;
+  }
+
+  .content { padding: 0 0 3rem; }
+
+  .prose { max-width: 640px; }
+
+  .prose h2 {
+    font-size: 1.2rem;
+    font-weight: 700;
+    margin-top: 2rem;
+    margin-bottom: 0.6rem;
+  }
+
+  .prose h2:first-child { margin-top: 0; }
+
+  .prose p {
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+    line-height: 1.9;
+    margin-bottom: 0.75rem;
+  }
+
+  .prose ul {
+    padding-inline-start: 1.25rem;
+    margin-bottom: 0.75rem;
+  }
+
+  .prose li {
+    font-size: 0.88rem;
+    color: var(--text-secondary);
+    line-height: 1.8;
+    margin-bottom: 0.35rem;
+  }
+
+  @media (max-width: 768px) {
+    .hero-split { grid-template-columns: 1fr; gap: 1rem; }
+  }
+</style>

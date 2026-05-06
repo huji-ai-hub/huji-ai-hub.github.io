@@ -1,0 +1,130 @@
+---
+import Base from '../layouts/Base.astro';
+---
+
+<Base title="About — HUJI AI Hub">
+  <section class="hero-banner">
+    <div class="hero-overlay"></div>
+  </section>
+
+  <section class="hero-text">
+    <div class="container">
+      <div class="hero-split">
+        <h1>About the AI Hub</h1>
+        <p>
+          The Hebrew University's center for artificial intelligence research,
+          education, and industry collaboration.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <section class="content">
+    <div class="container">
+      <div class="prose">
+        <h2>Our Mission</h2>
+        <p>
+          The AI Hub at the Rachel and Selim Benin School of Computer Science and Engineering
+          serves as the central node for AI activity at the Hebrew University of Jerusalem.
+          We connect researchers across disciplines, train the next generation of AI practitioners,
+          and bridge the gap between academic research and real-world applications.
+        </p>
+
+        <h2>What We Do</h2>
+        <ul>
+          <li><strong>Research coordination</strong> — connecting faculty across eight research domains, from machine perception to human-centered AI</li>
+          <li><strong>Academic programs</strong> — BSc, MSc, and PhD tracks with AI specialization</li>
+          <li><strong>Industry partnerships</strong> — technology transfer, startup incubation, and collaborative research</li>
+          <li><strong>Public engagement</strong> — making AI research accessible and its implications understood</li>
+        </ul>
+
+        <h2>The School</h2>
+        <p>
+          The Rachel and Selim Benin School of Computer Science and Engineering at the Hebrew University
+          is one of Israel's leading CS departments, with decades of foundational contributions to
+          machine learning, computer vision, natural language processing, and theoretical computer science.
+        </p>
+      </div>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .hero-banner {
+    height: 160px;
+    background: linear-gradient(135deg, #0d2847 0%, #1a4a6a 40%, #2a6b8a 100%);
+    position: relative;
+  }
+
+  .hero-overlay {
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(circle at 30% 50%, rgba(100,180,220,0.15) 0%, transparent 50%);
+  }
+
+  .hero-text {
+    padding: 3rem 0 2.5rem;
+  }
+
+  .hero-split {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 3rem;
+    align-items: start;
+  }
+
+  .hero-split h1 {
+    font-size: 2.2rem;
+    font-weight: 700;
+    line-height: 1.15;
+  }
+
+  .hero-split p {
+    font-size: 0.95rem;
+    color: var(--text-secondary);
+    line-height: 1.75;
+  }
+
+  .content {
+    padding: 0 0 3rem;
+  }
+
+  .prose {
+    max-width: 640px;
+  }
+
+  .prose h2 {
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-top: 2rem;
+    margin-bottom: 0.6rem;
+  }
+
+  .prose h2:first-child {
+    margin-top: 0;
+  }
+
+  .prose p {
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+    line-height: 1.8;
+    margin-bottom: 0.75rem;
+  }
+
+  .prose ul {
+    padding-left: 1.25rem;
+    margin-bottom: 0.75rem;
+  }
+
+  .prose li {
+    font-size: 0.88rem;
+    color: var(--text-secondary);
+    line-height: 1.7;
+    margin-bottom: 0.35rem;
+  }
+
+  @media (max-width: 768px) {
+    .hero-split { grid-template-columns: 1fr; gap: 1rem; }
+  }
+</style>

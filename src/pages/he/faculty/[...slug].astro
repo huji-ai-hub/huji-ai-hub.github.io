@@ -1,0 +1,117 @@
+---
+import Base from '../../../layouts/Base.astro';
+import { getCollection, render } from 'astro:content';
+
+export async function getStaticPaths() {
+  const faculty = await getCollection('faculty');
+  return faculty.map((member) => ({
+    params: { slug: member.id },
+    props: { member },
+  }));
+}
+
+const { member } = Astro.props;
+const { Content } = await render(member);
+---
+
+<Base title={`${member.data.name} — מרכז AI`} lang="he">
+  <section class="profile">
+    <div class="container">
+      <a href="/he/faculty" class="back">→ חזרה לסגל</a>
+      <div class="profile-header">
+        <div class="avatar">
+          {member.data.name.split(' ').map(n => n[0]).join('')}
+        </div>
+        <div>
+          <h1>{member.data.name}</h1>
+          <p class="title">{member.data.title}</p>
+          <p class="lab">{member.data.lab}</p>
+          <div class="links">
+            {member.data.website && <a href={member.data.website} target="_blank">↗ אתר אישי</a>}
+            {member.data.scholar && <a href={member.data.scholar} target="_blank">↗ Google Scholar</a>}
+          </div>
+        </div>
+      </div>
+
+      {member.data.areas && member.data.areas.length > 0 && (
+        <div class="areas">
+          {member.data.areas.map(area => <span class="tag">{area}</span>)}
+        </div>
+      )}
+
+      <div class="bio">
+        <Content />
+      </div>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .profile { padding: 2.5rem 0 4rem; }
+
+  .back {
+    display: inline-block;
+    font-size: 0.82rem;
+    color: var(--text-muted);
+    margin-bottom: 2rem;
+  }
+
+  .profile-header {
+    display: flex;
+    gap: 1.25rem;
+    align-items: flex-start;
+    margin-bottom: 1.5rem;
+  }
+
+  .avatar {
+    width: 72px;
+    height: 72px;
+    border-radius: 50%;
+    background: var(--huji-teal);
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 1.3rem;
+    flex-shrink: 0;
+  }
+
+  h1 { font-size: 1.6rem; font-weight: 700; margin-bottom: 0.15rem; }
+  .title { font-size: 0.9rem; color: var(--text-secondary); }
+  .lab { font-size: 0.85rem; color: var(--text-muted); margin-top: 0.1rem; }
+
+  .links {
+    display: flex;
+    gap: 1rem;
+    margin-top: 0.6rem;
+  }
+
+  .links a {
+    font-size: 0.82rem;
+    font-weight: 500;
+    color: var(--huji-teal);
+  }
+
+  .areas {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .tag {
+    font-size: 0.72rem;
+    padding: 0.15rem 0.55rem;
+    background: var(--bg-secondary);
+    border-radius: 100px;
+    color: var(--text-muted);
+  }
+
+  .bio {
+    max-width: 640px;
+    font-size: 0.92rem;
+    color: var(--text-secondary);
+    line-height: 1.9;
+  }
+</style>
