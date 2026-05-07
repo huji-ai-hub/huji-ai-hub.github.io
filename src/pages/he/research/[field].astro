@@ -18,7 +18,7 @@ const fieldFaculty = allFaculty
 ---
 
 <Base title={`${field.titleHe} — מרכז AI`} lang="he">
-  <section class="hero-banner" style={`background: ${field.gradient};`}>
+  <section class="hero-banner" style={field.image ? `background-image: url('${field.image}');` : `background: ${field.gradient};`}>
     <div class="hero-overlay"></div>
   </section>
 
@@ -73,9 +73,11 @@ const fieldFaculty = allFaculty
 
 <style>
   .hero-banner {
-    height: 200px;
+    height: 240px;
     position: relative;
     overflow: hidden;
+    background-size: cover;
+    background-position: center;
   }
 
   .hero-overlay {

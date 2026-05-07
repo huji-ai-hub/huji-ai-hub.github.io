@@ -8,7 +8,7 @@ const sortedFaculty = faculty.sort((a, b) => (a.data.order ?? 99) - (b.data.orde
 ---
 
 <Base title="מחקר — מרכז AI" lang="he">
-  <section class="hero-banner">
+  <section class="hero-banner" style="background-image: url('/images/pexels-googledeepmind-17485658.jpg');">
     <div class="hero-overlay"></div>
   </section>
 
@@ -43,7 +43,7 @@ const sortedFaculty = faculty.sort((a, b) => (a.data.order ?? 99) - (b.data.orde
       <div class="fields-grid">
         {FIELDS.map(field => (
           <a href={`/he/research/${field.slug}`} class="field-card">
-            <div class="field-img" style={`background: ${field.gradient};`}></div>
+            <div class="field-img" style={field.image ? `background-image: url('${field.image}');` : `background: ${field.gradient};`}></div>
             <div class="field-label">
               <span>{field.titleHe}</span>
               <span class="arrow">←</span>
@@ -192,6 +192,8 @@ const sortedFaculty = faculty.sort((a, b) => (a.data.order ?? 99) - (b.data.orde
     aspect-ratio: 4/3;
     border-radius: var(--radius);
     margin-bottom: 0.6rem;
+    background-size: cover;
+    background-position: center;
   }
 
   .field-label {
