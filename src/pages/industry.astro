@@ -1,0 +1,321 @@
+---
+import Base from '../layouts/Base.astro';
+
+const facultyCompanies = [
+  'Mobileye',
+  'AI21 Labs',
+  'OrCam',
+  'Factify',
+  'Lightricks',
+  'StarkWare',
+  'BriefCam',
+];
+
+const industryPartners = [
+  'Apple',
+  'Intel',
+  'Google',
+  'Mobileye',
+  'Monday.com',
+  'KLA',
+  'StarkWare',
+  'Lightricks',
+  'eSiP-Vision',
+  'QueenB',
+  'Forstart',
+];
+---
+
+<Base title="Industry — HUJI AI Hub">
+  <section class="hero-banner">
+    <div class="hero-overlay"></div>
+  </section>
+
+  <section class="hero-text">
+    <div class="container">
+      <div class="hero-split">
+        <h1>From Classroom Board to IPO: Theory Becomes Technology</h1>
+        <p>
+          The Hebrew University stands behind some of the greatest successes in Israeli High-Tech.
+          Research excellence is the surest path to groundbreaking innovation.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <section class="featured">
+    <div class="container">
+      <div class="featured-content">
+        <h2>How AI is Revolutionizing Drug Development with Prof. Yaakov Nahmias</h2>
+        <p class="featured-source">WIRED Briefings · Featured talk</p>
+        <a href="/research/biomed" class="featured-link">Learn more about Prof. Nahmias's research →</a>
+      </div>
+      <div class="featured-img" style="background: linear-gradient(135deg, #1a3a4a 0%, #2d6b7a 100%);"></div>
+    </div>
+  </section>
+
+  <section class="partnerships">
+    <div class="container">
+      <h2>Academia–Industry Partnerships</h2>
+      <p class="lede">
+        The AI Center at the School of Engineering and Computer Science at the Hebrew University
+        connects advanced artificial intelligence research with industry, entrepreneurship, and
+        international partners. We work to create meaningful collaborations that translate academic
+        excellence into real-world impact.
+      </p>
+
+      <div class="companies-block">
+        <h3>Companies that have emerged from our faculty and alumni community:</h3>
+        <ul class="company-list">
+          {facultyCompanies.map(c => <li>{c}</li>)}
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section class="partners">
+    <div class="container">
+      <h2>Industry Partners</h2>
+      <p>
+        We collaborate with leading technology companies and innovative startups
+        operating at the forefront of artificial intelligence.
+      </p>
+
+      <h3>Our partners include:</h3>
+      <ul class="company-list">
+        {industryPartners.map(p => <li>{p}</li>)}
+      </ul>
+    </div>
+  </section>
+
+  <section class="collaboration">
+    <div class="container">
+      <h2>Research Collaboration with Industry</h2>
+      <p>We work with industry partners through:</p>
+      <ul class="bullets">
+        <li>Sponsored and joint AI research projects</li>
+        <li>Long-term strategic collaborations</li>
+        <li>Joint submissions for national and international research grants</li>
+        <li>Direct access to faculty expertise and emerging research directions</li>
+      </ul>
+      <p class="closing">
+        Our goal is to build deep partnerships grounded in scientific excellence and technological
+        innovation, while addressing real-world industry challenges.
+      </p>
+    </div>
+  </section>
+
+  <section class="global">
+    <div class="container">
+      <h2>Global Engagement</h2>
+      <p>
+        The Hebrew University is a member of the <strong>AI Alliance</strong>, an international
+        initiative that brings together leading research institutions and technology companies
+        to advance open, safe, and responsible artificial intelligence.
+      </p>
+      <p>
+        Through international collaborations and global research initiatives, we contribute to
+        shaping the future of AI on a global scale.
+      </p>
+    </div>
+  </section>
+
+  <section class="iap">
+    <div class="container">
+      <div class="iap-split">
+        <div>
+          <h2>Industrial Affiliates Program (IAP)</h2>
+          <p>
+            Companies interested in a structured framework for ongoing collaboration are invited
+            to join the School's <strong>Industrial Affiliates Program (IAP)</strong>.
+          </p>
+          <p>
+            The program provides access to research activities, academic events, recruitment
+            opportunities, and additional collaboration channels.
+          </p>
+          <p>
+            We welcome opportunities to explore research collaborations, joint innovation
+            initiatives, and long-term partnerships.
+          </p>
+          <a href="mailto:webmaster@cs.huji.ac.il" class="cta-button">Learn more about the program</a>
+        </div>
+        <div class="iap-img" style="background: linear-gradient(135deg, #4a2a5a 0%, #7a5a8a 100%);"></div>
+      </div>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .hero-banner {
+    height: 220px;
+    background: linear-gradient(135deg, #2a3a3a 0%, #4a6a6a 100%);
+    position: relative;
+    overflow: hidden;
+  }
+  .hero-overlay {
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(circle at 30% 50%, rgba(255,255,255,0.08) 0%, transparent 50%);
+  }
+
+  .hero-text { padding: 3.5rem 0 3rem; }
+
+  .hero-split {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 3rem;
+    align-items: start;
+  }
+
+  .hero-split h1 { font-size: 2.2rem; font-weight: 700; line-height: 1.2; }
+  .hero-split p { font-size: 0.95rem; color: var(--text-secondary); line-height: 1.75; padding-top: 0.4rem; }
+
+  .featured { padding: 3rem 0; }
+
+  .featured .container {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2.5rem;
+    align-items: center;
+  }
+
+  .featured-content h2 {
+    font-size: 1.4rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+    line-height: 1.35;
+  }
+
+  .featured-source {
+    font-size: 0.82rem;
+    color: var(--text-muted);
+    margin-bottom: 1rem;
+  }
+
+  .featured-link {
+    font-size: 0.9rem;
+    font-weight: 500;
+  }
+
+  .featured-img {
+    aspect-ratio: 16/9;
+    border-radius: var(--radius);
+  }
+
+  .partnerships {
+    background: var(--bg-secondary);
+    padding: 3.5rem 0;
+  }
+
+  .partners, .collaboration, .global, .iap {
+    padding: 3rem 0;
+  }
+
+  h2 {
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin-bottom: 0.75rem;
+  }
+
+  h3 {
+    font-size: 1rem;
+    font-weight: 600;
+    margin-top: 1.5rem;
+    margin-bottom: 0.6rem;
+  }
+
+  .lede {
+    font-size: 0.95rem;
+    color: var(--text-secondary);
+    line-height: 1.85;
+    max-width: 760px;
+    margin-bottom: 1.5rem;
+  }
+
+  p {
+    font-size: 0.92rem;
+    color: var(--text-secondary);
+    line-height: 1.8;
+    max-width: 760px;
+    margin-bottom: 0.75rem;
+  }
+
+  .companies-block {
+    margin-top: 1rem;
+  }
+
+  .company-list {
+    list-style: none;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.6rem;
+    margin-top: 0.5rem;
+  }
+
+  .company-list li {
+    padding: 0.4rem 0.9rem;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 100px;
+    font-size: 0.85rem;
+    font-weight: 500;
+    color: var(--text-primary);
+  }
+
+  .partners .company-list li {
+    background: var(--bg-secondary);
+  }
+
+  .bullets {
+    padding-inline-start: 1.25rem;
+    max-width: 760px;
+  }
+
+  .bullets li {
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+    line-height: 1.85;
+    margin-bottom: 0.3rem;
+  }
+
+  .closing { margin-top: 1rem; }
+
+  .global {
+    background: var(--bg-secondary);
+  }
+
+  .iap-split {
+    display: grid;
+    grid-template-columns: 1.3fr 1fr;
+    gap: 2.5rem;
+    align-items: center;
+  }
+
+  .iap-img {
+    aspect-ratio: 1/1;
+    border-radius: var(--radius);
+  }
+
+  .cta-button {
+    display: inline-block;
+    margin-top: 1rem;
+    padding: 0.7rem 1.5rem;
+    background: var(--huji-teal-dark);
+    color: #fff;
+    border-radius: var(--radius);
+    font-weight: 500;
+    font-size: 0.88rem;
+    transition: background 0.15s;
+  }
+
+  .cta-button:hover {
+    background: var(--huji-teal);
+    text-decoration: none;
+  }
+
+  @media (max-width: 768px) {
+    .hero-split, .featured .container, .iap-split { grid-template-columns: 1fr; gap: 1rem; }
+    .hero-split h1 { font-size: 1.7rem; }
+  }
+</style>

@@ -1,0 +1,276 @@
+---
+import Base from '../../layouts/Base.astro';
+
+const facultyCompanies = [
+  'Mobileye',
+  'AI21 Labs',
+  'OrCam',
+  'Factify',
+  'Lightricks',
+  'StarkWare',
+  'BriefCam',
+];
+
+const industryPartners = [
+  'Apple',
+  'Intel',
+  'Google',
+  'Mobileye',
+  'Monday.com',
+  'KLA',
+  'StarkWare',
+  'Lightricks',
+  'eSiP-Vision',
+  'QueenB',
+  'Forstart',
+];
+---
+
+<Base title="תעשייה — מרכז AI" lang="he">
+  <section class="hero-banner">
+    <div class="hero-overlay"></div>
+  </section>
+
+  <section class="hero-text">
+    <div class="container">
+      <div class="hero-split">
+        <h1>מהלוח בכיתה ועד להנפקה: התאוריה הופכת לטכנולוגיה</h1>
+        <p>
+          האוניברסיטה העברית עומדת מאחורי כמה מההצלחות הגדולות של ההייטק הישראלי.
+          מצוינות מחקרית היא הדרך הבטוחה ביותר לחדשנות פורצת דרך.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <section class="featured">
+    <div class="container">
+      <div class="featured-content">
+        <h2>איך AI מחולל מהפכה בפיתוח תרופות עם פרופ' יעקב נחמיאס</h2>
+        <p class="featured-source">WIRED Briefings · הרצאה מיוחדת</p>
+        <a href="/he/research/biomed" class="featured-link">קראו עוד על המחקר של פרופ' נחמיאס ←</a>
+      </div>
+      <div class="featured-img" style="background: linear-gradient(135deg, #1a3a4a 0%, #2d6b7a 100%);"></div>
+    </div>
+  </section>
+
+  <section class="partnerships">
+    <div class="container">
+      <h2>שיתופי פעולה אקדמיה–תעשייה</h2>
+      <p class="lede">
+        מרכז ה-AI בבית הספר להנדסה ולמדעי המחשב באוניברסיטה העברית מחבר מחקר מתקדם בבינה מלאכותית
+        עם תעשייה, יזמות ושותפים בינלאומיים. אנו פועלים ליצירת שיתופי פעולה משמעותיים
+        המתרגמים מצוינות אקדמית להשפעה בעולם האמיתי.
+      </p>
+
+      <div class="companies-block">
+        <h3>חברות שצמחו מקהילת הסגל והבוגרים שלנו:</h3>
+        <ul class="company-list">
+          {facultyCompanies.map(c => <li>{c}</li>)}
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section class="partners">
+    <div class="container">
+      <h2>שותפי תעשייה</h2>
+      <p>
+        אנו משתפים פעולה עם חברות טכנולוגיה מובילות וסטארטאפים חדשניים הפועלים בחזית הבינה המלאכותית.
+      </p>
+
+      <h3>בין השותפים שלנו:</h3>
+      <ul class="company-list">
+        {industryPartners.map(p => <li>{p}</li>)}
+      </ul>
+    </div>
+  </section>
+
+  <section class="collaboration">
+    <div class="container">
+      <h2>שיתופי פעולה במחקר עם התעשייה</h2>
+      <p>אנו עובדים עם שותפים מהתעשייה באמצעות:</p>
+      <ul class="bullets">
+        <li>פרויקטי מחקר משותפים וממומנים בבינה מלאכותית</li>
+        <li>שיתופי פעולה אסטרטגיים ארוכי טווח</li>
+        <li>הגשות משותפות למענקי מחקר לאומיים ובינלאומיים</li>
+        <li>גישה ישירה למומחיות הסגל ולכיווני מחקר חדשים</li>
+      </ul>
+      <p class="closing">
+        מטרתנו לבנות שותפויות עמוקות המעוגנות במצוינות מדעית וחדשנות טכנולוגית, תוך מענה לאתגרי
+        תעשייה אמיתיים.
+      </p>
+    </div>
+  </section>
+
+  <section class="global">
+    <div class="container">
+      <h2>פעילות גלובלית</h2>
+      <p>
+        האוניברסיטה העברית חברה ב-<strong>AI Alliance</strong>, יוזמה בינלאומית המאגדת מוסדות מחקר
+        מובילים וחברות טכנולוגיה לקידום בינה מלאכותית פתוחה, בטוחה ואחראית.
+      </p>
+      <p>
+        באמצעות שיתופי פעולה בינלאומיים ויוזמות מחקר גלובליות, אנו תורמים לעיצוב עתיד ה-AI
+        בקנה מידה עולמי.
+      </p>
+    </div>
+  </section>
+
+  <section class="iap">
+    <div class="container">
+      <div class="iap-split">
+        <div>
+          <h2>תוכנית השותפים התעשייתיים (IAP)</h2>
+          <p>
+            חברות המעוניינות במסגרת מובנית לשיתוף פעולה מתמשך מוזמנות להצטרף ל
+            <strong>תוכנית השותפים התעשייתיים (IAP)</strong> של בית הספר.
+          </p>
+          <p>
+            התוכנית מספקת גישה לפעילויות מחקר, אירועים אקדמיים, הזדמנויות גיוס וערוצי שיתוף פעולה נוספים.
+          </p>
+          <p>
+            אנו מברכים על הזדמנויות לחקור שיתופי פעולה במחקר, יוזמות חדשנות משותפות ושותפויות ארוכות טווח.
+          </p>
+          <a href="mailto:webmaster@cs.huji.ac.il" class="cta-button">למידע נוסף על התוכנית</a>
+        </div>
+        <div class="iap-img" style="background: linear-gradient(135deg, #4a2a5a 0%, #7a5a8a 100%);"></div>
+      </div>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .hero-banner {
+    height: 220px;
+    background: linear-gradient(135deg, #2a3a3a 0%, #4a6a6a 100%);
+    position: relative;
+    overflow: hidden;
+  }
+  .hero-overlay {
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(circle at 30% 50%, rgba(255,255,255,0.08) 0%, transparent 50%);
+  }
+
+  .hero-text { padding: 3.5rem 0 3rem; }
+  .hero-split { display: grid; grid-template-columns: 1fr 1fr; gap: 3rem; align-items: start; }
+  .hero-split h1 { font-size: 2rem; font-weight: 700; line-height: 1.4; }
+  .hero-split p { font-size: 0.95rem; color: var(--text-secondary); line-height: 1.85; padding-top: 0.4rem; }
+
+  .featured { padding: 3rem 0; }
+
+  .featured .container {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2.5rem;
+    align-items: center;
+  }
+
+  .featured-content h2 { font-size: 1.4rem; font-weight: 700; margin-bottom: 0.5rem; line-height: 1.5; }
+  .featured-source { font-size: 0.82rem; color: var(--text-muted); margin-bottom: 1rem; }
+  .featured-link { font-size: 0.9rem; font-weight: 500; }
+  .featured-img { aspect-ratio: 16/9; border-radius: var(--radius); }
+
+  .partnerships {
+    background: var(--bg-secondary);
+    padding: 3.5rem 0;
+  }
+
+  .partners, .collaboration, .global, .iap {
+    padding: 3rem 0;
+  }
+
+  h2 { font-size: 1.5rem; font-weight: 700; margin-bottom: 0.75rem; }
+  h3 { font-size: 1rem; font-weight: 600; margin-top: 1.5rem; margin-bottom: 0.6rem; }
+
+  .lede {
+    font-size: 0.95rem;
+    color: var(--text-secondary);
+    line-height: 1.95;
+    max-width: 760px;
+    margin-bottom: 1.5rem;
+  }
+
+  p {
+    font-size: 0.92rem;
+    color: var(--text-secondary);
+    line-height: 1.95;
+    max-width: 760px;
+    margin-bottom: 0.75rem;
+  }
+
+  .companies-block { margin-top: 1rem; }
+
+  .company-list {
+    list-style: none;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.6rem;
+    margin-top: 0.5rem;
+  }
+
+  .company-list li {
+    padding: 0.4rem 0.9rem;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 100px;
+    font-size: 0.85rem;
+    font-weight: 500;
+    color: var(--text-primary);
+  }
+
+  .partners .company-list li {
+    background: var(--bg-secondary);
+  }
+
+  .bullets {
+    padding-inline-start: 1.25rem;
+    max-width: 760px;
+  }
+
+  .bullets li {
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+    line-height: 1.95;
+    margin-bottom: 0.3rem;
+  }
+
+  .closing { margin-top: 1rem; }
+
+  .global {
+    background: var(--bg-secondary);
+  }
+
+  .iap-split {
+    display: grid;
+    grid-template-columns: 1.3fr 1fr;
+    gap: 2.5rem;
+    align-items: center;
+  }
+
+  .iap-img {
+    aspect-ratio: 1/1;
+    border-radius: var(--radius);
+  }
+
+  .cta-button {
+    display: inline-block;
+    margin-top: 1rem;
+    padding: 0.7rem 1.5rem;
+    background: var(--huji-teal-dark);
+    color: #fff;
+    border-radius: var(--radius);
+    font-weight: 500;
+    font-size: 0.88rem;
+    transition: background 0.15s;
+  }
+
+  .cta-button:hover { background: var(--huji-teal); text-decoration: none; }
+
+  @media (max-width: 768px) {
+    .hero-split, .featured .container, .iap-split { grid-template-columns: 1fr; gap: 1rem; }
+    .hero-split h1 { font-size: 1.6rem; }
+  }
+</style>
