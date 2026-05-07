@@ -1,0 +1,255 @@
+---
+import Base from '../layouts/Base.astro';
+---
+
+<Base title="Academics — HUJI AI Hub">
+  <section class="hero-banner">
+    <div class="hero-overlay"></div>
+  </section>
+
+  <section class="hero-text">
+    <div class="container">
+      <div class="hero-split">
+        <h1>B.Sc. in Computer Science with AI Specialization</h1>
+        <p>
+          The most comprehensive and in-depth AI track at the Hebrew University.
+          Designed for students interested in mastering the fundamentals while
+          aspiring to lead the global forefront of AI research and development.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <section class="why">
+    <div class="container">
+      <div class="why-inner">
+        <h2>Why specialize in AI?</h2>
+        <p>
+          In a world where basic coding is becoming automated, deep understanding of the
+          principles driving AI systems is essential. This program is not a short course
+          on using AI tools, but a deep and broad academic track based on mathematical
+          excellence and classical Computer Science foundations.
+        </p>
+        <p>
+          We will teach you to deeply understand how models are built: how to deconstruct them,
+          how to delve into the mathematics behind them, and even how to rebuild them better.
+        </p>
+        <p>
+          The program requires high analytical abilities and dedication, providing a broad and
+          thorough scientific education — essential for both academia and industry in the AI era.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <section class="structure">
+    <div class="container">
+      <h2>Program Structure</h2>
+
+      <div class="year-grid">
+        <div class="year-card">
+          <div class="year-label">Year 1</div>
+          <h3>Laying the Foundations</h3>
+          <p>
+            Before approaching AI, students build a strong base in mathematics and core Computer
+            Science: calculus, linear algebra, discrete mathematics, probability, data structures,
+            and introductory programming.
+          </p>
+        </div>
+
+        <div class="year-card">
+          <div class="year-label">Year 2</div>
+          <h3>Building the Toolkit</h3>
+          <p>
+            Algorithms, computational complexity, statistics, and the foundations of machine
+            learning. Students begin working on substantial programming projects and are introduced
+            to the core ideas behind modern neural networks.
+          </p>
+        </div>
+
+        <div class="year-card">
+          <div class="year-label">Year 3</div>
+          <h3>Specialization & Research</h3>
+          <p>
+            Advanced AI courses spanning deep learning, computer vision, natural language processing,
+            reinforcement learning, and AI safety. Students choose electives matching their research
+            interests and may join faculty labs as research assistants.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="tracks">
+    <div class="container">
+      <h2>Beyond the B.Sc.</h2>
+      <div class="track-grid">
+        <div class="track-card">
+          <h3>M.Sc. in Computer Science</h3>
+          <p>
+            Research-track and applied-track Master's programs with AI specialization options.
+            Most M.Sc. students join one of the AI Hub's research labs and produce a research thesis.
+          </p>
+        </div>
+        <div class="track-card">
+          <h3>Ph.D. in Computer Science</h3>
+          <p>
+            Doctoral research under the supervision of the Hebrew University's AI faculty.
+            Ph.D. students contribute to international publications, EU-funded consortia,
+            and industry collaborations.
+          </p>
+        </div>
+        <div class="track-card">
+          <h3>New Course: Programming with AI Agents</h3>
+          <p>
+            A practical course on building, deploying, and evaluating autonomous AI agents
+            in real-world applications. Open to undergraduate and graduate students.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="cta-section">
+    <div class="container">
+      <div class="cta-block">
+        <h2>Apply or learn more</h2>
+        <p>
+          For full curriculum details, admission requirements, and registration information,
+          visit the School of Computer Science admissions page.
+        </p>
+        <a href="https://www.cs.huji.ac.il/he/page/10573" class="cta-button" target="_blank">
+          Details & Registration ↗
+        </a>
+      </div>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .hero-banner {
+    height: 220px;
+    background: linear-gradient(135deg, #3a2a5a 0%, #6b5a8a 100%);
+    position: relative;
+    overflow: hidden;
+  }
+  .hero-overlay {
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(circle at 30% 50%, rgba(255,255,255,0.08) 0%, transparent 50%);
+  }
+
+  .hero-text { padding: 3.5rem 0 3rem; }
+
+  .hero-split {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 3rem;
+    align-items: start;
+  }
+
+  .hero-split h1 { font-size: 2rem; font-weight: 700; line-height: 1.2; }
+  .hero-split p { font-size: 0.95rem; color: var(--text-secondary); line-height: 1.75; padding-top: 0.4rem; }
+
+  .why { background: var(--bg-secondary); padding: 3.5rem 0; }
+  .why-inner { max-width: 760px; }
+  .why h2 { font-size: 1.5rem; font-weight: 700; margin-bottom: 1rem; }
+  .why p { font-size: 0.95rem; color: var(--text-secondary); line-height: 1.85; margin-bottom: 1rem; }
+
+  .structure { padding: 3.5rem 0; }
+  .structure h2 { font-size: 1.5rem; font-weight: 700; margin-bottom: 1.5rem; }
+
+  .year-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.5rem;
+  }
+
+  .year-card {
+    padding: 1.5rem;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+  }
+
+  .year-label {
+    font-size: 0.78rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--huji-teal);
+    margin-bottom: 0.5rem;
+  }
+
+  .year-card h3 {
+    font-size: 1.1rem;
+    font-weight: 700;
+    margin-bottom: 0.6rem;
+  }
+
+  .year-card p {
+    font-size: 0.88rem;
+    color: var(--text-secondary);
+    line-height: 1.75;
+  }
+
+  .tracks { background: var(--bg-secondary); padding: 3.5rem 0; }
+  .tracks h2 { font-size: 1.5rem; font-weight: 700; margin-bottom: 1.5rem; }
+
+  .track-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.5rem;
+  }
+
+  .track-card {
+    padding: 1.5rem;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+  }
+
+  .track-card h3 {
+    font-size: 1rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+  }
+
+  .track-card p {
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    line-height: 1.75;
+  }
+
+  .cta-section { padding: 3.5rem 0; }
+
+  .cta-block {
+    max-width: 720px;
+    text-align: center;
+    margin: 0 auto;
+  }
+
+  .cta-block h2 { font-size: 1.5rem; font-weight: 700; margin-bottom: 0.6rem; }
+  .cta-block p { font-size: 0.95rem; color: var(--text-secondary); line-height: 1.75; margin-bottom: 1.25rem; }
+
+  .cta-button {
+    display: inline-block;
+    padding: 0.75rem 1.75rem;
+    background: var(--huji-teal-dark);
+    color: #fff;
+    border-radius: var(--radius);
+    font-weight: 500;
+    font-size: 0.92rem;
+    transition: background 0.15s;
+  }
+
+  .cta-button:hover {
+    background: var(--huji-teal);
+    text-decoration: none;
+  }
+
+  @media (max-width: 768px) {
+    .hero-split, .year-grid, .track-grid { grid-template-columns: 1fr; gap: 1rem; }
+    .hero-split h1 { font-size: 1.7rem; }
+  }
+</style>
