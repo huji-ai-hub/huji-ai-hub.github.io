@@ -2,7 +2,7 @@
 name: "Noam Nisan"
 title: "Prof."
 lab: "Learning in Markets and Games"
-field: "multi-agent"
+fields: ["multi-agent"]
 areas: ["Algorithmic Game Theory", "Market Design", "Strategic Learning"]
 order: 52
 ---

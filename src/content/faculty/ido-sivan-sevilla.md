@@ -2,7 +2,7 @@
 name: "Ido Sivan Sevilla"
 title: "Dr."
 lab: "Sivan Sevilla Lab"
-field: "human-centered"
+fields: ["human-centered"]
 areas: ["AI Governance", "AI Accountability", "Public Sector AI"]
 order: 81
 ---

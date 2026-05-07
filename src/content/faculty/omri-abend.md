@@ -2,7 +2,7 @@
 name: "Omri Abend"
 title: "Prof."
 lab: "NLP and Cognitive Science"
-field: "language-cognition"
+fields: ["language-cognition"]
 areas: ["Semantic Representation", "Language Acquisition", "Bayesian Modeling"]
 order: 23
 ---

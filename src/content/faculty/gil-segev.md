@@ -2,7 +2,7 @@
 name: "Gil Segev"
 title: "Prof."
 lab: "Segev Lab"
-field: "cyber-crypto"
+fields: ["cyber-crypto"]
 areas: ["Cryptography", "ML Security", "Privacy"]
 order: 60
 ---

@@ -2,7 +2,7 @@
 name: "Or Ordentlich"
 title: "Prof."
 lab: "Ordentlich Lab"
-field: "foundations-of-learning"
+fields: ["foundations-of-learning"]
 areas: ["LLM Quantization", "Efficient Inference", "Information Theory"]
 order: 30
 ---

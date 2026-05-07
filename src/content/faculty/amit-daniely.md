@@ -2,7 +2,7 @@
 name: "Amit Daniely"
 title: "Prof."
 lab: "Daniely Lab"
-field: "foundations-of-learning"
+fields: ["foundations-of-learning"]
 areas: ["Learning Theory", "ML Foundations"]
 order: 31
 ---

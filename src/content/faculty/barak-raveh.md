@@ -2,7 +2,7 @@
 name: "Barak Raveh"
 title: "Dr."
 lab: "Raveh Lab"
-field: "biomed"
+fields: ["biomed"]
 areas: ["Dynamic Biological Systems", "Computational Biology", "Multi-Scale Modeling"]
 order: 46
 ---

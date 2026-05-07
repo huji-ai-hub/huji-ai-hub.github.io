@@ -13,7 +13,7 @@ export async function getStaticPaths() {
 const { field } = Astro.props;
 const allFaculty = await getCollection('faculty');
 const fieldFaculty = allFaculty
-  .filter(m => m.data.field === field.slug)
+  .filter(m => (m.data.fields ?? []).includes(field.slug as any))
   .sort((a, b) => (a.data.order ?? 99) - (b.data.order ?? 99));
 ---
 

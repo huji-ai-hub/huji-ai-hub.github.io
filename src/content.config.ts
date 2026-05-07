@@ -7,7 +7,7 @@ const faculty = defineCollection({
     name: z.string(),
     title: z.string(),
     lab: z.string(),
-    field: z.enum([
+    fields: z.array(z.enum([
       'machine-perception',
       'language-cognition',
       'foundations-of-learning',
@@ -16,7 +16,7 @@ const faculty = defineCollection({
       'cyber-crypto',
       'data-science',
       'human-centered',
-    ]).optional(),
+    ])).optional(),
     photo: z.string().optional(),
     website: z.string().url().optional(),
     scholar: z.string().url().optional(),

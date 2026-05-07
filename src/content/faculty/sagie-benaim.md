@@ -2,7 +2,7 @@
 name: "Sagie Benaim"
 title: "Dr."
 lab: "Benaim Lab"
-field: "machine-perception"
+fields: ["machine-perception"]
 photo: "/photos/Benaim.png"
 website: "https://sagiebenaim.github.io/"
 areas: ["3D Reconstruction", "Generative Models", "Video Synthesis"]

@@ -2,7 +2,7 @@
 name: "Mor Nitzan"
 title: "Prof."
 lab: "Nitzan Lab"
-field: "biomed"
+fields: ["biomed"]
 photo: "/photos/Nitzan.jpg"
 areas: ["Single-Cell Genomics", "Spatial Transcriptomics", "Tissue Modeling"]
 order: 40

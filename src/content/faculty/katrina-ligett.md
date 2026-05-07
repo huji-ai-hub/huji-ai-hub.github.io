@@ -2,7 +2,7 @@
 name: "Katrina Ligett"
 title: "Prof."
 lab: "Ligett Lab"
-field: "multi-agent"
+fields: ["multi-agent"]
 areas: ["Differential Privacy", "Algorithmic Fairness", "AI Policy"]
 order: 50
 ---

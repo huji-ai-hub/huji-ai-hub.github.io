@@ -2,7 +2,7 @@
 name: "Oded Schwartz"
 title: "Prof."
 lab: "Schwartz Lab"
-field: "cyber-crypto"
+fields: ["cyber-crypto"]
 areas: ["Matrix Multiplication", "AI Acceleration", "Algorithms"]
 order: 63
 ---

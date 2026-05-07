@@ -2,7 +2,7 @@
 name: "Michael Schapira"
 title: "Prof."
 lab: "Schapira Lab"
-field: "cyber-crypto"
+fields: ["cyber-crypto"]
 photo: "/photos/Schapira.png"
 areas: ["Networked Systems", "Datacenter Optimization", "Deep Learning"]
 order: 62

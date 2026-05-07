@@ -2,7 +2,7 @@
 name: "Yaakov Nahmias"
 title: "Prof."
 lab: "Nahmias Lab"
-field: "biomed"
+fields: ["biomed"]
 areas: ["Tissue Dynamics", "Drug Development", "Hybrid Models"]
 order: 41
 ---

@@ -2,7 +2,7 @@
 name: "Daphna Weinshall"
 title: "Prof."
 lab: "Weinshall Lab"
-field: "machine-perception"
+fields: ["machine-perception"]
 photo: "/photos/Weinshall.png"
 website: "https://www.cs.huji.ac.il/~daphna/"
 areas: ["Machine Learning", "Active Learning", "Computer Vision"]

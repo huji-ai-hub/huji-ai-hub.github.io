@@ -2,7 +2,7 @@
 name: "Dafna Shahaf"
 title: "Prof."
 lab: "Hyadata Lab"
-field: "data-science"
+fields: ["data-science"]
 areas: ["Data Science", "Human Cognition", "Knowledge Discovery"]
 order: 71
 ---

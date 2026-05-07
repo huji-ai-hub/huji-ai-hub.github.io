@@ -2,7 +2,7 @@
 name: "Nir Friedman"
 title: "Prof."
 lab: "Friedman Lab"
-field: "biomed"
+fields: ["biomed"]
 areas: ["Gene Regulation", "Probabilistic Models", "Computational Biology"]
 order: 43
 ---
