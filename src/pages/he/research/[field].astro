@@ -1,0 +1,185 @@
+---
+import Base from '../../../layouts/Base.astro';
+import { getCollection } from 'astro:content';
+import { FIELDS } from '../../../data/fields';
+
+export async function getStaticPaths() {
+  return FIELDS.map(field => ({
+    params: { field: field.slug },
+    props: { field },
+  }));
+}
+
+const { field } = Astro.props;
+const allFaculty = await getCollection('faculty');
+const fieldFaculty = allFaculty
+  .filter(m => m.data.field === field.slug)
+  .sort((a, b) => (a.data.order ?? 99) - (b.data.order ?? 99));
+---
+
+<Base title={`${field.titleHe} — מרכז AI`} lang="he">
+  <section class="hero-banner" style={`background: ${field.gradient};`}>
+    <div class="hero-overlay"></div>
+  </section>
+
+  <section class="hero-text">
+    <div class="container">
+      <a href="/he/research" class="back">→ כל תחומי המחקר</a>
+      <div class="hero-split">
+        <h1>{field.titleHe}</h1>
+        <p>{field.subtitleHe}</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="intro">
+    <div class="container">
+      <div class="intro-inner">
+        <p>{field.introHe}</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="labs-section">
+    <div class="container">
+      <h2>מעבדות ב{field.titleHe}</h2>
+      {fieldFaculty.length === 0 ? (
+        <p class="empty">טרם הוקצו מעבדות לתחום זה.</p>
+      ) : (
+        <div class="labs-list">
+          {fieldFaculty.map(member => (
+            <a href={`/he/faculty/${member.id}`} class="lab-row">
+              <div class="lab-avatar">
+                {member.data.photo ? (
+                  <img src={member.data.photo} alt={member.data.name} />
+                ) : (
+                  <span>{member.data.name.split(' ').map(n => n[0]).join('')}</span>
+                )}
+              </div>
+              <div class="lab-info">
+                <h3>{member.data.lab} — {member.data.title} {member.data.name}</h3>
+                <p>{member.body || ''}</p>
+                {member.data.website && (
+                  <span class="lab-link">↗ אתר המעבדה</span>
+                )}
+              </div>
+            </a>
+          ))}
+        </div>
+      )}
+    </div>
+  </section>
+</Base>
+
+<style>
+  .hero-banner {
+    height: 200px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .hero-overlay {
+    position: absolute;
+    inset: 0;
+    background:
+      radial-gradient(circle at 30% 50%, rgba(255,255,255,0.08) 0%, transparent 50%),
+      radial-gradient(circle at 70% 30%, rgba(255,255,255,0.05) 0%, transparent 40%);
+  }
+
+  .hero-text { padding: 2rem 0 2.5rem; }
+
+  .back {
+    display: inline-block;
+    font-size: 0.82rem;
+    color: var(--text-muted);
+    margin-bottom: 1.5rem;
+  }
+
+  .hero-split {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 3rem;
+    align-items: start;
+  }
+
+  .hero-split h1 { font-size: 2.4rem; font-weight: 700; line-height: 1.3; }
+  .hero-split p { font-size: 1rem; color: var(--text-secondary); line-height: 1.85; padding-top: 0.4rem; }
+
+  .intro {
+    background: var(--bg-secondary);
+    padding: 2.5rem 0;
+  }
+
+  .intro-inner { max-width: 760px; }
+
+  .intro p {
+    font-size: 0.95rem;
+    color: var(--text-secondary);
+    line-height: 1.95;
+  }
+
+  .labs-section { padding: 3.5rem 0; }
+  .labs-section h2 { font-size: 1.4rem; font-weight: 700; margin-bottom: 1.75rem; }
+
+  .empty { color: var(--text-muted); font-size: 0.9rem; }
+
+  .labs-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .lab-row {
+    display: flex;
+    gap: 1.25rem;
+    padding: 1.25rem;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    text-decoration: none;
+    color: inherit;
+    transition: box-shadow 0.15s, border-color 0.15s;
+  }
+
+  .lab-row:hover {
+    box-shadow: var(--shadow-md);
+    border-color: var(--huji-teal);
+    text-decoration: none;
+  }
+
+  .lab-avatar {
+    width: 72px;
+    height: 72px;
+    border-radius: 50%;
+    background: var(--huji-teal);
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 600;
+    font-size: 1.1rem;
+    flex-shrink: 0;
+    overflow: hidden;
+  }
+  .lab-avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+
+  .lab-info h3 { font-size: 1rem; font-weight: 600; margin-bottom: 0.4rem; }
+  .lab-info p { font-size: 0.88rem; color: var(--text-secondary); line-height: 1.85; margin-bottom: 0.5rem; }
+
+  .lab-link {
+    font-size: 0.82rem;
+    color: var(--huji-teal);
+    font-weight: 500;
+  }
+
+  @media (max-width: 768px) {
+    .hero-split { grid-template-columns: 1fr; gap: 1rem; }
+    .hero-split h1 { font-size: 1.8rem; }
+    .lab-row { flex-direction: column; }
+  }
+</style>

@@ -1,0 +1,12 @@
+---
+name: "Dina Schneidman"
+title: "Prof."
+lab: "Schneidman Lab"
+field: "biomed"
+photo: "/photos/Schneidman.jpeg"
+website: "https://www.cs.huji.ac.il/~dina/"
+areas: ["Protein Structure", "Antibody Design", "Therapeutic AI"]
+order: 42
+---
+
+Applies deep learning to protein structure prediction, antibody-antigen interactions, and nanobody design for therapeutic applications.

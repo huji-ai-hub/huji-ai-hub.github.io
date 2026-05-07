@@ -1,11 +1,12 @@
 ---
 name: "Yair Weiss"
-title: "Professor of Computer Science"
-lab: "Computer Vision and Machine Learning"
+title: "Prof."
+lab: "Weiss Lab"
+field: "machine-perception"
+photo: "/photos/Weiss.png"
 website: "https://www.cs.huji.ac.il/~yweiss/"
-scholar: "https://scholar.google.com/citations?user=EXAMPLE"
-areas: ["Computer Vision", "Probabilistic Models", "Neural Networks"]
-order: 2
+areas: ["Computer Vision", "Probabilistic Models", "Bayesian Inference"]
+order: 15
 ---
 
-Research in computer vision, machine learning, and computational neuroscience. Known for foundational work on probabilistic graphical models, belief propagation, and spectral methods for clustering and segmentation.
+Research spans computer vision, probabilistic models, and Bayesian inference for human and machine perception. Also leads the TUM-HUJI AI Hub, a collaboration with the Technical University of Munich on AI research.

@@ -1,0 +1,12 @@
+---
+name: "Roy Schwartz"
+title: "Prof."
+lab: "Schwartz NLP Lab"
+field: "language-cognition"
+photo: "/photos/Schwartz_NLP.png"
+website: "https://schwartz-lab-huji.github.io/"
+areas: ["Natural Language Processing", "Model Efficiency", "Sustainability"]
+order: 20
+---
+
+Leads research in natural language processing with emphasis on model reliability, efficiency, and sustainability, spanning language understanding, generation, and practical AI tools.

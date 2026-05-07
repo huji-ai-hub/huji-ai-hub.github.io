@@ -20,7 +20,11 @@ const { Content } = await render(member);
       <a href="/faculty" class="back">← Back to Faculty</a>
       <div class="profile-header">
         <div class="avatar">
-          {member.data.name.split(' ').map(n => n[0]).join('')}
+          {member.data.photo ? (
+            <img src={member.data.photo} alt={member.data.name} />
+          ) : (
+            <span>{member.data.name.split(' ').map(n => n[0]).join('')}</span>
+          )}
         </div>
         <div>
           <h1>{member.data.name}</h1>
@@ -66,8 +70,8 @@ const { Content } = await render(member);
   }
 
   .avatar {
-    width: 72px;
-    height: 72px;
+    width: 96px;
+    height: 96px;
     border-radius: 50%;
     background: var(--huji-teal);
     color: #fff;
@@ -75,8 +79,15 @@ const { Content } = await render(member);
     align-items: center;
     justify-content: center;
     font-weight: 700;
-    font-size: 1.3rem;
+    font-size: 1.6rem;
     flex-shrink: 0;
+    overflow: hidden;
+  }
+  .avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
   }
 
   h1 {
