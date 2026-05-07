@@ -1,21 +1,18 @@
 ---
 import Base from '../layouts/Base.astro';
+import { HOMEPAGE } from '../data/homepage';
 ---
 
 <Base title="HUJI AI Hub — Artificial Intelligence at the Hebrew University">
-  <section class="hero-banner">
+  <section class="hero-banner" style={`background-image: url('${HOMEPAGE.heroImage}');`}>
     <div class="hero-overlay"></div>
   </section>
 
   <section class="hero-text">
     <div class="container">
       <div class="hero-split">
-        <h1>AI at the Hebrew University</h1>
-        <p>
-          Artificial Intelligence impacts every aspect of life. At the Hebrew University,
-          we research and teach diverse disciplines in the foundations, applications,
-          and implications of AI.
-        </p>
+        <h1>{HOMEPAGE.hero.title}</h1>
+        <p>{HOMEPAGE.hero.body}</p>
       </div>
     </div>
   </section>
@@ -23,27 +20,15 @@ import Base from '../layouts/Base.astro';
   <section class="pillars">
     <div class="container">
       <div class="pillar-grid">
-        <a href="/research" class="pillar-card">
-          <div class="pillar-img" style="background: linear-gradient(135deg, #1a3a4a 0%, #2d6b7a 100%);"></div>
-          <div class="pillar-label">
-            <span>Research</span>
-            <span class="arrow">→</span>
-          </div>
-        </a>
-        <a href="/academics" class="pillar-card">
-          <div class="pillar-img" style="background: linear-gradient(135deg, #3a2a5a 0%, #6b5a8a 100%);"></div>
-          <div class="pillar-label">
-            <span>Academics</span>
-            <span class="arrow">→</span>
-          </div>
-        </a>
-        <a href="/industry" class="pillar-card">
-          <div class="pillar-img" style="background: linear-gradient(135deg, #2a4a3a 0%, #4a7a5a 100%);"></div>
-          <div class="pillar-label">
-            <span>Industry</span>
-            <span class="arrow">→</span>
-          </div>
-        </a>
+        {HOMEPAGE.pillars.map(p => (
+          <a href={p.href} class="pillar-card">
+            <div class="pillar-img" style={`background-image: url('${p.image}');`}></div>
+            <div class="pillar-label">
+              <span>{p.label}</span>
+              <span class="arrow">→</span>
+            </div>
+          </a>
+        ))}
       </div>
     </div>
   </section>
@@ -51,21 +36,11 @@ import Base from '../layouts/Base.astro';
   <section class="program-spotlight">
     <div class="container">
       <div class="spotlight-split">
-        <div class="spotlight-img" style="background: linear-gradient(135deg, #1a3a4a 0%, #2d6b7a 100%);"></div>
+        <div class="spotlight-img" style={`background-image: url('${HOMEPAGE.spotlight.image}');`}></div>
         <div class="spotlight-content">
-          <h2>Mastering the Tech of Tomorrow: Computer Science in the AI Era</h2>
-          <p>
-            The new Computer Science program at the Hebrew University, featuring an AI specialization,
-            is designed for students aspiring to understand how this generation's tools work — and to
-            develop the next generation's tools. The program was developed by leading researchers,
-            combining theoretical depth with practical application.
-          </p>
-          <p>
-            It provides a solid mathematical foundation and deep exposure to modern models, training
-            graduates capable of analyzing, training, and critically examining complex systems.
-            Here, you acquire the knowledge needed to lead R&D in a changing technological environment.
-          </p>
-          <a href="/academics" class="cta-button">Details & Registration →</a>
+          <h2>{HOMEPAGE.spotlight.title}</h2>
+          {HOMEPAGE.spotlight.body.map(p => <p>{p}</p>)}
+          <a href={HOMEPAGE.spotlight.ctaHref} class="cta-button">{HOMEPAGE.spotlight.cta}</a>
         </div>
       </div>
     </div>
@@ -73,22 +48,17 @@ import Base from '../layouts/Base.astro';
 
   <section class="news">
     <div class="container">
-      <h2>Latest in AI at Hebrew University</h2>
+      <h2>{HOMEPAGE.newsTitle}</h2>
       <div class="news-grid">
-        <a href="/about" class="news-card">
-          <div class="news-img" style="background: linear-gradient(135deg, #2a4a3a 0%, #4a7a5a 100%);"></div>
-          <div class="news-label">
-            <span>CS AI Program</span>
-            <span class="arrow">→</span>
-          </div>
-        </a>
-        <a href="/about" class="news-card">
-          <div class="news-img" style="background: linear-gradient(135deg, #3a2a5a 0%, #5a4a7a 100%);"></div>
-          <div class="news-label">
-            <span>New Course — Programming with AI Agents</span>
-            <span class="arrow">→</span>
-          </div>
-        </a>
+        {HOMEPAGE.news.map(n => (
+          <a href={n.href} class="news-card">
+            <div class="news-img" style={`background-image: url('${n.image}');`}></div>
+            <div class="news-label">
+              <span>{n.label}</span>
+              <span class="arrow">→</span>
+            </div>
+          </a>
+        ))}
       </div>
     </div>
   </section>
@@ -96,23 +66,21 @@ import Base from '../layouts/Base.astro';
 
 <style>
   .hero-banner {
-    height: 200px;
-    background: linear-gradient(135deg, #0d2847 0%, #1a4a6a 40%, #2a6b8a 100%);
+    height: 320px;
     position: relative;
     overflow: hidden;
+    background-size: cover;
+    background-position: center;
   }
 
   .hero-overlay {
     position: absolute;
     inset: 0;
     background:
-      radial-gradient(circle at 30% 50%, rgba(100,180,220,0.15) 0%, transparent 50%),
-      radial-gradient(circle at 70% 30%, rgba(150,200,240,0.1) 0%, transparent 40%);
+      linear-gradient(180deg, rgba(13,40,71,0.15) 0%, rgba(13,40,71,0.05) 100%);
   }
 
-  .hero-text {
-    padding: 3.5rem 0 3rem;
-  }
+  .hero-text { padding: 3.5rem 0 3rem; }
 
   .hero-split {
     display: grid;
@@ -122,7 +90,7 @@ import Base from '../layouts/Base.astro';
   }
 
   .hero-split h1 {
-    font-size: 2.4rem;
+    font-size: 2.8rem;
     font-weight: 700;
     line-height: 1.15;
     color: var(--text-primary);
@@ -161,6 +129,8 @@ import Base from '../layouts/Base.astro';
     aspect-ratio: 4/3;
     border-radius: var(--radius);
     margin-bottom: 0.75rem;
+    background-size: cover;
+    background-position: center;
   }
 
   .pillar-label {
@@ -182,9 +152,7 @@ import Base from '../layouts/Base.astro';
     transform: translateX(3px);
   }
 
-  .program-spotlight {
-    padding: 4rem 0;
-  }
+  .program-spotlight { padding: 4rem 0; }
 
   .spotlight-split {
     display: grid;
@@ -197,6 +165,8 @@ import Base from '../layouts/Base.astro';
     aspect-ratio: 1/1;
     border-radius: var(--radius);
     border: 1px solid var(--border-light);
+    background-size: cover;
+    background-position: center;
   }
 
   .spotlight-content h2 {
@@ -264,6 +234,8 @@ import Base from '../layouts/Base.astro';
     aspect-ratio: 16/9;
     border-radius: var(--radius);
     margin-bottom: 0.75rem;
+    background-size: cover;
+    background-position: center;
   }
 
   .news-label {
@@ -277,15 +249,13 @@ import Base from '../layouts/Base.astro';
     gap: 1rem;
   }
 
-  .news-card:hover .arrow {
-    transform: translateX(3px);
-  }
+  .news-card:hover .arrow { transform: translateX(3px); }
 
   @media (max-width: 768px) {
     .hero-split { grid-template-columns: 1fr; gap: 1rem; }
-    .hero-split h1 { font-size: 1.8rem; }
-    .pillar-grid { grid-template-columns: 1fr; }
+    .hero-split h1 { font-size: 2rem; }
+    .pillar-grid, .news-grid { grid-template-columns: 1fr; }
     .spotlight-split { grid-template-columns: 1fr; }
-    .news-grid { grid-template-columns: 1fr; }
+    .hero-banner { height: 220px; }
   }
 </style>
