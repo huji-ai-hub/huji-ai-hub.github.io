@@ -28,7 +28,11 @@ const sortedFaculty = faculty.sort((a, b) => (a.data.order ?? 99) - (b.data.orde
         {sortedFaculty.map((member) => (
           <a href={`/he/faculty/${member.id}`} class="faculty-card">
             <div class="avatar">
-              {member.data.name.split(' ').map(n => n[0]).join('')}
+              {member.data.photo ? (
+                <img src={member.data.photo} alt={member.data.name} />
+              ) : (
+                <span>{member.data.name.split(' ').map(n => n[0]).join('')}</span>
+              )}
             </div>
             <div class="info">
               <h3>{member.data.name}</h3>
@@ -108,8 +112,8 @@ const sortedFaculty = faculty.sort((a, b) => (a.data.order ?? 99) - (b.data.orde
   }
 
   .avatar {
-    width: 48px;
-    height: 48px;
+    width: 56px;
+    height: 56px;
     border-radius: 50%;
     background: var(--huji-teal);
     color: #fff;
@@ -117,8 +121,15 @@ const sortedFaculty = faculty.sort((a, b) => (a.data.order ?? 99) - (b.data.orde
     align-items: center;
     justify-content: center;
     font-weight: 600;
-    font-size: 0.9rem;
+    font-size: 0.95rem;
     flex-shrink: 0;
+    overflow: hidden;
+  }
+  .avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
   }
 
   .info h3 { font-size: 0.88rem; font-weight: 600; }
