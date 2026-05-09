@@ -2,7 +2,7 @@
 name: "Yair Bartal"
 title: "Prof."
 lab: "Bartal Lab"
-field: "human-centered"
+fields: ["human-centered"]
 areas: ["VR for Mental Health", "Clinical AI", "Human-Computer Interaction"]
 order: 80
 ---

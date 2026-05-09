@@ -2,7 +2,7 @@
 name: "Yedid Hoshen"
 title: "Prof."
 lab: "Hoshen Lab"
-field: "machine-perception"
+fields: ["machine-perception"]
 photo: "/photos/Hoshen.jpg"
 website: "https://www.cs.huji.ac.il/~yedid/"
 areas: ["Computer Vision", "Self-Supervised Learning", "Anomaly Detection"]

@@ -2,7 +2,7 @@
 name: "Guy Katz"
 title: "Prof."
 lab: "Katz Lab"
-field: "cyber-crypto"
+fields: ["cyber-crypto"]
 photo: "/photos/Katz.png"
 website: "https://www.katz-lab.com/about"
 areas: ["Neural Network Verification", "AI Safety", "Formal Methods"]

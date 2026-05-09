@@ -2,7 +2,7 @@
 name: "Orna Kupferman"
 title: "Prof."
 lab: "Kupferman Lab"
-field: "multi-agent"
+fields: ["multi-agent"]
 areas: ["Formal Methods", "Verification", "Game Theory"]
 order: 51
 ---

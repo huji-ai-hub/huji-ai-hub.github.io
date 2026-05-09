@@ -2,7 +2,7 @@
 name: "Roy Schwartz"
 title: "Prof."
 lab: "Schwartz NLP Lab"
-field: "language-cognition"
+fields: ["language-cognition"]
 photo: "/photos/Schwartz_NLP.png"
 website: "https://schwartz-lab-huji.github.io/"
 areas: ["Natural Language Processing", "Model Efficiency", "Sustainability"]

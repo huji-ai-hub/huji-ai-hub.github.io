@@ -2,7 +2,7 @@
 name: "Yossi Adi"
 title: "Dr."
 lab: "Adi Lab"
-field: "machine-perception"
+fields: ["machine-perception"]
 photo: "/photos/Adi.png"
 website: "https://www.cs.huji.ac.il/~adiyoss/"
 areas: ["Spoken Language Models", "Speech Processing", "Audio Generation"]

@@ -3,7 +3,7 @@ import Base from '../layouts/Base.astro';
 ---
 
 <Base title="Academics — HUJI AI Hub">
-  <section class="hero-banner">
+  <section class="hero-banner" style="background-image: url('/images/pexels-cottonbro-6153739.jpg');">
     <div class="hero-overlay"></div>
   </section>
 
@@ -128,10 +128,11 @@ import Base from '../layouts/Base.astro';
 
 <style>
   .hero-banner {
-    height: 220px;
-    background: linear-gradient(135deg, #3a2a5a 0%, #6b5a8a 100%);
+    height: 260px;
     position: relative;
     overflow: hidden;
+    background-size: cover;
+    background-position: center;
   }
   .hero-overlay {
     position: absolute;

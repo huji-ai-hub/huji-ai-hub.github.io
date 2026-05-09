@@ -1,44 +1,18 @@
 ---
 import Base from '../layouts/Base.astro';
-
-const facultyCompanies = [
-  'Mobileye',
-  'AI21 Labs',
-  'OrCam',
-  'Factify',
-  'Lightricks',
-  'StarkWare',
-  'BriefCam',
-];
-
-const industryPartners = [
-  'Apple',
-  'Intel',
-  'Google',
-  'Mobileye',
-  'Monday.com',
-  'KLA',
-  'StarkWare',
-  'Lightricks',
-  'eSiP-Vision',
-  'QueenB',
-  'Forstart',
-];
+import { INDUSTRY, FACULTY_COMPANIES, INDUSTRY_PARTNERS } from '../data/industry';
 ---
 
 <Base title="Industry — HUJI AI Hub">
-  <section class="hero-banner">
+  <section class="hero-banner" style={`background-image: url('${INDUSTRY.heroImage}');`}>
     <div class="hero-overlay"></div>
   </section>
 
   <section class="hero-text">
     <div class="container">
       <div class="hero-split">
-        <h1>From Classroom Board to IPO: Theory Becomes Technology</h1>
-        <p>
-          The Hebrew University stands behind some of the greatest successes in Israeli High-Tech.
-          Research excellence is the surest path to groundbreaking innovation.
-        </p>
+        <h1>{INDUSTRY.hero.title}</h1>
+        <p>{INDUSTRY.hero.body}</p>
       </div>
     </div>
   </section>
@@ -46,11 +20,11 @@ const industryPartners = [
   <section class="featured">
     <div class="container">
       <div class="featured-content">
-        <h2>How AI is Revolutionizing Drug Development with Prof. Yaakov Nahmias</h2>
-        <p class="featured-source">WIRED Briefings · Featured talk</p>
+        <h2>{INDUSTRY.featured.title}</h2>
+        <p class="featured-source">{INDUSTRY.featured.source}</p>
         <a href="/research/biomed" class="featured-link">Learn more about Prof. Nahmias's research →</a>
       </div>
-      <div class="featured-img" style="background: linear-gradient(135deg, #1a3a4a 0%, #2d6b7a 100%);"></div>
+      <div class="featured-img" style={`background-image: url('${INDUSTRY.featured.image}');`}></div>
     </div>
   </section>
 
@@ -67,7 +41,7 @@ const industryPartners = [
       <div class="companies-block">
         <h3>Companies that have emerged from our faculty and alumni community:</h3>
         <ul class="company-list">
-          {facultyCompanies.map(c => <li>{c}</li>)}
+          {FACULTY_COMPANIES.map(c => <li>{c}</li>)}
         </ul>
       </div>
     </div>
@@ -80,10 +54,9 @@ const industryPartners = [
         We collaborate with leading technology companies and innovative startups
         operating at the forefront of artificial intelligence.
       </p>
-
       <h3>Our partners include:</h3>
       <ul class="company-list">
-        {industryPartners.map(p => <li>{p}</li>)}
+        {INDUSTRY_PARTNERS.map(p => <li>{p}</li>)}
       </ul>
     </div>
   </section>
@@ -139,7 +112,7 @@ const industryPartners = [
           </p>
           <a href="mailto:webmaster@cs.huji.ac.il" class="cta-button">Learn more about the program</a>
         </div>
-        <div class="iap-img" style="background: linear-gradient(135deg, #4a2a5a 0%, #7a5a8a 100%);"></div>
+        <div class="iap-img" style={`background-image: url('${INDUSTRY.iapImage}');`}></div>
       </div>
     </div>
   </section>
@@ -147,26 +120,20 @@ const industryPartners = [
 
 <style>
   .hero-banner {
-    height: 220px;
-    background: linear-gradient(135deg, #2a3a3a 0%, #4a6a6a 100%);
+    height: 280px;
     position: relative;
     overflow: hidden;
+    background-size: cover;
+    background-position: center;
   }
   .hero-overlay {
     position: absolute;
     inset: 0;
-    background: radial-gradient(circle at 30% 50%, rgba(255,255,255,0.08) 0%, transparent 50%);
+    background: linear-gradient(180deg, rgba(13,40,71,0.1) 0%, rgba(13,40,71,0.05) 100%);
   }
 
   .hero-text { padding: 3.5rem 0 3rem; }
-
-  .hero-split {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 3rem;
-    align-items: start;
-  }
-
+  .hero-split { display: grid; grid-template-columns: 1fr 1fr; gap: 3rem; align-items: start; }
   .hero-split h1 { font-size: 2.2rem; font-weight: 700; line-height: 1.2; }
   .hero-split p { font-size: 0.95rem; color: var(--text-secondary); line-height: 1.75; padding-top: 0.4rem; }
 
@@ -179,70 +146,28 @@ const industryPartners = [
     align-items: center;
   }
 
-  .featured-content h2 {
-    font-size: 1.4rem;
-    font-weight: 700;
-    margin-bottom: 0.5rem;
-    line-height: 1.35;
-  }
-
-  .featured-source {
-    font-size: 0.82rem;
-    color: var(--text-muted);
-    margin-bottom: 1rem;
-  }
-
-  .featured-link {
-    font-size: 0.9rem;
-    font-weight: 500;
-  }
+  .featured-content h2 { font-size: 1.4rem; font-weight: 700; margin-bottom: 0.5rem; line-height: 1.35; }
+  .featured-source { font-size: 0.82rem; color: var(--text-muted); margin-bottom: 1rem; }
+  .featured-link { font-size: 0.9rem; font-weight: 500; }
 
   .featured-img {
     aspect-ratio: 16/9;
     border-radius: var(--radius);
+    background-size: cover;
+    background-position: center;
   }
 
-  .partnerships {
-    background: var(--bg-secondary);
-    padding: 3.5rem 0;
-  }
+  .partnerships { background: var(--bg-secondary); padding: 3.5rem 0; }
+  .partners, .collaboration, .global, .iap { padding: 3rem 0; }
 
-  .partners, .collaboration, .global, .iap {
-    padding: 3rem 0;
-  }
+  h2 { font-size: 1.5rem; font-weight: 700; margin-bottom: 0.75rem; }
+  h3 { font-size: 1rem; font-weight: 600; margin-top: 1.5rem; margin-bottom: 0.6rem; }
 
-  h2 {
-    font-size: 1.5rem;
-    font-weight: 700;
-    margin-bottom: 0.75rem;
-  }
+  .lede { font-size: 0.95rem; color: var(--text-secondary); line-height: 1.85; max-width: 760px; margin-bottom: 1.5rem; }
 
-  h3 {
-    font-size: 1rem;
-    font-weight: 600;
-    margin-top: 1.5rem;
-    margin-bottom: 0.6rem;
-  }
+  p { font-size: 0.92rem; color: var(--text-secondary); line-height: 1.8; max-width: 760px; margin-bottom: 0.75rem; }
 
-  .lede {
-    font-size: 0.95rem;
-    color: var(--text-secondary);
-    line-height: 1.85;
-    max-width: 760px;
-    margin-bottom: 1.5rem;
-  }
-
-  p {
-    font-size: 0.92rem;
-    color: var(--text-secondary);
-    line-height: 1.8;
-    max-width: 760px;
-    margin-bottom: 0.75rem;
-  }
-
-  .companies-block {
-    margin-top: 1rem;
-  }
+  .companies-block { margin-top: 1rem; }
 
   .company-list {
     list-style: none;
@@ -263,27 +188,14 @@ const industryPartners = [
     color: var(--text-primary);
   }
 
-  .partners .company-list li {
-    background: var(--bg-secondary);
-  }
+  .partners .company-list li { background: var(--bg-secondary); }
 
-  .bullets {
-    padding-inline-start: 1.25rem;
-    max-width: 760px;
-  }
-
-  .bullets li {
-    font-size: 0.9rem;
-    color: var(--text-secondary);
-    line-height: 1.85;
-    margin-bottom: 0.3rem;
-  }
+  .bullets { padding-inline-start: 1.25rem; max-width: 760px; }
+  .bullets li { font-size: 0.9rem; color: var(--text-secondary); line-height: 1.85; margin-bottom: 0.3rem; }
 
   .closing { margin-top: 1rem; }
 
-  .global {
-    background: var(--bg-secondary);
-  }
+  .global { background: var(--bg-secondary); }
 
   .iap-split {
     display: grid;
@@ -295,6 +207,8 @@ const industryPartners = [
   .iap-img {
     aspect-ratio: 1/1;
     border-radius: var(--radius);
+    background-size: cover;
+    background-position: center;
   }
 
   .cta-button {
@@ -309,10 +223,7 @@ const industryPartners = [
     transition: background 0.15s;
   }
 
-  .cta-button:hover {
-    background: var(--huji-teal);
-    text-decoration: none;
-  }
+  .cta-button:hover { background: var(--huji-teal); text-decoration: none; }
 
   @media (max-width: 768px) {
     .hero-split, .featured .container, .iap-split { grid-template-columns: 1fr; gap: 1rem; }
