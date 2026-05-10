@@ -1,43 +1,165 @@
-# Astro Starter Kit: Minimal
+# HUJI AI Hub
 
-```sh
-npm create astro@latest -- --template minimal
+The website for the AI Hub at the Hebrew University of Jerusalem — research, academic programs, faculty profiles, and industry collaboration. A bilingual (English / Hebrew) static site, built with Astro and deployed on Cloudflare Pages.
+
+- **Live site:** https://huji-ai-hub.pages.dev
+- **Repository:** https://github.com/huji-ai-hub/huji-ai-hub.github.io
+
+The site replaces an older Drupal-based version. The design goal was that anyone — not just a developer — should be able to update content, and the next maintainer should inherit a project that doesn't depend on tribal knowledge to keep running.
+
+---
+
+## Quick reference: what to do if you want to…
+
+| Goal | Where to go |
+|---|---|
+| Edit a faculty bio | `src/content/faculty/<slug>.md` — open it on github.com, click the pencil, edit, commit |
+| Add a new faculty member | Create a new `src/content/faculty/<their-name>.md` (copy an existing one as a template) and add their photo to `public/photos/` |
+| Change a homepage section | `src/data/homepage.ts` |
+| Add or edit a research field | `src/data/fields.ts` |
+| Update industry-page content | `src/data/industry.ts` |
+| Update the page header / footer / language toggle | `src/layouts/Base.astro` |
+| Add a new top-level page | New `.astro` file under `src/pages/` (and a parallel one under `src/pages/he/`) |
+| See what the site builds to | `npm run build` (output in `dist/`) |
+| Run locally | `npm install` then `npm run dev` (opens on `http://localhost:4321`) |
+
+---
+
+## How a content edit becomes a live page
+
+```
+edit a file → commit → open pull request → review → merge to main → automatic build → live in ~90 seconds
 ```
 
-> 🧑‍🚀 **Seasoned astronaut?** Delete this file. Have fun!
+There are three ways to do the "edit a file" step, depending on who you are:
 
-## 🚀 Project Structure
+1. **In the browser.** Open the file on github.com, click the pencil icon, edit in the GitHub UI, save. GitHub creates the commit and prompts you to open a pull request. No software to install.
+2. **On your computer.** Clone the repo, edit any file in your text editor of choice, commit, push. Suitable for someone who edits frequently or wants to preview locally first.
+3. **Via the auto-update bot.** A scheduled agent (planned, not yet running in production) scans HUJI faculty pages, university marketing, and Google Scholar for new AI-related content and proposes updates as pull requests. The same human review and merge step applies before anything goes live. See `output/updater-bot-design.md` in the project workspace for the design doc.
 
-Inside of your Astro project, you'll see the following folders and files:
+In all three cases, no CMS login, no admin panel, no database. The repository is the content source of truth.
 
-```text
-/
-├── public/
+---
+
+## Project structure
+
+```
+site/
 ├── src/
-│   └── pages/
-│       └── index.astro
-└── package.json
+│   ├── content/
+│   │   └── faculty/            ← One markdown file per faculty member
+│   ├── data/                   ← Structured page content (homepage, research fields, industry data)
+│   ├── pages/                  ← Routes — each .astro file becomes a URL
+│   │   ├── faculty/
+│   │   ├── research/
+│   │   └── he/                 ← Hebrew mirror of every English route
+│   ├── layouts/
+│   │   └── Base.astro          ← Page shell (head metadata, header, footer)
+│   ├── components/             ← Reusable UI pieces
+│   └── content.config.ts       ← Schema for content collections
+├── public/
+│   ├── images/                 ← Hero and section images
+│   ├── photos/                 ← Faculty headshots
+│   ├── favicon.svg
+│   └── robots.txt
+├── astro.config.mjs            ← Build configuration (one-line site URL)
+├── package.json                ← Dependencies (4 packages)
+└── README.md                   ← This file
 ```
 
-Astro looks for `.astro` or `.md` files in the `src/pages/` directory. Each page is exposed as a route based on its file name.
+**Content vs code.** Content lives under `src/content/`, `src/data/`, and `public/`. Code lives under `src/pages/`, `src/layouts/`, and `src/components/`. They share a repository but they're cleanly separated by folder, with different change patterns. A content edit doesn't touch any code; a code change doesn't touch any content. The build runs in either case.
 
-There's nothing special about `src/components/`, but that's where we like to put any Astro/React/Vue/Svelte/Preact components.
+This is the standard pattern for content sites with the modern static-site frameworks (Astro, Next.js, Hugo, Eleventy). The older approach of separating into two systems — code in one place, content in a CMS database — solved a problem (rebuilding code was once expensive) that doesn't exist anymore. A static-site build runs in seconds; the operational cost of a database (backups, migrations, version compatibility, hosting) is no longer justified for a site that doesn't need user accounts or runtime-generated pages.
 
-Any static assets, like images, can be placed in the `public/` directory.
+---
 
-## 🧞 Commands
+## Stack
 
-All commands are run from the root of the project, from a terminal:
+| Piece | Choice | Why |
+|---|---|---|
+| Static-site generator | [Astro](https://astro.build) | Best current tool for content sites with multiple contributors. Markdown-first. Native Hebrew/RTL support. Zero JavaScript shipped to the browser unless explicitly added. |
+| Content storage | Markdown + TypeScript data files in the repository | Anyone can edit with a text editor. AI agents can write to markdown trivially. No CMS API required. |
+| Hosting | [Cloudflare Pages](https://pages.cloudflare.com) | Per-pull-request preview URLs out of the box, free, fast CDN. Output is plain static files — the host is interchangeable if needed. |
+| Repository host | github.com | Outside HUJI institutional control, won't disappear if internal infrastructure changes. Standard tooling, free unlimited collaborators, GitHub Actions native. |
+| Permissions | GitHub branch protection | Edits go through pull requests; only repo collaborators can merge. No site-level login required. |
 
-| Command                   | Action                                           |
-| :------------------------ | :----------------------------------------------- |
-| `npm install`             | Installs dependencies                            |
-| `npm run dev`             | Starts local dev server at `localhost:4321`      |
-| `npm run build`           | Build your production site to `./dist/`          |
-| `npm run preview`         | Preview your build locally, before deploying     |
-| `npm run astro ...`       | Run CLI commands like `astro add`, `astro check` |
-| `npm run astro -- --help` | Get help using the Astro CLI                     |
+---
 
-## 👀 Want to learn more?
+## Languages and RTL
 
-Feel free to check [our documentation](https://docs.astro.build) or jump into our [Discord server](https://astro.build/chat).
+Every English route at `/foo` has a parallel Hebrew route at `/he/foo`. The `Base.astro` layout sets `<html lang="he" dir="rtl">` for Hebrew pages and the corresponding `lang/dir` for English. Hebrew uses the Heebo font; English uses Inter. Each page's English ↔ Hebrew counterpart is linked in the head via `<link rel="alternate" hreflang="...">` so search engines route language-specific queries correctly.
+
+Faculty content is currently shared between languages — one markdown file per person, with English bios. Adding Hebrew bios is a content change (add a `bioHe` frontmatter field, conditionally render in the Hebrew template); structurally supported, awaiting a translation pass.
+
+---
+
+## SEO
+
+Every page emits:
+
+- A canonical URL
+- `hreflang` link tags for the EN ↔ HE pair (plus `x-default`)
+- Open Graph and Twitter Card metadata for shared links
+- A JSON-LD `Organization` schema (the Hub, with parent organization = the Hebrew University)
+
+Faculty profile pages additionally emit a JSON-LD `Person` schema with name, title, affiliation, and `sameAs` links to their personal website and Google Scholar.
+
+The site exposes a `sitemap-index.xml` (generated at build time from the actual routes) and a `robots.txt` that allows all crawlers and points at the sitemap.
+
+After the site is publicly deployed: submit the sitemap to Google Search Console (`search.google.com/search-console`) and Bing Webmaster Tools. PageSpeed Insights (`pagespeed.web.dev`) gives a Lighthouse SEO/performance/accessibility report on any URL.
+
+---
+
+## Permissions and governance
+
+- The `main` branch is protected — direct pushes are blocked.
+- Changes land via pull request and require at least one approving review from a repo collaborator.
+- Repo collaborators control who can merge.
+- There is no separate site-level login. Authorization to edit the site = authorization to merge to `main` = membership in the GitHub repo with merge rights.
+
+If a logged-in editing surface for non-technical editors is later required, a headless CMS (such as Decap CMS or Sanity Studio) can be layered on top without changing the storage model. The decision is deferred until there's a real demand.
+
+---
+
+## Hosting and DNS
+
+- **Hosting:** Cloudflare Pages, free tier.
+- **Production URL:** `huji-ai-hub.pages.dev`
+- **HUJI subdomain:** awaiting confirmation from HUJI IT on whether a CNAME from a HUJI subdomain (proposed: `ai.cs.huji.ac.il`) is feasible. When confirmed, Cloudflare's custom domain feature handles the DNS side; the only code change is updating the `site` field in `astro.config.mjs`.
+- **Backup deploy:** a workflow at `.github/workflows/deploy.yml` is also configured for GitHub Pages — currently inactive in production but kept for portability if hosting needs to change.
+
+The build output is plain static files. The site can be served from any static host (a HUJI server with nginx, GitHub Pages, S3, Netlify, etc.) without code changes.
+
+---
+
+## Local development
+
+Requires Node.js 22 or newer.
+
+```bash
+npm install     # install dependencies (one-time)
+npm run dev     # start dev server at http://localhost:4321 (live reload on save)
+npm run build   # build static output to dist/
+npm run preview # preview the built output locally
+```
+
+That's the entire development surface.
+
+---
+
+## Departure-proofing
+
+The project is designed so that whoever inherits it gets:
+
+- A public GitHub repository with no missing credentials and no shadow infrastructure.
+- This README, plus design rationale documents in the project workspace at `output/`.
+- A standard, widely-used stack (Astro and Cloudflare Pages are both mainstream).
+- A working deploy pipeline that requires no manual intervention.
+
+There is no proprietary GUI, no custom CMS, no contractor-specific tooling. Anyone fluent in markdown and git can take over the editing flow. Anyone with web development experience can take over the code.
+
+---
+
+## Contact
+
+For content corrections or to be added as a contributor, email [webmaster@cs.huji.ac.il](mailto:webmaster@cs.huji.ac.il).
