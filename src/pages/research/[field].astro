@@ -17,7 +17,11 @@ const fieldFaculty = allFaculty
   .sort((a, b) => (a.data.order ?? 99) - (b.data.order ?? 99));
 ---
 
-<Base title={`${field.title} — HUJI AI Hub`}>
+<Base
+  title={`${field.title} — HUJI AI Hub`}
+  description={field.subtitle}
+  image={field.image}
+>
   <section class="hero-banner" style={field.image ? `background-image: url('${field.image}');` : `background: ${field.gradient};`}>
     <div class="hero-overlay"></div>
   </section>

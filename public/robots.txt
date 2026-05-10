@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://huji-ai-hub.pages.dev/sitemap-index.xml
