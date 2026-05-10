@@ -12,9 +12,40 @@ export async function getStaticPaths() {
 
 const { member } = Astro.props;
 const { Content } = await render(member);
+
+const description = `${member.data.name}, ${member.data.title}, האוניברסיטה העברית בירושלים. ${member.data.lab}.`;
+
+const sameAs = [member.data.website, member.data.scholar].filter(Boolean);
+
+const personSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'Person',
+  name: member.data.name,
+  jobTitle: member.data.title,
+  affiliation: {
+    '@type': 'CollegeOrUniversity',
+    name: 'The Hebrew University of Jerusalem',
+    url: 'https://new.huji.ac.il/',
+  },
+  worksFor: {
+    '@type': 'Organization',
+    name: 'HUJI AI Hub',
+    url: Astro.site?.toString(),
+  },
+  url: new URL(Astro.url.pathname, Astro.site).toString(),
+  ...(member.data.photo && { image: new URL(member.data.photo, Astro.site).toString() }),
+  ...(sameAs.length > 0 && { sameAs }),
+};
 ---
 
-<Base title={`${member.data.name} — מרכז AI`} lang="he">
+<Base
+  title={`${member.data.name} — מרכז AI`}
+  lang="he"
+  description={description}
+  pageType="profile"
+  image={member.data.photo}
+>
+  <script type="application/ld+json" set:html={JSON.stringify(personSchema)} />
   <section class="profile">
     <div class="container">
       <a href="/he/faculty" class="back">→ חזרה לסגל</a>

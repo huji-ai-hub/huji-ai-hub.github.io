@@ -17,7 +17,12 @@ const fieldFaculty = allFaculty
   .sort((a, b) => (a.data.order ?? 99) - (b.data.order ?? 99));
 ---
 
-<Base title={`${field.titleHe} — מרכז AI`} lang="he">
+<Base
+  title={`${field.titleHe} — מרכז AI`}
+  lang="he"
+  description={field.subtitleHe}
+  image={field.image}
+>
   <section class="hero-banner" style={field.image ? `background-image: url('${field.image}');` : `background: ${field.gradient};`}>
     <div class="hero-overlay"></div>
   </section>

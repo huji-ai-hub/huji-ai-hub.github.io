@@ -3,9 +3,22 @@ interface Props {
   title: string;
   description?: string;
   lang?: 'en' | 'he';
+  image?: string;
+  pageType?: 'website' | 'article' | 'profile';
 }
 
-const { title, description = '', lang = 'en' } = Astro.props;
+const DEFAULT_DESCRIPTION_EN = 'The HUJI AI Hub at the Hebrew University of Jerusalem — research, academic programs, and industry collaboration in artificial intelligence at the Rachel and Selim Benin School of Computer Science and Engineering.';
+const DEFAULT_DESCRIPTION_HE = 'מרכז ה-AI של האוניברסיטה העברית בירושלים — מחקר, לימודים ושיתופי פעולה עם תעשייה בבינה מלאכותית, בבית הספר להנדסה ולמדעי המחשב ע"ש רחל וסלים בנין.';
+const DEFAULT_SHARE_IMAGE = '/images/pexels-googledeepmind-17483874.jpg';
+
+const {
+  title,
+  description,
+  lang = 'en',
+  image = DEFAULT_SHARE_IMAGE,
+  pageType = 'website',
+} = Astro.props;
+
 const isHe = lang === 'he';
 const dir = isHe ? 'rtl' : 'ltr';
 const prefix = isHe ? '/he' : '';
@@ -16,6 +29,30 @@ const currentPath = Astro.url.pathname;
 const altPath = isHe
   ? currentPath.replace(/^\/he/, '') || '/'
   : `/he${currentPath === '/' ? '' : currentPath}`;
+
+const resolvedDescription = description || (isHe ? DEFAULT_DESCRIPTION_HE : DEFAULT_DESCRIPTION_EN);
+
+// Astro.site is set in astro.config.mjs — used for absolute URLs in canonical, OG, hreflang.
+const canonicalURL = new URL(currentPath, Astro.site).toString();
+const alternateURL = new URL(altPath, Astro.site).toString();
+const shareImageURL = new URL(image, Astro.site).toString();
+
+const ogLocale = isHe ? 'he_IL' : 'en_US';
+const ogLocaleAlternate = isHe ? 'en_US' : 'he_IL';
+
+const organizationSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'Organization',
+  name: 'HUJI AI Hub',
+  alternateName: 'מרכז ה-AI של האוניברסיטה העברית',
+  url: Astro.site?.toString(),
+  parentOrganization: {
+    '@type': 'CollegeOrUniversity',
+    name: 'The Hebrew University of Jerusalem',
+    url: 'https://new.huji.ac.il/',
+  },
+  sameAs: ['https://ai-hub.cs.huji.ac.il/'],
+};
 
 const schoolName = isHe
   ? 'ביה"ס להנדסה ולמדעי המחשב ע"ש רחל וסלים בנין'
@@ -54,8 +91,30 @@ const footerContact = isHe
     <meta charset="utf-8" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="description" content={description} />
     <title>{title}</title>
+    <meta name="description" content={resolvedDescription} />
+
+    <link rel="canonical" href={canonicalURL} />
+    <link rel="alternate" hreflang={isHe ? 'he' : 'en'} href={canonicalURL} />
+    <link rel="alternate" hreflang={isHe ? 'en' : 'he'} href={alternateURL} />
+    <link rel="alternate" hreflang="x-default" href={isHe ? alternateURL : canonicalURL} />
+
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={resolvedDescription} />
+    <meta property="og:type" content={pageType} />
+    <meta property="og:url" content={canonicalURL} />
+    <meta property="og:image" content={shareImageURL} />
+    <meta property="og:site_name" content="HUJI AI Hub" />
+    <meta property="og:locale" content={ogLocale} />
+    <meta property="og:locale:alternate" content={ogLocaleAlternate} />
+
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={resolvedDescription} />
+    <meta name="twitter:image" content={shareImageURL} />
+
+    <script type="application/ld+json" set:html={JSON.stringify(organizationSchema)} />
+
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Heebo:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
