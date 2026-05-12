@@ -1,86 +1,114 @@
 ---
 slug: matar
-name: 'MaTaR — Excellence Track in Mathematics, Computer Science & Physics'
-nameHe: 'מט"ר — מסלול מצוינות במתמטיקה, מדעי המחשב ופיזיקה'
-tagline: "An elite triple-major track for students who want depth in three foundational sciences."
-taglineHe: "מסלול מצוינות אליטיסטי לסטודנטים שרוצים עומק בשלושה מדעים מהווים."
+name: 'MaTaR — Interfaces of Technology, Society & Networks'
+nameHe: 'מט"ר — ממשקי טכנולוגיה, רשתות וחברה'
+tagline: "A dual-major honors program training the people who'll shape what technology and AI do to society — not just the people who build them."
+taglineHe: "תוכנית מצטיינים דו-חוגית להכשרת מנהיגים שיעצבו את ההשפעה של טכנולוגיה ו-AI על החברה — לא רק את מי שבונים אותן."
 degreeLevel: bsc
 type: honors-track
-faculty: "Rachel and Selim Benin School of Computer Science and Engineering"
-facultyHe: 'בית הספר להנדסה ולמדעי המחשב ע"ש רחל וסלים בנין'
+faculty: "Faculty of Science"
+facultyHe: "הפקולטה למדעי הטבע"
 officialWebsite: "https://matar.cs.huji.ac.il/he"
 order: 2
-seoTitle: 'MaTaR Excellence Track (מט"ר) — Hebrew University AI Hub'
-seoTitleHe: 'מסלול מט"ר — מצוינות במתמטיקה, מדעי המחשב ופיזיקה — האוניברסיטה העברית'
-seoDescription: 'The MaTaR (מט"ר) track at the Hebrew University combines mathematics, computer science, and physics into a single elite undergraduate program — designed for students who want a foundation that scales to research in AI, physics, and beyond.'
-seoDescriptionHe: 'מסלול מט"ר באוניברסיטה העברית משלב מתמטיקה, מדעי המחשב ופיזיקה לתוכנית בכירה אחת לתואר ראשון — מיועד לסטודנטים שרוצים בסיס שמתאים למחקר ב-AI, בפיזיקה ובכל הכיוונים שלאחריהם.'
+seoTitle: 'MaTaR (מט"ר) — Technology, Society & AI Honors Program — Hebrew University'
+seoTitleHe: 'תוכנית מט"ר — ממשקי טכנולוגיה, רשתות וחברה — האוניברסיטה העברית'
+seoDescription: 'MaTaR (מט"ר) at the Hebrew University is a dual-major honors program at the intersection of technology, society, AI, economics, regulation, and ethics. Students earn one major within MaTaR and a second major from almost any other HUJI program. Minimum 134 credits, 3–4 years.'
+seoDescriptionHe: 'תוכנית המצטיינים מט"ר באוניברסיטה העברית היא תוכנית דו-חוגית במפגש של טכנולוגיה, חברה, AI, כלכלה, רגולציה ואתיקה. הסטודנטים לומדים חוג אחד במסגרת מט"ר וחוג שני (כמעט מכל חוג אחר באוניברסיטה). מינימום 134 נקודות זכות, 3–4 שנים.'
 keywords:
   - MaTaR program Hebrew University
-  - mathematics computer science physics triple major
-  - HUJI excellence track
-  - Israeli honors undergraduate program
+  - technology and society program Israel
+  - AI ethics undergraduate degree
+  - tech policy honors program
+  - HUJI excellence program technology society
+  - AI regulation program Israel
 keywordsHe:
-  - מסלול מטר האוניברסיטה העברית
-  - מתמטיקה מדעי המחשב פיזיקה
-  - תוכנית מצוינות תואר ראשון
-  - מסלול מטר ירושלים
-needsReview: true
-needsReviewNote: 'The official מט"ר site is JS-rendered and could not be scraped. The description below is written from general knowledge of HUJI excellence tracks and the dean''s reference. Verify the program structure, exact course count, admission criteria, and any official program description before publishing. The Hebrew name spelling and acronym expansion should be verified — current text assumes "מתמטיקה, מדעי המחשב ופיזיקה" but this should be confirmed against the official source.'
+  - מט"ר האוניברסיטה העברית
+  - תוכנית מצטיינים טכנולוגיה וחברה
+  - לימודי AI וחברה
+  - תוכנית טכנולוגיה רגולציה אתיקה
+  - מסלול דו-חוגי טכנולוגיה ירושלים
+  - ממשקי טכנולוגיה רשתות וחברה
+needsReview: false
 bodyHe: |
-  מט"ר הוא מסלול לימודים אינטנסיבי שמשלב שלושה תחומי בסיס — מתמטיקה, מדעי המחשב,
-  ופיזיקה — בתוכנית אחת לתואר ראשון. התוכנית מיועדת לסטודנטים שרוצים בסיס תיאורטי
-  רחב במיוחד, לא להתמחות צרה.
+  > מטרת תכנית המצטיינים מט"ר (ממשקי טכנולוגיה, רשתות וחברה) היא להכשיר את המנהיגים
+  > אשר ישפיעו על תצורתו העתידית של המרחב הטכנולוגי, והפעולה החברתית הנגזרת ממנו.
 
-  > 💡 **לעריכה לפני פרסום:** הטקסט להלן מבוסס על המידע הציבורי הזמין ועל הרקע של
-  > מסלולי מצוינות באוניברסיטה העברית. יש לאמת את הפרטים מול האתר הרשמי של מט"ר
-  > ([כאן](https://matar.cs.huji.ac.il/he)) ועם רכזי התוכנית לפני שליחה לסטודנטים.
+  בעוד שמרבית התוכניות הטכנולוגיות מכשירות את הסטודנטים *לבנות* את מערכות ה-AI
+  של מחר, מט"ר מכשירה את האנשים שיכריעו מה המערכות האלה יעשו בעולם. הסטודנטים
+  רוכשים ידע במגוון נושאים — טכנולוגיים, אנליטיים, חברתיים, כלכליים, רגולטורים,
+  משפטיים ואתיים — ומפתחים הבנה מעמיקה וכוללת של התמורות בעולם הטכנולוגיה וה-AI,
+  התקשורת והתעסוקה.
 
-  ## למה לבחור במט"ר
-
-  בעידן ה-AI, היכולת לחבר בין שלושה מדעים יסודיים נדירה — ויקרת ערך. בוגרי התוכנית
-  מוכנים למחקר בחזית של למידת מכונה, פיזיקה תיאורטית, מערכות מורכבות, וחישוב מדעי
-  ברמה הגבוהה ביותר. הם גם בעלי הגמישות לעבור בין התחומים האלה במשך הקריירה
-  שלהם — מה שכמעט בלתי אפשרי עבור בוגרי התמחות יחידה.
+  לצד הידע התיאורטי, התוכנית שמה דגש על פיתוח כלים וחיבור לעולם המעשה — סטודנטים
+  משלימים פרויקטים בנושאים הבוערים אשר בלב המפגש של חברה וטכנולוגיה.
 
   ## מבנה התוכנית
 
-  שלושה מסלולי לימוד הרצים במקביל לאורך התואר. סטודנטים לוקחים קורסי ליבה משלושה
-  פקולטות — מדעי המחשב, מתמטיקה, ופיזיקה — ובוחרים בהמשך מסלולי התמחות מועדפים.
-  התוכנית דורשת עומס לימודים גבוה מהממוצע אבל מספקת חופש בחירה רחב מהממוצע גם הוא.
+  **תוכנית דו-חוגית.** כל סטודנט/ית בוחר/ת חוג שני בהתאם לכישורים ולתחומי העניין
+  שלו/ה. החוג השני יכול להיות (כמעט) כל חוג הניתן באוניברסיטה העברית. בהתאם
+  לשילוב הנבחר, התואר נפרס על פני שלוש עד ארבע שנים.
 
-  לפרטי המבנה המלאים, רשימת הקורסים, ולוח הזמנים — בקרו באתר הרשמי של מט"ר.
+  **מינימום 134 נקודות זכות** במהלך התואר, כנהוג בפקולטה למדעי הטבע.
 
-  ## למי זה מתאים
+  במהלך הלימודים בכל השילובים, הסטודנטים רוכשים ידע במגוון נושאים — מבואות
+  לסטטיסטיקה, מתמטיקה ומדעי המחשב, תיאוריות בכלכלה ובתקשורת. לצד אלה יש קורסי
+  ליבה מיוחדים לתוכנית, ביניהם:
 
-  סטודנטים שאינם רוצים לבחור עכשיו בין שלושת התחומים. סטודנטים שראו את עצמם הולכים
-  לפיזיקה, גילו את ה-AI, ולא רוצים לוותר על אף אחד מהם. סטודנטים שתכננו מתמטיקה
-  אבל מבינים שכלי המחקר העדכניים יושבים בתחומים שכנים. ובאופן כללי — סטודנטים
-  מצוינים שמסוגלים לעמוד בעומס.
+  - אפליקציות וב מופעלות על ידי בינה מלאכותית
+  - עיצוב ממשקי אדם-מכונה בעידן הבינה המלאכותית
+  - אתיקה, טכנולוגיה ובינה מלאכותית
+  - מבוא לבינה מלאכותית ולמידת מכונה
+  - מבוא להשלכות חברתיות של טכנולוגיה
+  - רשתות, קהילות ושווקים
+  - רגולציה של טכנולוגיות מתפתחות
+  - הכשרה מעשית — התמחות קיץ בחברת הייטק
+  - מבוא ויזמות וסדנת יזמות / ג'אם פיתוח מוצר
 
-  ## איך נרשמים
+  ## מה עושים עם זה
 
-  הרשמה למט"ר פתוחה דרך מערכת הקבלה של בית הספר למדעי המחשב, עם הליך מיון נוסף
-  לתוכנית עצמה. פרטים מדויקים על דרישות הקבלה, מועדים, וטפסי הרשמה — באתר הרשמי.
+  בוגרי מט"ר מסוגלים לפתור בעיות בתחומים שונים באמצעות כלים חישוביים וחשיבה
+  ביקורתית. הם יכולים לכתוב קוד בשפת תכנות אחת לפחות, ולעיתים קרובות אף יותר
+  מאחת (בהתאם לשילוב עם החוג השני); לבצע מחקר הכולל איסוף מידע ממקורות שונים,
+  למיין ולמפות שלל היבטים הקשורים לתופעה הנחקרת באמצעות אלגוריתמים ושיטות ניתוח
+  נתונים; לבצע פעולות שונות על המידע ולהפיק תובנות משמעותיות — החל ממחקר מתחרים
+  עבור פיתוח מוצר ועד ניתוח ישימות אבטחה במערכת של ארגון ממשלתי, לדוגמה; להעריך
+  את ההשפעות וההשלכות הפוטנציאליות של פיתוחים טכנולוגיים על משתמשים, הן מבחינה
+  עסקית-כלכלית והן מבחינה אתית; לראות דברים מנקודות מבט שונות (למשל של גורמים
+  שונים המעורבים בתהליך פיתוח של מוצר); להפעיל חשיבה גמישה ויצירתית בהשגה ומדידה
+  של יעדים.
+
+  ארגז הכלים הזה מאפשר לבוגרי התוכנית להשתלב במשרות מבוקשות בתעשייה, הן במגזר
+  הפרטי והן במגזר הציבורי, במגוון רחב של תפקידים: דאטא אנליסטים, מנהלי מוצר,
+  מפתחי תוכנה, מעצבי חוויית משתמש (UX), מנהלי תוכן ומדיה חברתית ועוד — בהתאם
+  לרקע שאליו מגיע כל סטודנט בסיום התואר המשולב.
 ---
 
-MaTaR (מט"ר) is an intensive undergraduate program that combines three foundational sciences — mathematics, computer science, and physics — into a single degree track. It's designed for students who want an unusually broad theoretical base, not narrow specialization.
+> The goal of the MaTaR Excellence Program (Interfaces of Technology, Networks and Society) is to train the leaders who will shape the future form of the technological space and the social action derived from it.
 
-> 💡 **Editorial flag — verify before publishing.** The text below is written from publicly available information and from general knowledge of HUJI's excellence tracks. Verify the details against the official MaTaR site ([here](https://matar.cs.huji.ac.il/he)) and with the program coordinators before sending students.
+While most technology programs train students to *build* the AI systems of tomorrow, MaTaR trains the people who'll decide what those systems do in the world. Students gain knowledge across a range of subjects — technological, analytical, social, economic, regulatory, legal, and ethical — and develop a deep, comprehensive understanding of the shifts in technology, AI, media, and employment.
 
-## Why MaTaR
-
-In the AI era, the ability to connect three foundational sciences is rare — and valuable. Graduates of the program are prepared for research at the frontier of machine learning, theoretical physics, complex systems, and scientific computing at the highest level. They also have the flexibility to move between these fields throughout their career — something almost impossible for graduates of a single specialization.
+Alongside theoretical knowledge, the program emphasizes hands-on tools and connection to the real world — students complete projects on the urgent issues at the intersection of society and technology.
 
 ## Program structure
 
-Three parallel tracks running through the degree. Students take core courses across three faculties — computer science, mathematics, and physics — and later choose preferred specialization tracks. The program demands an above-average course load but offers above-average freedom of choice.
+**Dual-major program.** Each student picks a second major matching their skills and interests. The second major can be (almost) any major offered at the Hebrew University. Depending on the combination, the degree spans three to four years.
 
-For full structural details, course lists, and timetables — visit the official MaTaR site.
+**Minimum 134 credit points** across the degree, following the Faculty of Science norm.
 
-## Who it's for
+Across every combination, students acquire knowledge in a wide range of subjects — introductions to statistics, mathematics and computer science, theories in economics and communication. Alongside these are core MaTaR courses, including:
 
-Students who don't want to choose between the three fields right now. Students who saw themselves heading into physics, discovered AI, and don't want to give either up. Students who planned on mathematics but realize that the cutting-edge research tools sit in neighboring fields. And generally — excellent students who can handle the load.
+- AI-Powered Web Applications
+- Human-Machine Interfaces in the AI Era
+- Ethics, Technology and Artificial Intelligence
+- Introduction to Artificial Intelligence and Machine Learning
+- Introduction to the Social Implications of Technology
+- Networks, Crowds and Markets
+- Regulation of Emerging Technologies
+- Practical training — summer internship at a tech company
+- Introduction to Entrepreneurship + Entrepreneurship Workshop / Product Development Jam
 
-## How to apply
+## What you do with it
 
-Admission to MaTaR is through the School of Computer Science admissions system, with an additional selection process for the program itself. Exact admission requirements, deadlines, and registration forms — on the official site.
+MaTaR graduates solve problems across domains using computational tools and critical thinking. They can write code in at least one programming language and often more (depending on the second-major combination); conduct research that gathers information from multiple sources, classifies and maps various aspects of the phenomenon under study using algorithms and data analysis methods; act on the data to produce meaningful insights — from competitive research for product development to analyzing the feasibility of security implementations in a government organization, for example; evaluate the potential impacts and consequences of technological developments on users, both economically and ethically; see things from different perspectives (e.g., from the standpoint of the various actors involved in a product development process); and exercise flexible, creative thinking in setting and measuring goals.
+
+This toolkit lets MaTaR graduates take in-demand positions in industry, in both the private and public sectors, in a wide range of roles: data analysts, product managers, software developers, UX designers, content and social media managers and more — depending on the background each student brings at the end of their combined degree.
