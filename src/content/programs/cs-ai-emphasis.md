@@ -10,6 +10,7 @@ faculty: "Rachel and Selim Benin School of Computer Science and Engineering"
 facultyHe: 'בית הספר להנדסה ולמדעי המחשב ע"ש רחל וסלים בנין'
 officialWebsite: "https://www.cs.huji.ac.il/he/page/10573"
 registrationUrl: "https://www.cs.huji.ac.il/he/page/10573"
+image: "/images/pexels-googledeepmind-25626519.jpg"
 order: 1
 seoTitle: "B.Sc. Computer Science with AI Emphasis — Hebrew University"
 seoTitleHe: "תואר ראשון במדעי המחשב עם הדגש ב-AI — האוניברסיטה העברית"

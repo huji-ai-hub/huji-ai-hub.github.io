@@ -69,15 +69,24 @@ const programLd = programs.map((p) => ({
 
   <section class="programs">
     <div class="container">
-      <nav class="tabs" aria-label="מסלולי לימוד ב-AI">
+      <nav class="program-cards" aria-label="מסלולי לימוד ב-AI">
         {programs.map((p, i) => (
           <a
             href={`#${p.data.slug}`}
-            class={`tab ${i === 0 ? 'tab-active' : ''}`}
+            class={`program-card ${i === 0 ? 'card-active' : ''}`}
             data-tab={p.data.slug}
           >
-            <span class="tab-name">{p.data.nameHe}</span>
-            <span class="tab-tagline">{p.data.taglineHe}</span>
+            {p.data.image && (
+              <div class="card-img" style={`background-image: url('${p.data.image}');`}></div>
+            )}
+            <div class="card-content">
+              <h3 class="card-name">{p.data.nameHe}</h3>
+              <p class="card-tagline">{p.data.taglineHe}</p>
+              <span class="card-cta">
+                <span class="cta-label">לפרטי התוכנית</span>
+                <span class="arrow">←</span>
+              </span>
+            </div>
           </a>
         ))}
       </nav>
@@ -130,10 +139,10 @@ const programLd = programs.map((p) => ({
 
 <script>
   function updateTabs() {
-    const hash = window.location.hash || `#${document.querySelector('.tab')?.getAttribute('data-tab')}`;
-    document.querySelectorAll('.tab').forEach((tab) => {
-      const href = tab.getAttribute('href');
-      tab.classList.toggle('tab-active', href === hash);
+    const hash = window.location.hash || `#${document.querySelector('.program-card')?.getAttribute('data-tab')}`;
+    document.querySelectorAll('.program-card').forEach((card) => {
+      const href = card.getAttribute('href');
+      card.classList.toggle('card-active', href === hash);
     });
   }
   window.addEventListener('hashchange', updateTabs);
@@ -171,48 +180,95 @@ const programLd = programs.map((p) => ({
 
   .programs { padding: 0 0 4rem; }
 
-  .tabs {
-    display: flex;
-    gap: 0;
-    border-bottom: 1px solid var(--border);
+  .program-cards {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.25rem;
     margin-bottom: 2.5rem;
-    overflow-x: auto;
   }
 
-  .tab {
-    flex: 1;
-    min-width: 200px;
-    padding: 1.1rem 1.25rem;
-    text-align: start;
-    text-decoration: none;
-    color: var(--text-secondary);
-    border-bottom: 2px solid transparent;
-    transition: color 0.15s, border-color 0.15s, background 0.15s;
+  .program-card {
     display: flex;
     flex-direction: column;
-    gap: 0.25rem;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    overflow: hidden;
+    text-decoration: none;
+    color: inherit;
+    transition: transform 0.2s, box-shadow 0.2s, border-color 0.2s;
   }
 
-  .tab:hover { background: var(--bg-secondary); text-decoration: none; color: var(--text-primary); }
+  .program-card:hover {
+    transform: translateY(-3px);
+    box-shadow: var(--shadow-md);
+    border-color: var(--huji-teal-light);
+    text-decoration: none;
+  }
 
-  .tab-name {
-    font-size: 0.95rem;
+  .program-card:hover .arrow { transform: translateX(-3px); }
+
+  .card-img {
+    aspect-ratio: 4/3;
+    background-size: cover;
+    background-position: center;
+    background-color: var(--bg-secondary);
+  }
+
+  .card-content {
+    padding: 1rem 1.1rem 1.1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.45rem;
+    flex: 1;
+  }
+
+  .card-name {
+    font-size: 1rem;
     font-weight: 600;
     color: var(--text-primary);
     line-height: 1.4;
   }
 
-  .tab-tagline {
-    font-size: 0.78rem;
-    color: var(--text-muted);
-    line-height: 1.5;
+  .card-tagline {
+    font-size: 0.82rem;
+    color: var(--text-secondary);
+    line-height: 1.7;
+    flex: 1;
   }
 
-  .tab-active {
-    border-bottom-color: var(--huji-teal);
-    background: var(--bg-secondary);
+  .card-cta {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 0.5rem;
+    padding-top: 0.6rem;
+    border-top: 1px solid var(--border-light);
+    font-size: 0.82rem;
+    font-weight: 500;
+    color: var(--text-muted);
   }
-  .tab-active .tab-name { color: var(--huji-teal-dark); }
+
+  .arrow {
+    color: var(--text-muted);
+    transition: transform 0.15s;
+  }
+
+  .card-active {
+    border-color: var(--huji-teal);
+    box-shadow: 0 0 0 1px var(--huji-teal), var(--shadow-md);
+  }
+
+  .card-active .card-name { color: var(--huji-teal-dark); }
+  .card-active .card-cta { color: var(--huji-teal); }
+  .card-active .arrow { color: var(--huji-teal); }
+  .card-active .cta-label::before {
+    content: "● ";
+    color: var(--huji-teal);
+    font-size: 0.7em;
+    margin-inline-end: 0.15rem;
+  }
+  .card-active .cta-label { color: var(--huji-teal); }
 
   .panel { display: none; }
   .panel:target { display: block; }
@@ -306,12 +362,14 @@ const programLd = programs.map((p) => ({
   }
   .cta-link:hover { text-decoration: underline; }
 
+  @media (max-width: 900px) {
+    .program-cards { grid-template-columns: 1fr; gap: 0.9rem; }
+    .card-img { aspect-ratio: 16/9; }
+  }
+
   @media (max-width: 768px) {
     .hero-split { grid-template-columns: 1fr; gap: 1rem; }
     .hero-split h1 { font-size: 1.6rem; }
-    .tab { min-width: 160px; padding: 0.85rem 0.9rem; }
-    .tab-name { font-size: 0.88rem; }
-    .tab-tagline { display: none; }
     .panel-header h2 { font-size: 1.35rem; }
   }
 </style>

@@ -9,6 +9,7 @@ type: honors-track
 faculty: "Faculty of Science"
 facultyHe: "הפקולטה למדעי הטבע"
 officialWebsite: "https://matar.cs.huji.ac.il/he"
+image: "/images/pexels-tara-winstead-8386421.jpg"
 order: 2
 seoTitle: 'MaTaR (מט"ר) — Technology, Society & AI Honors Program — Hebrew University'
 seoTitleHe: 'תוכנית מט"ר — ממשקי טכנולוגיה, רשתות וחברה — האוניברסיטה העברית'

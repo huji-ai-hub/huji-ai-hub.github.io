@@ -70,15 +70,24 @@ const programLd = programs.map((p) => ({
 
   <section class="programs">
     <div class="container">
-      <nav class="tabs" aria-label="AI program tracks">
+      <nav class="program-cards" aria-label="AI program tracks">
         {programs.map((p, i) => (
           <a
             href={`#${p.data.slug}`}
-            class={`tab ${i === 0 ? 'tab-active' : ''}`}
+            class={`program-card ${i === 0 ? 'card-active' : ''}`}
             data-tab={p.data.slug}
           >
-            <span class="tab-name">{p.data.name}</span>
-            <span class="tab-tagline">{p.data.tagline}</span>
+            {p.data.image && (
+              <div class="card-img" style={`background-image: url('${p.data.image}');`}></div>
+            )}
+            <div class="card-content">
+              <h3 class="card-name">{p.data.name}</h3>
+              <p class="card-tagline">{p.data.tagline}</p>
+              <span class="card-cta">
+                <span class="cta-label">View program</span>
+                <span class="arrow">→</span>
+              </span>
+            </div>
           </a>
         ))}
       </nav>
@@ -132,12 +141,12 @@ const programLd = programs.map((p) => ({
 </Base>
 
 <script>
-  // Sync the active tab with the current hash so the highlight follows the panel.
+  // Sync the active card with the current hash so the highlight follows the panel.
   function updateTabs() {
-    const hash = window.location.hash || `#${document.querySelector('.tab')?.getAttribute('data-tab')}`;
-    document.querySelectorAll('.tab').forEach((tab) => {
-      const href = tab.getAttribute('href');
-      tab.classList.toggle('tab-active', href === hash);
+    const hash = window.location.hash || `#${document.querySelector('.program-card')?.getAttribute('data-tab')}`;
+    document.querySelectorAll('.program-card').forEach((card) => {
+      const href = card.getAttribute('href');
+      card.classList.toggle('card-active', href === hash);
     });
   }
   window.addEventListener('hashchange', updateTabs);
@@ -177,55 +186,101 @@ const programLd = programs.map((p) => ({
     padding: 0 0 4rem;
   }
 
-  .tabs {
-    display: flex;
-    gap: 0;
-    border-bottom: 1px solid var(--border);
+  /* Program selector — clickable cards modeled on the homepage pillars.
+     Image on top, name + tagline + arrow CTA below. Active card has a
+     strong teal accent so the current selection is unmistakable. */
+  .program-cards {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.25rem;
     margin-bottom: 2.5rem;
-    overflow-x: auto;
   }
 
-  .tab {
-    flex: 1;
-    min-width: 200px;
-    padding: 1.1rem 1.25rem;
-    text-align: start;
-    text-decoration: none;
-    color: var(--text-secondary);
-    border-bottom: 2px solid transparent;
-    transition: color 0.15s, border-color 0.15s, background 0.15s;
+  .program-card {
     display: flex;
     flex-direction: column;
-    gap: 0.25rem;
-  }
-
-  .tab:hover {
-    background: var(--bg-secondary);
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    overflow: hidden;
     text-decoration: none;
-    color: var(--text-primary);
+    color: inherit;
+    transition: transform 0.2s, box-shadow 0.2s, border-color 0.2s;
   }
 
-  .tab-name {
-    font-size: 0.95rem;
+  .program-card:hover {
+    transform: translateY(-3px);
+    box-shadow: var(--shadow-md);
+    border-color: var(--huji-teal-light);
+    text-decoration: none;
+  }
+
+  .program-card:hover .arrow {
+    transform: translateX(3px);
+  }
+
+  .card-img {
+    aspect-ratio: 4/3;
+    background-size: cover;
+    background-position: center;
+    background-color: var(--bg-secondary);
+  }
+
+  .card-content {
+    padding: 1rem 1.1rem 1.1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.45rem;
+    flex: 1;
+  }
+
+  .card-name {
+    font-size: 1rem;
     font-weight: 600;
     color: var(--text-primary);
     line-height: 1.3;
   }
 
-  .tab-tagline {
-    font-size: 0.78rem;
+  .card-tagline {
+    font-size: 0.82rem;
+    color: var(--text-secondary);
+    line-height: 1.55;
+    flex: 1;
+  }
+
+  .card-cta {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 0.5rem;
+    padding-top: 0.6rem;
+    border-top: 1px solid var(--border-light);
+    font-size: 0.82rem;
+    font-weight: 500;
     color: var(--text-muted);
-    line-height: 1.4;
   }
 
-  .tab-active {
-    border-bottom-color: var(--huji-teal);
-    background: var(--bg-secondary);
+  .arrow {
+    color: var(--text-muted);
+    transition: transform 0.15s;
   }
 
-  .tab-active .tab-name {
-    color: var(--huji-teal-dark);
+  /* Active state — current program. Strong teal accent on every visible edge. */
+  .card-active {
+    border-color: var(--huji-teal);
+    box-shadow: 0 0 0 1px var(--huji-teal), var(--shadow-md);
   }
+
+  .card-active .card-name { color: var(--huji-teal-dark); }
+  .card-active .card-cta { color: var(--huji-teal); }
+  .card-active .arrow { color: var(--huji-teal); }
+  .card-active .cta-label::before {
+    content: "● ";
+    color: var(--huji-teal);
+    font-size: 0.7em;
+    margin-inline-end: 0.15rem;
+  }
+  .card-active .cta-label { color: var(--huji-teal); }
 
   /* Tabbed panels: only the targeted one is shown.
      The first panel shows by default when nothing is targeted. */
@@ -338,12 +393,14 @@ const programLd = programs.map((p) => ({
     text-decoration: underline;
   }
 
+  @media (max-width: 900px) {
+    .program-cards { grid-template-columns: 1fr; gap: 0.9rem; }
+    .card-img { aspect-ratio: 16/9; }
+  }
+
   @media (max-width: 768px) {
     .hero-split { grid-template-columns: 1fr; gap: 1rem; }
     .hero-split h1 { font-size: 1.7rem; }
-    .tab { min-width: 160px; padding: 0.85rem 0.9rem; }
-    .tab-name { font-size: 0.88rem; }
-    .tab-tagline { display: none; }
     .panel-header h2 { font-size: 1.35rem; }
   }
 </style>
