@@ -3,7 +3,7 @@ import Base from '../../layouts/Base.astro';
 import { getCollection } from 'astro:content';
 import { marked } from 'marked';
 
-// Configure marked for the Hebrew bodies — minimal setup, GFM-flavored.
+// Configure marked for the Hebrew bodies, minimal setup, GFM-flavored.
 marked.setOptions({ gfm: true, breaks: false });
 
 const programs = (await getCollection('programs'))
@@ -15,7 +15,7 @@ const rendered = programs.map((p) => ({
   html: marked.parse(p.data.bodyHe ?? ''),
 }));
 
-const pageTitle = 'לימודים — בינה מלאכותית באוניברסיטה העברית';
+const pageTitle = 'לימודים, בינה מלאכותית באוניברסיטה העברית';
 const pageDescription =
   'שלושה מסלולי תואר ראשון בבינה מלאכותית באוניברסיטה העברית: מסלול ההדגש ב-AI במדעי המחשב, מסלול מט"ר המשלב מתמטיקה, מדעי המחשב ופיזיקה, ותוכנית חד-חוגית במדעי המחשב וביולוגיה חישובית. בנוי לסטודנטים שרוצים להבין באמת איך מערכות AI עובדות.';
 
@@ -57,11 +57,11 @@ const programLd = programs.map((p) => ({
       <div class="hero-split">
         <h1>תארים בבינה מלאכותית באוניברסיטה העברית</h1>
         <p>
-          כלי AI משנים את משמעות העיסוק במדעי המחשב — וזו בדיוק הסיבה שלימוד עמוק של התחום
+          כלי AI משנים את משמעות העיסוק במדעי המחשב, וזו בדיוק הסיבה שלימוד עמוק של התחום
           חשוב היום יותר מתמיד. האנשים שמעצבים את מה ש-AI עושה, לאן הוא הולך, ואיך הוא נשאר
           בטוח, הם אלה שמבינים איך הוא באמת עובד. התוכניות שלנו מכשירות אתכם להיות האנשים
           האלה: יסודות מתמטיים, מדעי מחשב קלאסיים, וחופש להתמחות בפינה של התחום שמתאימה
-          לכם — ולמה שאתם רוצים לבנות.
+          לכם, ולמה שאתם רוצים לבנות.
         </p>
       </div>
     </div>

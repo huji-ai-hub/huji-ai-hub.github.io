@@ -35,7 +35,7 @@ const labs = defineCollection({
   }),
 });
 
-// Academic programs — one markdown file per program.
+// Academic programs, one markdown file per program.
 // Each file is rendered as a tab on /academics and (mirrored) /he/academics.
 // Frontmatter holds the structured fields; the markdown body holds the long description.
 const programs = defineCollection({
@@ -62,7 +62,7 @@ const programs = defineCollection({
 
     // Display
     image: z.string().optional(),           // hero image path (under /public)
-    order: z.number().default(99),          // tab ordering — lower numbers first
+    order: z.number().default(99),          // tab ordering, lower numbers first
 
     // SEO
     seoTitle: z.string().optional(),        // overrides the auto-generated <title> on the page
@@ -72,7 +72,7 @@ const programs = defineCollection({
     keywords: z.array(z.string()).optional(),     // English keyword cues
     keywordsHe: z.array(z.string()).optional(),   // Hebrew keyword cues
 
-    // Long-form body — Hebrew lives in frontmatter (YAML literal block) so the
+    // Long-form body, Hebrew lives in frontmatter (YAML literal block) so the
     // markdown body field can stay clean for the English text. Editors who only
     // know one language can edit just one side without confusing themselves.
     bodyHe: z.string(),                     // multi-paragraph Hebrew body (separate paragraphs with blank lines)

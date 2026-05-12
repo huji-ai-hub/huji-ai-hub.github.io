@@ -14,11 +14,11 @@ const rendered = await Promise.all(
   })
 );
 
-const pageTitle = 'Academics — AI at the Hebrew University';
+const pageTitle = 'Academics, AI at the Hebrew University';
 const pageDescription =
   "Three undergraduate paths into AI at the Hebrew University: the CS+AI emphasis, the MaTaR excellence track combining math, CS and physics, and the single-major Computer Science & Computational Biology program. Built for students who want to understand how AI systems actually work.";
 
-// Build a JSON-LD EducationalOccupationalProgram block per program — Google's
+// Build a JSON-LD EducationalOccupationalProgram block per program, Google's
 // rich-result schema for academic programs. Helps search visibility.
 const programLd = programs.map((p) => ({
   '@context': 'https://schema.org',
@@ -57,7 +57,7 @@ const programLd = programs.map((p) => ({
       <div class="hero-split">
         <h1>AI degrees at the Hebrew University</h1>
         <p>
-          AI tools are rewriting what it means to be a computer scientist — and that's
+          AI tools are rewriting what it means to be a computer scientist, and that's
           exactly why deep computer science training matters more than ever. The people
           who shape what AI does, where it goes, and how it stays safe are the ones who
           understand how it actually works. Our programs train you to be those people:
@@ -186,7 +186,7 @@ const programLd = programs.map((p) => ({
     padding: 0 0 4rem;
   }
 
-  /* Program selector — clickable cards modeled on the homepage pillars.
+  /* Program selector, clickable cards modeled on the homepage pillars.
      Image on top, name + tagline + arrow CTA below. Active card has a
      strong teal accent so the current selection is unmistakable. */
   .program-cards {
@@ -265,7 +265,7 @@ const programLd = programs.map((p) => ({
     transition: transform 0.15s;
   }
 
-  /* Active state — current program. Strong teal accent on every visible edge. */
+  /* Active state, current program. Strong teal accent on every visible edge. */
   .card-active {
     border-color: var(--huji-teal);
     box-shadow: 0 0 0 1px var(--huji-teal), var(--shadow-md);

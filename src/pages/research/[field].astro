@@ -18,7 +18,7 @@ const fieldFaculty = allFaculty
 ---
 
 <Base
-  title={`${field.title} — HUJI AI Hub`}
+  title={`${field.title} | HUJI AI Hub`}
   description={field.subtitle}
   image={field.image}
 >
@@ -61,7 +61,7 @@ const fieldFaculty = allFaculty
                 )}
               </div>
               <div class="lab-info">
-                <h3>{member.data.lab} — {member.data.title} {member.data.name}</h3>
+                <h3>{member.data.lab}, {member.data.title} {member.data.name}</h3>
                 <p>{member.body || ''}</p>
                 {member.data.website && (
                   <span class="lab-link">Lab Website ↗</span>

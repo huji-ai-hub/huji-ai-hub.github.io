@@ -7,8 +7,8 @@ interface Props {
   pageType?: 'website' | 'article' | 'profile';
 }
 
-const DEFAULT_DESCRIPTION_EN = 'The HUJI AI Hub at the Hebrew University of Jerusalem — research, academic programs, and industry collaboration in artificial intelligence at the Rachel and Selim Benin School of Computer Science and Engineering.';
-const DEFAULT_DESCRIPTION_HE = 'מרכז ה-AI של האוניברסיטה העברית בירושלים — מחקר, לימודים ושיתופי פעולה עם תעשייה בבינה מלאכותית, בבית הספר להנדסה ולמדעי המחשב ע"ש רחל וסלים בנין.';
+const DEFAULT_DESCRIPTION_EN = 'The HUJI AI Hub at the Hebrew University of Jerusalem, research, academic programs, and industry collaboration in artificial intelligence at the Rachel and Selim Benin School of Computer Science and Engineering.';
+const DEFAULT_DESCRIPTION_HE = 'מרכז ה-AI של האוניברסיטה העברית בירושלים, מחקר, לימודים ושיתופי פעולה עם תעשייה בבינה מלאכותית, בבית הספר להנדסה ולמדעי המחשב ע"ש רחל וסלים בנין.';
 const DEFAULT_SHARE_IMAGE = '/images/pexels-googledeepmind-17483874.jpg';
 
 const {
@@ -32,7 +32,7 @@ const altPath = isHe
 
 const resolvedDescription = description || (isHe ? DEFAULT_DESCRIPTION_HE : DEFAULT_DESCRIPTION_EN);
 
-// Astro.site is set in astro.config.mjs — used for absolute URLs in canonical, OG, hreflang.
+// Astro.site is set in astro.config.mjs, used for absolute URLs in canonical, OG, hreflang.
 const canonicalURL = new URL(currentPath, Astro.site).toString();
 const alternateURL = new URL(altPath, Astro.site).toString();
 const shareImageURL = new URL(image, Astro.site).toString();
