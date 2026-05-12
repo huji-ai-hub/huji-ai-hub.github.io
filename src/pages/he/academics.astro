@@ -1,12 +1,53 @@
 ---
 import Base from '../../layouts/Base.astro';
+import { getCollection } from 'astro:content';
+import { marked } from 'marked';
+
+// Configure marked for the Hebrew bodies — minimal setup, GFM-flavored.
+marked.setOptions({ gfm: true, breaks: false });
+
+const programs = (await getCollection('programs'))
+  .sort((a, b) => a.data.order - b.data.order);
+
+// Pre-render each Hebrew body string to HTML.
+const rendered = programs.map((p) => ({
+  program: p,
+  html: marked.parse(p.data.bodyHe ?? ''),
+}));
+
+const pageTitle = 'לימודים — בינה מלאכותית באוניברסיטה העברית';
+const pageDescription =
+  'שלושה מסלולי תואר ראשון בבינה מלאכותית באוניברסיטה העברית: מסלול ההדגש ב-AI במדעי המחשב, מסלול מט"ר המשלב מתמטיקה, מדעי המחשב ופיזיקה, ותוכנית חד-חוגית במדעי המחשב וביולוגיה חישובית. בנוי לסטודנטים שרוצים להבין באמת איך מערכות AI עובדות.';
+
+const programLd = programs.map((p) => ({
+  '@context': 'https://schema.org',
+  '@type': 'EducationalOccupationalProgram',
+  name: p.data.nameHe,
+  alternateName: p.data.name,
+  description: p.data.seoDescriptionHe,
+  url: `https://huji-ai-hub.pages.dev/he/academics#${p.data.slug}`,
+  educationalProgramMode: 'full-time',
+  occupationalCategory: 'Computer Science / Artificial Intelligence',
+  programType: p.data.type,
+  educationalCredentialAwarded: p.data.degreeLevel === 'bsc' ? "Bachelor's degree" :
+                                 p.data.degreeLevel === 'msc' ? "Master's degree" :
+                                 p.data.degreeLevel === 'phd' ? "Doctoral degree" :
+                                 'Multiple degree levels',
+  inLanguage: 'he',
+  provider: {
+    '@type': 'CollegeOrUniversity',
+    name: 'האוניברסיטה העברית בירושלים',
+    sameAs: 'https://new.huji.ac.il',
+  },
+  ...(p.data.officialWebsite ? { sameAs: p.data.officialWebsite } : {}),
+}));
 ---
 
-<Base
-  title="לימודים — מרכז AI"
-  lang="he"
-  description="התוכנית למדעי המחשב באוניברסיטה העברית, עם התמחות בבינה מלאכותית — מסלולי תואר ראשון, שני ושלישי, בהוראת חוקרי AI מובילים."
->
+<Base title={pageTitle} lang="he" description={pageDescription}>
+  {programLd.map((ld) => (
+    <script type="application/ld+json" set:html={JSON.stringify(ld)} />
+  ))}
+
   <section class="hero-banner" style="background-image: url('/images/pexels-cottonbro-6153739.jpg');">
     <div class="hero-overlay"></div>
   </section>
@@ -14,117 +55,90 @@ import Base from '../../layouts/Base.astro';
   <section class="hero-text">
     <div class="container">
       <div class="hero-split">
-        <h1>תואר ראשון במדעי המחשב עם התמחות ב-AI</h1>
+        <h1>תארים בבינה מלאכותית באוניברסיטה העברית</h1>
         <p>
-          המסלול המקיף והמעמיק ביותר ל-AI באוניברסיטה העברית. מיועד לסטודנטים שרוצים
-          לשלוט ביסודות תוך שאיפה להוביל את החזית הגלובלית של מחקר ופיתוח AI.
+          כלי AI משנים את משמעות העיסוק במדעי המחשב — וזו בדיוק הסיבה שלימוד עמוק של התחום
+          חשוב היום יותר מתמיד. האנשים שמעצבים את מה ש-AI עושה, לאן הוא הולך, ואיך הוא נשאר
+          בטוח, הם אלה שמבינים איך הוא באמת עובד. התוכניות שלנו מכשירות אתכם להיות האנשים
+          האלה: יסודות מתמטיים, מדעי מחשב קלאסיים, וחופש להתמחות בפינה של התחום שמתאימה
+          לכם — ולמה שאתם רוצים לבנות.
         </p>
       </div>
     </div>
   </section>
 
-  <section class="why">
+  <section class="programs">
     <div class="container">
-      <div class="why-inner">
-        <h2>למה להתמחות ב-AI?</h2>
-        <p>
-          בעולם שבו תכנות בסיסי הופך לאוטומטי, הבנה עמוקה של העקרונות המניעים מערכות AI
-          היא חיונית. התוכנית הזו אינה קורס קצר על שימוש בכלי AI, אלא מסלול אקדמי עמוק
-          ורחב המבוסס על מצוינות מתמטית ויסודות קלאסיים של מדעי המחשב.
-        </p>
-        <p>
-          נלמד אתכם להבין לעומק כיצד מודלים נבנים: איך לפרק אותם, איך להעמיק במתמטיקה
-          העומדת מאחוריהם, ואפילו איך לבנות אותם מחדש בצורה טובה יותר.
-        </p>
-        <p>
-          התוכנית דורשת יכולות אנליטיות גבוהות ומסירות, ומספקת השכלה מדעית רחבה ויסודית —
-          חיונית גם לאקדמיה וגם לתעשייה בעידן ה-AI.
-        </p>
-      </div>
-    </div>
-  </section>
+      <nav class="tabs" aria-label="מסלולי לימוד ב-AI">
+        {programs.map((p, i) => (
+          <a
+            href={`#${p.data.slug}`}
+            class={`tab ${i === 0 ? 'tab-active' : ''}`}
+            data-tab={p.data.slug}
+          >
+            <span class="tab-name">{p.data.nameHe}</span>
+            <span class="tab-tagline">{p.data.taglineHe}</span>
+          </a>
+        ))}
+      </nav>
 
-  <section class="structure">
-    <div class="container">
-      <h2>מבנה התוכנית</h2>
+      <div class="panels">
+        {rendered.map(({ program: p, html }, i) => (
+          <article id={p.data.slug} class={`panel ${i === 0 ? 'panel-default' : ''}`}>
+            <header class="panel-header">
+              <p class="panel-eyebrow">
+                {p.data.degreeLevel === 'bsc' ? 'תואר ראשון' :
+                 p.data.degreeLevel === 'msc' ? 'תואר שני' :
+                 p.data.degreeLevel === 'phd' ? 'תואר שלישי' :
+                 'תוכנית רב-תארית'}
+                {p.data.facultyHe && <span class="panel-faculty"> · {p.data.facultyHe}</span>}
+              </p>
+              <h2>{p.data.nameHe}</h2>
+              <p class="panel-tagline">{p.data.taglineHe}</p>
+            </header>
 
-      <div class="year-grid">
-        <div class="year-card">
-          <div class="year-label">שנה א</div>
-          <h3>הנחת היסודות</h3>
-          <p>
-            לפני הגישה ל-AI, הסטודנטים בונים בסיס איתן במתמטיקה ובמדעי המחשב הליבתיים:
-            חשבון אינפיניטסימלי, אלגברה לינארית, מתמטיקה דיסקרטית, הסתברות, מבני נתונים
-            ותכנות מבוא.
-          </p>
-        </div>
+            <div class="panel-body" set:html={html} />
 
-        <div class="year-card">
-          <div class="year-label">שנה ב</div>
-          <h3>בניית ארגז הכלים</h3>
-          <p>
-            אלגוריתמים, סיבוכיות חישובית, סטטיסטיקה ויסודות למידת מכונה. הסטודנטים מתחילים
-            לעבוד על פרויקטי תכנות מהותיים ונחשפים לרעיונות הליבה שמאחורי רשתות נוירונים מודרניות.
-          </p>
-        </div>
-
-        <div class="year-card">
-          <div class="year-label">שנה ג</div>
-          <h3>התמחות ומחקר</h3>
-          <p>
-            קורסי AI מתקדמים בלמידה עמוקה, ראייה ממוחשבת, עיבוד שפה טבעית, למידה חיזוקית
-            ובטיחות AI. הסטודנטים בוחרים קורסי בחירה התואמים את תחומי המחקר שלהם
-            ויכולים להצטרף למעבדות הסגל כעוזרי מחקר.
-          </p>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <section class="tracks">
-    <div class="container">
-      <h2>מעבר לתואר הראשון</h2>
-      <div class="track-grid">
-        <div class="track-card">
-          <h3>תואר שני במדעי המחשב</h3>
-          <p>
-            תוכניות תואר שני במסלול מחקרי ומסלול יישומי עם אפשרויות התמחות ב-AI.
-            רוב סטודנטי התואר השני מצטרפים לאחת ממעבדות המחקר של מרכז ה-AI ומפיקים תזה מחקרית.
-          </p>
-        </div>
-        <div class="track-card">
-          <h3>תואר שלישי במדעי המחשב</h3>
-          <p>
-            מחקר דוקטורט בהנחיית סגל ה-AI של האוניברסיטה העברית. סטודנטי דוקטורט תורמים
-            לפרסומים בינלאומיים, לקונסורציומים ממומני האיחוד האירופי ולשיתופי פעולה עם התעשייה.
-          </p>
-        </div>
-        <div class="track-card">
-          <h3>קורס חדש: תכנות עם סוכני AI</h3>
-          <p>
-            קורס מעשי על בנייה, פריסה והערכה של סוכני AI אוטונומיים ביישומים אמיתיים.
-            פתוח לסטודנטים בתואר ראשון ושני.
-          </p>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <section class="cta-section">
-    <div class="container">
-      <div class="cta-block">
-        <h2>הרשמה ומידע נוסף</h2>
-        <p>
-          לפרטים מלאים על תוכנית הלימודים, דרישות הקבלה ומידע על הרשמה — בקרו בעמוד
-          הקבלה של בית הספר למדעי המחשב.
-        </p>
-        <a href="https://www.cs.huji.ac.il/he/page/10573" class="cta-button" target="_blank">
-          ↗ פרטים והרשמה
-        </a>
+            <footer class="panel-footer">
+              {p.data.officialWebsite && (
+                <a href={p.data.officialWebsite} target="_blank" rel="noopener" class="cta-button">
+                  אתר התוכנית הרשמי ↗
+                </a>
+              )}
+              {p.data.courseListUrl && (
+                <a href={p.data.courseListUrl} target="_blank" rel="noopener" class="cta-link">
+                  רשימת קורסים מלאה ↗
+                </a>
+              )}
+              {p.data.structurePdfUrl && (
+                <a href={p.data.structurePdfUrl} target="_blank" rel="noopener" class="cta-link">
+                  מבנה התוכנית (PDF) ↗
+                </a>
+              )}
+              {p.data.registrationUrl && p.data.registrationUrl !== p.data.officialWebsite && (
+                <a href={p.data.registrationUrl} target="_blank" rel="noopener" class="cta-link">
+                  הרשמה ↗
+                </a>
+              )}
+            </footer>
+          </article>
+        ))}
       </div>
     </div>
   </section>
 </Base>
+
+<script>
+  function updateTabs() {
+    const hash = window.location.hash || `#${document.querySelector('.tab')?.getAttribute('data-tab')}`;
+    document.querySelectorAll('.tab').forEach((tab) => {
+      const href = tab.getAttribute('href');
+      tab.classList.toggle('tab-active', href === hash);
+    });
+  }
+  window.addEventListener('hashchange', updateTabs);
+  document.addEventListener('DOMContentLoaded', updateTabs);
+</script>
 
 <style>
   .hero-banner {
@@ -140,97 +154,164 @@ import Base from '../../layouts/Base.astro';
     background: radial-gradient(circle at 30% 50%, rgba(255,255,255,0.08) 0%, transparent 50%);
   }
 
-  .hero-text { padding: 3.5rem 0 3rem; }
-
+  .hero-text { padding: 3rem 0 2.5rem; }
   .hero-split {
     display: grid;
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: 1fr 1.6fr;
     gap: 3rem;
     align-items: start;
   }
-
-  .hero-split h1 { font-size: 1.9rem; font-weight: 700; line-height: 1.4; }
-  .hero-split p { font-size: 0.95rem; color: var(--text-secondary); line-height: 1.85; padding-top: 0.4rem; }
-
-  .why { background: var(--bg-secondary); padding: 3.5rem 0; }
-  .why-inner { max-width: 760px; }
-  .why h2 { font-size: 1.5rem; font-weight: 700; margin-bottom: 1rem; }
-  .why p { font-size: 0.95rem; color: var(--text-secondary); line-height: 1.95; margin-bottom: 1rem; }
-
-  .structure { padding: 3.5rem 0; }
-  .structure h2 { font-size: 1.5rem; font-weight: 700; margin-bottom: 1.5rem; }
-
-  .year-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 1.5rem;
+  .hero-split h1 { font-size: 2.1rem; font-weight: 700; line-height: 1.3; }
+  .hero-split p {
+    font-size: 0.98rem;
+    color: var(--text-secondary);
+    line-height: 1.9;
+    padding-top: 0.4rem;
   }
 
-  .year-card {
-    padding: 1.5rem;
-    background: var(--bg-card);
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
+  .programs { padding: 0 0 4rem; }
+
+  .tabs {
+    display: flex;
+    gap: 0;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 2.5rem;
+    overflow-x: auto;
   }
 
-  .year-label {
-    font-size: 0.78rem;
+  .tab {
+    flex: 1;
+    min-width: 200px;
+    padding: 1.1rem 1.25rem;
+    text-align: start;
+    text-decoration: none;
+    color: var(--text-secondary);
+    border-bottom: 2px solid transparent;
+    transition: color 0.15s, border-color 0.15s, background 0.15s;
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+  }
+
+  .tab:hover { background: var(--bg-secondary); text-decoration: none; color: var(--text-primary); }
+
+  .tab-name {
+    font-size: 0.95rem;
     font-weight: 600;
+    color: var(--text-primary);
+    line-height: 1.4;
+  }
+
+  .tab-tagline {
+    font-size: 0.78rem;
+    color: var(--text-muted);
+    line-height: 1.5;
+  }
+
+  .tab-active {
+    border-bottom-color: var(--huji-teal);
+    background: var(--bg-secondary);
+  }
+  .tab-active .tab-name { color: var(--huji-teal-dark); }
+
+  .panel { display: none; }
+  .panel:target { display: block; }
+  .panel-default { display: block; }
+  .panels:has(.panel:target) .panel-default:not(:target) { display: none; }
+  .panel { scroll-margin-top: 2rem; }
+
+  .panel-header { margin-bottom: 1.75rem; }
+
+  .panel-eyebrow {
+    font-size: 0.78rem;
     color: var(--huji-teal);
+    font-weight: 600;
     margin-bottom: 0.5rem;
   }
 
-  .year-card h3 { font-size: 1.1rem; font-weight: 700; margin-bottom: 0.6rem; }
-  .year-card p { font-size: 0.88rem; color: var(--text-secondary); line-height: 1.85; }
+  .panel-faculty { color: var(--text-muted); font-weight: 500; }
 
-  .tracks { background: var(--bg-secondary); padding: 3.5rem 0; }
-  .tracks h2 { font-size: 1.5rem; font-weight: 700; margin-bottom: 1.5rem; }
-
-  .track-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 1.5rem;
+  .panel-header h2 {
+    font-size: 1.65rem;
+    font-weight: 700;
+    line-height: 1.3;
+    margin-bottom: 0.5rem;
   }
 
-  .track-card {
-    padding: 1.5rem;
-    background: var(--bg-card);
-    border: 1px solid var(--border);
+  .panel-tagline {
+    font-size: 1rem;
+    color: var(--text-secondary);
+    line-height: 1.7;
+  }
+
+  .panel-body {
+    max-width: 760px;
+    color: var(--text-primary);
+  }
+
+  .panel-body :global(h2) {
+    font-size: 1.2rem;
+    font-weight: 700;
+    margin-top: 1.75rem;
+    margin-bottom: 0.6rem;
+    color: var(--text-primary);
+  }
+
+  .panel-body :global(p) {
+    font-size: 0.95rem;
+    color: var(--text-secondary);
+    line-height: 1.9;
+    margin-bottom: 0.9rem;
+  }
+
+  .panel-body :global(strong) { color: var(--text-primary); font-weight: 600; }
+
+  .panel-body :global(blockquote) {
+    border-inline-start: 3px solid var(--border);
+    background: var(--bg-secondary);
+    padding: 0.85rem 1.1rem;
     border-radius: var(--radius);
+    margin: 1rem 0;
+    font-size: 0.9rem;
+    color: var(--text-secondary);
   }
 
-  .track-card h3 { font-size: 1rem; font-weight: 700; margin-bottom: 0.5rem; }
-  .track-card p { font-size: 0.85rem; color: var(--text-secondary); line-height: 1.85; }
-
-  .cta-section { padding: 3.5rem 0; }
-
-  .cta-block {
-    max-width: 720px;
-    text-align: center;
-    margin: 0 auto;
+  .panel-footer {
+    margin-top: 2rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--border-light);
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem 1.5rem;
+    align-items: center;
   }
-
-  .cta-block h2 { font-size: 1.5rem; font-weight: 700; margin-bottom: 0.6rem; }
-  .cta-block p { font-size: 0.95rem; color: var(--text-secondary); line-height: 1.95; margin-bottom: 1.25rem; }
 
   .cta-button {
     display: inline-block;
-    padding: 0.75rem 1.75rem;
+    padding: 0.65rem 1.4rem;
     background: var(--huji-teal-dark);
     color: #fff;
     border-radius: var(--radius);
     font-weight: 500;
-    font-size: 0.92rem;
+    font-size: 0.9rem;
     transition: background 0.15s;
   }
 
-  .cta-button:hover {
-    background: var(--huji-teal);
+  .cta-button:hover { background: var(--huji-teal); text-decoration: none; }
+
+  .cta-link {
+    font-size: 0.88rem;
+    color: var(--huji-teal);
     text-decoration: none;
   }
+  .cta-link:hover { text-decoration: underline; }
 
   @media (max-width: 768px) {
-    .hero-split, .year-grid, .track-grid { grid-template-columns: 1fr; gap: 1rem; }
+    .hero-split { grid-template-columns: 1fr; gap: 1rem; }
     .hero-split h1 { font-size: 1.6rem; }
+    .tab { min-width: 160px; padding: 0.85rem 0.9rem; }
+    .tab-name { font-size: 0.88rem; }
+    .tab-tagline { display: none; }
+    .panel-header h2 { font-size: 1.35rem; }
   }
 </style>
