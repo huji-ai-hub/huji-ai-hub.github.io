@@ -56,11 +56,11 @@ export const HOMEPAGE = {
     title: 'Mastering the Tech of Tomorrow: Computer Science in the AI Era',
     titleHe: 'לשלוט בטכנולוגיה של מחר: מדעי המחשב בעידן ה-AI',
     body: [
-      "The new Computer Science program at the Hebrew University, featuring an AI specialization, is designed for students aspiring to understand how this generation's tools work — and to develop the next generation's tools. The program was developed by leading researchers, combining theoretical depth with practical application.",
+      "The new Computer Science program at the Hebrew University, featuring an AI specialization, is designed for students aspiring to understand how this generation's tools work, and to develop the next generation's tools. The program was developed by leading researchers, combining theoretical depth with practical application.",
       'It provides a solid mathematical foundation and deep exposure to modern models, training graduates capable of analyzing, training, and critically examining complex systems. Here, you acquire the knowledge needed to lead R&D in a changing technological environment.',
     ],
     bodyHe: [
-      'התוכנית החדשה למדעי המחשב באוניברסיטה העברית, הכוללת התמחות בבינה מלאכותית, מיועדת לסטודנטים השואפים להבין כיצד פועלים הכלים של הדור הנוכחי — ולפתח את הכלים של הדור הבא. התוכנית פותחה על ידי חוקרים מובילים, ומשלבת עומק תיאורטי עם יישום מעשי.',
+      'התוכנית החדשה למדעי המחשב באוניברסיטה העברית, הכוללת התמחות בבינה מלאכותית, מיועדת לסטודנטים השואפים להבין כיצד פועלים הכלים של הדור הנוכחי, ולפתח את הכלים של הדור הבא. התוכנית פותחה על ידי חוקרים מובילים, ומשלבת עומק תיאורטי עם יישום מעשי.',
       'היא מספקת בסיס מתמטי מוצק וחשיפה מעמיקה למודלים מודרניים, ומכשירה בוגרים המסוגלים לנתח, לאמן ולבחון באופן ביקורתי מערכות מורכבות.',
     ],
     cta: 'Details & Registration →',
@@ -83,8 +83,8 @@ export const HOMEPAGE = {
     {
       href: '/academics',
       hrefHe: '/he/academics',
-      label: 'New Course — Programming with AI Agents',
-      labelHe: 'קורס חדש — תכנות עם סוכני AI',
+      label: 'New Course: Programming with AI Agents',
+      labelHe: 'קורס חדש: תכנות עם סוכני AI',
       image: '/images/pexels-googledeepmind-18069241.jpg',
     },
   ] satisfies NewsCard[],

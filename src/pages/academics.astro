@@ -1,11 +1,49 @@
 ---
 import Base from '../layouts/Base.astro';
+import { getCollection, render } from 'astro:content';
+
+const programs = (await getCollection('programs'))
+  .sort((a, b) => a.data.order - b.data.order);
+
+const rendered = await Promise.all(
+  programs.map(async (p) => {
+    const { Content } = await render(p);
+    return { program: p, Content };
+  })
+);
+
+const pageTitle = 'Education | HUJI AI Hub';
+const pageDescription =
+  "Three undergraduate paths into AI at the Hebrew University: the CS+AI emphasis, the MaTaR honors program at the intersection of tech and society, and the single-major Computer Science & Computational Biology track. Built for students who want to understand how AI systems actually work.";
+
+const programLd = programs.map((p) => ({
+  '@context': 'https://schema.org',
+  '@type': 'EducationalOccupationalProgram',
+  name: p.data.name,
+  alternateName: p.data.nameHe,
+  description: p.data.seoDescription,
+  url: `https://huji-ai-hub.pages.dev/academics#${p.data.slug}`,
+  educationalProgramMode: 'full-time',
+  occupationalCategory: 'Computer Science / Artificial Intelligence',
+  programType: p.data.type,
+  educationalCredentialAwarded: p.data.degreeLevel === 'bsc' ? "Bachelor's degree" :
+                                 p.data.degreeLevel === 'msc' ? "Master's degree" :
+                                 p.data.degreeLevel === 'phd' ? "Doctoral degree" :
+                                 'Multiple degree levels',
+  provider: {
+    '@type': 'CollegeOrUniversity',
+    name: 'The Hebrew University of Jerusalem',
+    sameAs: 'https://en.huji.ac.il',
+  },
+  ...(p.data.officialWebsite ? { sameAs: p.data.officialWebsite } : {}),
+}));
 ---
 
-<Base
-  title="Academics — HUJI AI Hub"
-  description="The Computer Science program at the Hebrew University, with an AI specialization — covering BSc, MSc, and PhD tracks, taught by leading AI researchers."
->
+<Base title={pageTitle} description={pageDescription}>
+  {programLd.map((ld) => (
+    <script type="application/ld+json" set:html={JSON.stringify(ld)} />
+  ))}
+
   <section class="hero-banner" style="background-image: url('/images/pexels-cottonbro-6153739.jpg');">
     <div class="hero-overlay"></div>
   </section>
@@ -13,121 +51,166 @@ import Base from '../layouts/Base.astro';
   <section class="hero-text">
     <div class="container">
       <div class="hero-split">
-        <h1>B.Sc. in Computer Science with AI Specialization</h1>
+        <h1>Educational programs in AI</h1>
         <p>
-          The most comprehensive and in-depth AI track at the Hebrew University.
-          Designed for students interested in mastering the fundamentals while
-          aspiring to lead the global forefront of AI research and development.
+          AI tools are rewriting what it means to be a computer scientist, and that's
+          exactly why deep training matters more than ever. The people who shape what AI
+          does, where it goes, and how it stays safe are the ones who understand how it
+          actually works. Our programs train you to be those people.
         </p>
       </div>
     </div>
   </section>
 
-  <section class="why">
+  <section class="programs">
     <div class="container">
-      <div class="why-inner">
-        <h2>Why specialize in AI?</h2>
-        <p>
-          In a world where basic coding is becoming automated, deep understanding of the
-          principles driving AI systems is essential. This program is not a short course
-          on using AI tools, but a deep and broad academic track based on mathematical
-          excellence and classical Computer Science foundations.
-        </p>
-        <p>
-          We will teach you to deeply understand how models are built: how to deconstruct them,
-          how to delve into the mathematics behind them, and even how to rebuild them better.
-        </p>
-        <p>
-          The program requires high analytical abilities and dedication, providing a broad and
-          thorough scientific education — essential for both academia and industry in the AI era.
-        </p>
-      </div>
-    </div>
-  </section>
+      <nav class="program-cards" aria-label="AI program tracks">
+        {programs.map((p, i) => (
+          <button
+            type="button"
+            class={`program-card ${i === 0 ? 'card-active' : ''}`}
+            data-tab={p.data.slug}
+            aria-controls={`panel-${p.data.slug}`}
+            aria-selected={i === 0 ? 'true' : 'false'}
+          >
+            {p.data.image && (
+              <div class="card-img" style={`background-image: url('${p.data.image}');`}></div>
+            )}
+            <div class="card-content">
+              <h3 class="card-name">{p.data.name}</h3>
+              <p class="card-tagline">{p.data.tagline}</p>
+              <span class="card-cta">
+                <span class="cta-label">View program</span>
+                <span class="arrow">→</span>
+              </span>
+            </div>
+          </button>
+        ))}
+      </nav>
 
-  <section class="structure">
-    <div class="container">
-      <h2>Program Structure</h2>
+      <div class="panels">
+        {rendered.map(({ program: p, Content }, i) => (
+          <article
+            id={`panel-${p.data.slug}`}
+            data-panel={p.data.slug}
+            class={`panel ${i === 0 ? 'panel-visible' : ''}`}
+            aria-hidden={i === 0 ? 'false' : 'true'}
+          >
+            <header class="panel-header">
+              <p class="panel-eyebrow">
+                {p.data.degreeLevel === 'bsc' ? "Bachelor's program" :
+                 p.data.degreeLevel === 'msc' ? "Master's program" :
+                 p.data.degreeLevel === 'phd' ? 'Doctoral program' :
+                 'Multi-level program'}
+                {p.data.faculty && <span class="panel-faculty"> · {p.data.faculty}</span>}
+              </p>
+              <h2>{p.data.name}</h2>
+              <p class="panel-tagline">{p.data.tagline}</p>
+            </header>
 
-      <div class="year-grid">
-        <div class="year-card">
-          <div class="year-label">Year 1</div>
-          <h3>Laying the Foundations</h3>
-          <p>
-            Before approaching AI, students build a strong base in mathematics and core Computer
-            Science: calculus, linear algebra, discrete mathematics, probability, data structures,
-            and introductory programming.
-          </p>
-        </div>
+            {p.data.highlights && p.data.highlights.length > 0 && (
+              <ul class="highlights" aria-label="Program facts">
+                {p.data.highlights.map((h) => (
+                  <li class="highlight-chip">
+                    <span class="highlight-label">{h.label}</span>
+                    <span class="highlight-value">{h.value}</span>
+                  </li>
+                ))}
+              </ul>
+            )}
 
-        <div class="year-card">
-          <div class="year-label">Year 2</div>
-          <h3>Building the Toolkit</h3>
-          <p>
-            Algorithms, computational complexity, statistics, and the foundations of machine
-            learning. Students begin working on substantial programming projects and are introduced
-            to the core ideas behind modern neural networks.
-          </p>
-        </div>
+            <div class="panel-body">
+              <Content />
+            </div>
 
-        <div class="year-card">
-          <div class="year-label">Year 3</div>
-          <h3>Specialization & Research</h3>
-          <p>
-            Advanced AI courses spanning deep learning, computer vision, natural language processing,
-            reinforcement learning, and AI safety. Students choose electives matching their research
-            interests and may join faculty labs as research assistants.
-          </p>
-        </div>
-      </div>
-    </div>
-  </section>
+            {(p.data.whoItsFor || p.data.whatComesAfter) && (
+              <div class="callout-grid">
+                {p.data.whoItsFor && (
+                  <div class="callout">
+                    <h3 class="callout-title">Who it's for</h3>
+                    <p>{p.data.whoItsFor}</p>
+                  </div>
+                )}
+                {p.data.whatComesAfter && (
+                  <div class="callout">
+                    <h3 class="callout-title">What comes after</h3>
+                    <p>{p.data.whatComesAfter}</p>
+                  </div>
+                )}
+              </div>
+            )}
 
-  <section class="tracks">
-    <div class="container">
-      <h2>Beyond the B.Sc.</h2>
-      <div class="track-grid">
-        <div class="track-card">
-          <h3>M.Sc. in Computer Science</h3>
-          <p>
-            Research-track and applied-track Master's programs with AI specialization options.
-            Most M.Sc. students join one of the AI Hub's research labs and produce a research thesis.
-          </p>
-        </div>
-        <div class="track-card">
-          <h3>Ph.D. in Computer Science</h3>
-          <p>
-            Doctoral research under the supervision of the Hebrew University's AI faculty.
-            Ph.D. students contribute to international publications, EU-funded consortia,
-            and industry collaborations.
-          </p>
-        </div>
-        <div class="track-card">
-          <h3>New Course: Programming with AI Agents</h3>
-          <p>
-            A practical course on building, deploying, and evaluating autonomous AI agents
-            in real-world applications. Open to undergraduate and graduate students.
-          </p>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <section class="cta-section">
-    <div class="container">
-      <div class="cta-block">
-        <h2>Apply or learn more</h2>
-        <p>
-          For full curriculum details, admission requirements, and registration information,
-          visit the School of Computer Science admissions page.
-        </p>
-        <a href="https://www.cs.huji.ac.il/he/page/10573" class="cta-button" target="_blank">
-          Details & Registration ↗
-        </a>
+            <footer class="panel-footer">
+              {p.data.officialWebsite && (
+                <a href={p.data.officialWebsite} target="_blank" rel="noopener" class="cta-button">
+                  Official program site ↗
+                </a>
+              )}
+              {p.data.courseListUrl && (
+                <a href={p.data.courseListUrl} target="_blank" rel="noopener" class="cta-link">
+                  Full course list ↗
+                </a>
+              )}
+              {p.data.structurePdfUrl && (
+                <a href={p.data.structurePdfUrl} target="_blank" rel="noopener" class="cta-link">
+                  Program structure (PDF) ↗
+                </a>
+              )}
+              {p.data.registrationUrl && p.data.registrationUrl !== p.data.officialWebsite && (
+                <a href={p.data.registrationUrl} target="_blank" rel="noopener" class="cta-link">
+                  Registration ↗
+                </a>
+              )}
+            </footer>
+          </article>
+        ))}
       </div>
     </div>
   </section>
 </Base>
+
+<script>
+  // JS-driven panel switching: swap content in place, NEVER scroll.
+  // URL hash updates via replaceState so deep links work and the back button
+  // doesn't trigger a scroll-to-anchor (which is the entire bug we're fixing).
+  function showPanel(slug, opts = { updateHash: true }) {
+    document.querySelectorAll('.program-card').forEach((card) => {
+      const isActive = card.getAttribute('data-tab') === slug;
+      card.classList.toggle('card-active', isActive);
+      card.setAttribute('aria-selected', isActive ? 'true' : 'false');
+    });
+    document.querySelectorAll('.panel').forEach((panel) => {
+      const isActive = panel.getAttribute('data-panel') === slug;
+      panel.classList.toggle('panel-visible', isActive);
+      panel.setAttribute('aria-hidden', isActive ? 'false' : 'true');
+    });
+    if (opts.updateHash && window.location.hash !== `#${slug}`) {
+      // replaceState avoids both browser scroll AND a history entry per click.
+      history.replaceState(null, '', `#${slug}`);
+    }
+  }
+
+  function init() {
+    document.querySelectorAll('.program-card').forEach((card) => {
+      card.addEventListener('click', (e) => {
+        e.preventDefault();
+        const slug = card.getAttribute('data-tab');
+        if (slug) showPanel(slug);
+      });
+    });
+    // Honor deep links on load (e.g. /academics#matar)
+    const initial = window.location.hash.replace(/^#/, '');
+    if (initial && document.querySelector(`[data-panel="${initial}"]`)) {
+      showPanel(initial, { updateHash: false });
+    }
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', init);
+  } else {
+    init();
+  }
+</script>
 
 <style>
   .hero-banner {
@@ -143,117 +226,300 @@ import Base from '../layouts/Base.astro';
     background: radial-gradient(circle at 30% 50%, rgba(255,255,255,0.08) 0%, transparent 50%);
   }
 
-  .hero-text { padding: 3.5rem 0 3rem; }
-
+  .hero-text { padding: 3rem 0 2.5rem; }
   .hero-split {
     display: grid;
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: 1fr 1.6fr;
     gap: 3rem;
     align-items: start;
   }
-
-  .hero-split h1 { font-size: 2rem; font-weight: 700; line-height: 1.2; }
-  .hero-split p { font-size: 0.95rem; color: var(--text-secondary); line-height: 1.75; padding-top: 0.4rem; }
-
-  .why { background: var(--bg-secondary); padding: 3.5rem 0; }
-  .why-inner { max-width: 760px; }
-  .why h2 { font-size: 1.5rem; font-weight: 700; margin-bottom: 1rem; }
-  .why p { font-size: 0.95rem; color: var(--text-secondary); line-height: 1.85; margin-bottom: 1rem; }
-
-  .structure { padding: 3.5rem 0; }
-  .structure h2 { font-size: 1.5rem; font-weight: 700; margin-bottom: 1.5rem; }
-
-  .year-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 1.5rem;
+  .hero-split h1 { font-size: 2.2rem; font-weight: 700; line-height: 1.2; }
+  .hero-split p {
+    font-size: 0.98rem;
+    color: var(--text-secondary);
+    line-height: 1.8;
+    padding-top: 0.4rem;
   }
 
-  .year-card {
-    padding: 1.5rem;
+  .programs { padding: 0 0 4rem; }
+
+  /* Card selectors. Buttons (not links) so click never triggers a navigation. */
+  .program-cards {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.25rem;
+    margin-bottom: 2.5rem;
+    list-style: none;
+    padding: 0;
+  }
+
+  .program-card {
+    display: flex;
+    flex-direction: column;
     background: var(--bg-card);
     border: 1px solid var(--border);
     border-radius: var(--radius);
+    overflow: hidden;
+    text-decoration: none;
+    color: inherit;
+    text-align: start;
+    cursor: pointer;
+    font: inherit;
+    padding: 0;
+    transition: transform 0.2s, box-shadow 0.2s, border-color 0.2s;
   }
 
-  .year-label {
+  .program-card:hover {
+    transform: translateY(-3px);
+    box-shadow: var(--shadow-md);
+    border-color: var(--huji-teal-light);
+  }
+
+  .program-card:hover .arrow { transform: translateX(3px); }
+
+  .card-img {
+    aspect-ratio: 4/3;
+    background-size: cover;
+    background-position: center;
+    background-color: var(--bg-secondary);
+  }
+
+  .card-content {
+    padding: 1rem 1.1rem 1.1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.45rem;
+    flex: 1;
+  }
+
+  .card-name {
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    line-height: 1.3;
+  }
+
+  .card-tagline {
+    font-size: 0.82rem;
+    color: var(--text-secondary);
+    line-height: 1.55;
+    flex: 1;
+  }
+
+  .card-cta {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 0.5rem;
+    padding-top: 0.6rem;
+    border-top: 1px solid var(--border-light);
+    font-size: 0.82rem;
+    font-weight: 500;
+    color: var(--text-muted);
+  }
+
+  .arrow { color: var(--text-muted); transition: transform 0.15s; }
+
+  .card-active {
+    border-color: var(--huji-teal);
+    box-shadow: 0 0 0 1px var(--huji-teal), var(--shadow-md);
+  }
+  .card-active .card-name { color: var(--huji-teal-dark); }
+  .card-active .card-cta { color: var(--huji-teal); }
+  .card-active .arrow { color: var(--huji-teal); }
+  .card-active .cta-label::before {
+    content: "● ";
+    color: var(--huji-teal);
+    font-size: 0.7em;
+    margin-inline-end: 0.15rem;
+  }
+  .card-active .cta-label { color: var(--huji-teal); }
+
+  /* JS controls visibility. No :target. No scroll. */
+  .panel { display: none; }
+  .panel-visible { display: block; }
+
+  .panel-header { margin-bottom: 1.5rem; }
+
+  .panel-eyebrow {
+    font-size: 0.78rem;
+    color: var(--huji-teal);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    margin-bottom: 0.5rem;
+  }
+
+  .panel-faculty {
+    color: var(--text-muted);
+    font-weight: 500;
+    text-transform: none;
+    letter-spacing: 0;
+  }
+
+  .panel-header h2 {
+    font-size: 1.65rem;
+    font-weight: 700;
+    line-height: 1.25;
+    margin-bottom: 0.5rem;
+  }
+
+  .panel-tagline {
+    font-size: 1rem;
+    color: var(--text-secondary);
+    line-height: 1.6;
+  }
+
+  /* Quick-facts chips: small pills with a quiet label and a stronger value. */
+  .highlights {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    list-style: none;
+    padding: 0;
+    margin: 0 0 1.75rem;
+  }
+
+  .highlight-chip {
+    display: inline-flex;
+    align-items: baseline;
+    gap: 0.4rem;
+    padding: 0.4rem 0.8rem;
+    background: var(--huji-teal-light);
+    border-radius: 999px;
+    font-size: 0.8rem;
+    line-height: 1;
+  }
+
+  .highlight-label {
+    color: var(--text-muted);
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    font-size: 0.7rem;
+  }
+
+  .highlight-value {
+    color: var(--huji-teal-dark);
+    font-weight: 600;
+  }
+
+  .panel-body {
+    max-width: 760px;
+    color: var(--text-primary);
+  }
+
+  .panel-body :global(h2) {
+    font-size: 1.15rem;
+    font-weight: 700;
+    margin-top: 1.5rem;
+    margin-bottom: 0.6rem;
+    color: var(--text-primary);
+  }
+
+  .panel-body :global(p) {
+    font-size: 0.95rem;
+    color: var(--text-secondary);
+    line-height: 1.75;
+    margin-bottom: 0.9rem;
+  }
+
+  .panel-body :global(ul) {
+    margin: 0.6rem 0 1rem;
+    padding-inline-start: 1.25rem;
+  }
+
+  .panel-body :global(li) {
+    font-size: 0.92rem;
+    color: var(--text-secondary);
+    line-height: 1.7;
+    margin-bottom: 0.45rem;
+  }
+
+  .panel-body :global(li strong) { color: var(--text-primary); }
+
+  .panel-body :global(strong) { color: var(--text-primary); font-weight: 600; }
+
+  .panel-body :global(blockquote) {
+    border-inline-start: 3px solid var(--huji-teal);
+    background: var(--bg-secondary);
+    padding: 0.85rem 1.1rem;
+    border-radius: var(--radius);
+    margin: 1rem 0;
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+    font-style: italic;
+  }
+
+  /* Boxed callouts: visual breakpoint between body prose and the "who/after" pair. */
+  .callout-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+    margin: 1.75rem 0 0;
+  }
+
+  .callout {
+    padding: 1.1rem 1.2rem;
+    background: var(--bg-secondary);
+    border-radius: var(--radius);
+    border-inline-start: 3px solid var(--huji-teal);
+  }
+
+  .callout-title {
     font-size: 0.78rem;
     font-weight: 600;
     text-transform: uppercase;
     letter-spacing: 0.04em;
-    color: var(--huji-teal);
-    margin-bottom: 0.5rem;
+    color: var(--huji-teal-dark);
+    margin: 0 0 0.4rem;
   }
 
-  .year-card h3 {
-    font-size: 1.1rem;
-    font-weight: 700;
-    margin-bottom: 0.6rem;
-  }
-
-  .year-card p {
-    font-size: 0.88rem;
+  .callout p {
+    font-size: 0.9rem;
     color: var(--text-secondary);
-    line-height: 1.75;
+    line-height: 1.7;
+    margin: 0;
   }
 
-  .tracks { background: var(--bg-secondary); padding: 3.5rem 0; }
-  .tracks h2 { font-size: 1.5rem; font-weight: 700; margin-bottom: 1.5rem; }
-
-  .track-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 1.5rem;
+  .panel-footer {
+    margin-top: 2rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--border-light);
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem 1.5rem;
+    align-items: center;
   }
-
-  .track-card {
-    padding: 1.5rem;
-    background: var(--bg-card);
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-  }
-
-  .track-card h3 {
-    font-size: 1rem;
-    font-weight: 700;
-    margin-bottom: 0.5rem;
-  }
-
-  .track-card p {
-    font-size: 0.85rem;
-    color: var(--text-secondary);
-    line-height: 1.75;
-  }
-
-  .cta-section { padding: 3.5rem 0; }
-
-  .cta-block {
-    max-width: 720px;
-    text-align: center;
-    margin: 0 auto;
-  }
-
-  .cta-block h2 { font-size: 1.5rem; font-weight: 700; margin-bottom: 0.6rem; }
-  .cta-block p { font-size: 0.95rem; color: var(--text-secondary); line-height: 1.75; margin-bottom: 1.25rem; }
 
   .cta-button {
     display: inline-block;
-    padding: 0.75rem 1.75rem;
+    padding: 0.65rem 1.4rem;
     background: var(--huji-teal-dark);
     color: #fff;
     border-radius: var(--radius);
     font-weight: 500;
-    font-size: 0.92rem;
+    font-size: 0.9rem;
     transition: background 0.15s;
   }
+  .cta-button:hover { background: var(--huji-teal); text-decoration: none; }
 
-  .cta-button:hover {
-    background: var(--huji-teal);
+  .cta-link {
+    font-size: 0.88rem;
+    color: var(--huji-teal);
     text-decoration: none;
+  }
+  .cta-link:hover { text-decoration: underline; }
+
+  @media (max-width: 900px) {
+    .program-cards { grid-template-columns: 1fr; gap: 0.9rem; }
+    .card-img { aspect-ratio: 16/9; }
+    .callout-grid { grid-template-columns: 1fr; }
   }
 
   @media (max-width: 768px) {
-    .hero-split, .year-grid, .track-grid { grid-template-columns: 1fr; gap: 1rem; }
+    .hero-split { grid-template-columns: 1fr; gap: 1rem; }
     .hero-split h1 { font-size: 1.7rem; }
+    .panel-header h2 { font-size: 1.35rem; }
   }
 </style>

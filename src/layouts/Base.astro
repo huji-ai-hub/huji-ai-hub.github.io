@@ -1,4 +1,7 @@
 ---
+import { getCollection } from 'astro:content';
+import { FIELDS } from '../data/fields';
+
 interface Props {
   title: string;
   description?: string;
@@ -7,8 +10,20 @@ interface Props {
   pageType?: 'website' | 'article' | 'profile';
 }
 
-const DEFAULT_DESCRIPTION_EN = 'The HUJI AI Hub at the Hebrew University of Jerusalem — research, academic programs, and industry collaboration in artificial intelligence at the Rachel and Selim Benin School of Computer Science and Engineering.';
-const DEFAULT_DESCRIPTION_HE = 'מרכז ה-AI של האוניברסיטה העברית בירושלים — מחקר, לימודים ושיתופי פעולה עם תעשייה בבינה מלאכותית, בבית הספר להנדסה ולמדעי המחשב ע"ש רחל וסלים בנין.';
+// Education dropdown content. Pulled from the programs collection so adding a
+// new program populates the menu automatically with no code change.
+const programsForNav = (await getCollection('programs'))
+  .sort((a, b) => a.data.order - b.data.order)
+  .map((p) => ({
+    slug: p.data.slug,
+    name: p.data.name,
+    nameHe: p.data.nameHe,
+    tagline: p.data.tagline,
+    taglineHe: p.data.taglineHe,
+  }));
+
+const DEFAULT_DESCRIPTION_EN = 'The HUJI AI Hub at the Hebrew University of Jerusalem, research, academic programs, and industry collaboration in artificial intelligence at the Rachel and Selim Benin School of Computer Science and Engineering.';
+const DEFAULT_DESCRIPTION_HE = 'מרכז ה-AI של האוניברסיטה העברית בירושלים, מחקר, לימודים ושיתופי פעולה עם תעשייה בבינה מלאכותית, בבית הספר להנדסה ולמדעי המחשב ע"ש רחל וסלים בנין.';
 const DEFAULT_SHARE_IMAGE = '/images/pexels-googledeepmind-17483874.jpg';
 
 const {
@@ -32,7 +47,7 @@ const altPath = isHe
 
 const resolvedDescription = description || (isHe ? DEFAULT_DESCRIPTION_HE : DEFAULT_DESCRIPTION_EN);
 
-// Astro.site is set in astro.config.mjs — used for absolute URLs in canonical, OG, hreflang.
+// Astro.site is set in astro.config.mjs, used for absolute URLs in canonical, OG, hreflang.
 const canonicalURL = new URL(currentPath, Astro.site).toString();
 const alternateURL = new URL(altPath, Astro.site).toString();
 const shareImageURL = new URL(image, Astro.site).toString();
@@ -61,18 +76,32 @@ const uniName = isHe
   ? 'האוניברסיטה העברית בירושלים'
   : 'THE HEBREW UNIVERSITY OF JERUSALEM';
 
+// Build the Education dropdown children from the programs collection.
+const educationChildren = programsForNav.map((p) => ({
+  href: `${prefix}/academics#${p.slug}`,
+  label: isHe ? p.nameHe : p.name,
+  description: isHe ? p.taglineHe : p.tagline,
+}));
+
+// Build the Research dropdown children from the 8 fields.
+const researchChildren = FIELDS.map((f) => ({
+  href: `${prefix}/research/${f.slug}`,
+  label: isHe ? f.titleHe : f.title,
+  description: isHe ? f.subtitleHe : f.subtitle,
+}));
+
 const navItems = isHe
   ? [
       { href: '/he', label: 'ראשי' },
-      { href: '/he/research', label: 'מחקר' },
-      { href: '/he/academics', label: 'לימודים' },
+      { href: '/he/research', label: 'מחקר', children: researchChildren },
+      { href: '/he/academics', label: 'לימודים', children: educationChildren },
       { href: '/he/industry', label: 'תעשייה' },
       { href: '/he/faculty', label: 'סגל' },
     ]
   : [
       { href: '/', label: 'Home' },
-      { href: '/research', label: 'Research' },
-      { href: '/academics', label: 'Academics' },
+      { href: '/research', label: 'Research', children: researchChildren },
+      { href: '/academics', label: 'Education', children: educationChildren },
       { href: '/industry', label: 'Industry' },
       { href: '/faculty', label: 'Faculty' },
     ];
@@ -131,7 +160,24 @@ const footerContact = isHe
         <div class="container header-nav-inner">
           <nav>
             {navItems.map(item => (
-              <a href={item.href}>{item.label}</a>
+              item.children ? (
+                <div class="nav-item nav-has-children">
+                  <a href={item.href} class="nav-link nav-trigger" aria-haspopup="true" aria-expanded="false">
+                    {item.label}
+                    <span class="nav-caret" aria-hidden="true">▾</span>
+                  </a>
+                  <div class="nav-dropdown" role="menu">
+                    {item.children.map(child => (
+                      <a href={child.href} class="nav-dropdown-item" role="menuitem">
+                        <span class="dd-label">{child.label}</span>
+                        {child.description && <span class="dd-desc">{child.description}</span>}
+                      </a>
+                    ))}
+                  </div>
+                </div>
+              ) : (
+                <a href={item.href} class="nav-link">{item.label}</a>
+              )
             ))}
           </nav>
           <a href={altPath} class="lang-toggle">{altLabel}</a>
@@ -149,6 +195,57 @@ const footerContact = isHe
         <p class="footer-contact">{footerContact.text} <a href="mailto:webmaster@cs.huji.ac.il">{footerContact.link}</a></p>
       </div>
     </footer>
+
+    <script>
+      // Touch / click toggle for nav dropdowns. Desktop hover keeps working
+      // via CSS — this layer only matters when there's no hover capability or
+      // when a user wants to keep the menu open by clicking.
+      const supportsHover = window.matchMedia('(hover: hover)').matches;
+
+      document.querySelectorAll('.nav-has-children').forEach((item) => {
+        const trigger = item.querySelector('.nav-trigger');
+        if (!trigger) return;
+
+        trigger.addEventListener('click', (e) => {
+          // On hover-capable devices (desktop), let the link navigate normally
+          // — the dropdown was already visible on hover.
+          if (supportsHover) return;
+
+          // On touch / no-hover: first tap opens the menu, second tap navigates.
+          if (!item.classList.contains('open')) {
+            e.preventDefault();
+            // Close any other open dropdowns first.
+            document.querySelectorAll('.nav-has-children.open').forEach((other) => {
+              if (other !== item) other.classList.remove('open');
+            });
+            item.classList.add('open');
+            trigger.setAttribute('aria-expanded', 'true');
+          }
+        });
+      });
+
+      // Close any open dropdown when clicking outside.
+      document.addEventListener('click', (e) => {
+        const target = e.target;
+        if (!(target instanceof Element)) return;
+        if (target.closest('.nav-has-children')) return;
+        document.querySelectorAll('.nav-has-children.open').forEach((item) => {
+          item.classList.remove('open');
+          const trigger = item.querySelector('.nav-trigger');
+          if (trigger) trigger.setAttribute('aria-expanded', 'false');
+        });
+      });
+
+      // Close on Escape for keyboard users.
+      document.addEventListener('keydown', (e) => {
+        if (e.key !== 'Escape') return;
+        document.querySelectorAll('.nav-has-children.open').forEach((item) => {
+          item.classList.remove('open');
+          const trigger = item.querySelector('.nav-trigger');
+          if (trigger) trigger.setAttribute('aria-expanded', 'false');
+        });
+      });
+    </script>
 
     <style is:global>
       :root {
@@ -254,17 +351,102 @@ const footerContact = isHe
         align-items: center;
       }
 
-      nav a {
+      .nav-link {
         color: var(--text-primary);
         font-size: 0.88rem;
         font-weight: 500;
         text-decoration: none;
         transition: color 0.15s;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.25rem;
       }
 
-      nav a:hover {
+      .nav-link:hover {
         color: var(--huji-teal);
         text-decoration: none;
+      }
+
+      /* Dropdown ----------------------------------------------------------- */
+      .nav-item {
+        position: relative;
+      }
+
+      .nav-caret {
+        font-size: 0.6rem;
+        opacity: 0.7;
+        transition: transform 0.15s;
+      }
+
+      .nav-item.open .nav-caret,
+      .nav-item:hover .nav-caret {
+        transform: rotate(180deg);
+      }
+
+      .nav-dropdown {
+        position: absolute;
+        top: calc(100% + 0.5rem);
+        inset-inline-start: 0;
+        min-width: 320px;
+        background: var(--bg-card);
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        box-shadow: var(--shadow-lg);
+        padding: 0.5rem;
+        opacity: 0;
+        visibility: hidden;
+        transform: translateY(-4px);
+        transition: opacity 0.12s, transform 0.12s, visibility 0.12s;
+        z-index: 50;
+      }
+
+      /* Show on hover (desktop) and on .open (touch + click toggle). */
+      .nav-item:hover .nav-dropdown,
+      .nav-item:focus-within .nav-dropdown,
+      .nav-item.open .nav-dropdown {
+        opacity: 1;
+        visibility: visible;
+        transform: translateY(0);
+      }
+
+      .nav-dropdown-item {
+        display: block;
+        padding: 0.65rem 0.85rem;
+        border-radius: 4px;
+        color: var(--text-primary);
+        text-decoration: none;
+        transition: background 0.1s;
+      }
+
+      .nav-dropdown-item:hover {
+        background: var(--huji-teal-light);
+        text-decoration: none;
+      }
+
+      .dd-label {
+        display: block;
+        font-size: 0.88rem;
+        font-weight: 600;
+        color: var(--text-primary);
+        line-height: 1.3;
+      }
+
+      .dd-desc {
+        display: block;
+        margin-top: 0.2rem;
+        font-size: 0.78rem;
+        color: var(--text-muted);
+        line-height: 1.5;
+      }
+
+      .nav-dropdown-item:hover .dd-label { color: var(--huji-teal-dark); }
+
+      @media (max-width: 768px) {
+        .nav-dropdown {
+          min-width: 260px;
+          inset-inline-end: 0;
+          inset-inline-start: auto;
+        }
       }
 
       .lang-toggle {

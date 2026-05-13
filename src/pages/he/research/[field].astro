@@ -18,7 +18,7 @@ const fieldFaculty = allFaculty
 ---
 
 <Base
-  title={`${field.titleHe} — מרכז AI`}
+  title={`${field.titleHe} | מרכז AI`}
   lang="he"
   description={field.subtitleHe}
   image={field.image}
@@ -62,7 +62,7 @@ const fieldFaculty = allFaculty
                 )}
               </div>
               <div class="lab-info">
-                <h3>{member.data.lab} — {member.data.title} {member.data.name}</h3>
+                <h3>{member.data.lab}, {member.data.title} {member.data.name}</h3>
                 <p>{member.body || ''}</p>
                 {member.data.website && (
                   <span class="lab-link">↗ אתר המעבדה</span>
