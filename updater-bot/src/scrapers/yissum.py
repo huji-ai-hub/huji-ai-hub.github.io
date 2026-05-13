@@ -35,7 +35,10 @@ def scrape(cfg: SourceConfig) -> ScrapeResult:
         return result
     max_items = cfg.max_items or 20
 
-    with client() as http:
+    # Yissum's CDN (Cloudflare) returns 403 to the polite huji-ai-hub-bot UA.
+    # Use the browser-like UA: this is a public news index, no auth involved,
+    # no rate-limit issues at one request per run.
+    with client(browser_ua=True) as http:
         try:
             resp = http.get(url)
             resp.raise_for_status()
