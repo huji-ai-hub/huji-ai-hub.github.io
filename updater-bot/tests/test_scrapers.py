@@ -100,7 +100,42 @@ def test_huji_main_news_handles_fetch_failure():
         mock_http.get.side_effect = httpx.ConnectError("boom")
         mock_client_factory.return_value.__enter__.return_value = mock_http
 
-        result = huji_main_news.scrape(cfg)
+        result = huji_main_news.scrape("huji_main_news_he", cfg)
 
     assert not result.ok
     assert "fetch failed" in (result.error or "")
+
+
+def test_yissum_scraper_filters_to_substantive_links():
+    """Yissum scraper keeps long anchor-text links and drops nav junk."""
+    from src.scrapers import yissum
+
+    html = """
+    <html><body>
+    <a href="/about">About</a>
+    <a href="https://www.yissum.co.il/news/some-real-news-item-with-substantive-text">
+      A long substantive headline about an AI deal at Yissum 2026
+    </a>
+    <a href="https://www.linkedin.com/feed/update/urn:li:activity:7459">
+      Harvard and HUJI joining forces to advance NeuroAI research at scale
+    </a>
+    <a href="tel:+972-2-658-6688">Phone number</a>
+    <a href="https://external.example.com/post">Some external long enough headline text</a>
+    </body></html>
+    """
+    cfg = SourceConfig(enabled=True, url="https://www.yissum.co.il/news/", max_items=10)
+
+    with patch("src.scrapers.yissum.client") as mock_client_factory:
+        mock_http = MagicMock()
+        mock_http.get.return_value = _mock_response(html)
+        mock_client_factory.return_value.__enter__.return_value = mock_http
+
+        result = yissum.scrape(cfg)
+
+    assert result.ok
+    # Two should pass: the yissum article + the linkedin embed.
+    # External non-yissum, non-linkedin should be filtered.
+    urls = [it.url for it in result.items]
+    assert any("yissum.co.il/news/some-real-news-item" in u for u in urls)
+    assert any("linkedin.com" in u for u in urls)
+    assert not any("external.example.com" in u for u in urls)

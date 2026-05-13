@@ -8,7 +8,7 @@ import pytest
 
 from src.checkers import Finding
 from src.config import ReviewConfig
-from src.llm.provider import LLMProvider, RelevanceVerdict, StaleDateVerdict
+from src.llm.provider import LLMProvider, NewsDraft, NewsVerdict, RelevanceVerdict, StaleDateVerdict
 from src.proposals import applier, builder
 from src.proposals.models import Proposal
 from src.scrapers import ScrapedItem, ScrapeResult
@@ -34,6 +34,21 @@ class FakeLLM(LLMProvider):
 
     def generate_commit_message(self, file_path, source_id, reason) -> str:
         return f"feat({Path(file_path).stem}): updater bot test"
+
+    def classify_news_item(self, *args, **kwargs) -> NewsVerdict:
+        return NewsVerdict(is_newsworthy=True, confidence=0.9, reason="test")
+
+    def draft_news_card(self, *args, **kwargs) -> NewsDraft:
+        return NewsDraft(
+            slug="2026-05-13-test-item",
+            title="Test", titleHe="בדיקה",
+            summary="Test summary.", summaryHe="תקציר בדיקה.",
+            body="Body paragraph.", bodyHe="פסקה.",
+            seoTitle="Test | HUJI AI Hub", seoTitleHe="בדיקה | מרכז AI",
+            seoDescription="Test description.", seoDescriptionHe="תיאור בדיקה.",
+            keywords=["test"], keywordsHe=["בדיקה"], tags=["test"],
+            image=None,
+        )
 
 
 def test_builder_skips_seen_items(tmp_path):
@@ -151,3 +166,65 @@ def test_findings_become_comment_proposals():
     assert len(proposals) == 1
     assert proposals[0].change_type == "comment"
     assert proposals[0].confidence >= 0.9
+
+
+def test_news_pipeline_emits_new_file_proposal():
+    item = ScrapedItem(
+        id="news-1",
+        title="Yissum announces $50M AI deal",
+        url="https://www.yissum.co.il/news/some-deal",
+        content="Deal announced today between Yissum and X for AI tech.",
+    )
+    sr = ScrapeResult(source_id="yissum", items=[item])
+
+    proposals = builder.build_news_proposals(
+        [sr], FakeLLM(), Manifest(), ReviewConfig(min_confidence=0.5),
+        available_images=["/images/foo.jpg"],
+    )
+    assert len(proposals) == 1
+    p = proposals[0]
+    assert p.change_type == "new_file"
+    assert p.file_path.startswith("src/content/news/")
+    assert p.file_path.endswith(".md")
+    # Em dashes must be scrubbed by the builder.
+    assert "—" not in p.new_content
+    # YAML frontmatter delimiters present.
+    assert p.new_content.startswith("---\n")
+    assert "\n---\n" in p.new_content
+    # Source URL captured for attribution.
+    assert "yissum.co.il" in p.new_content
+
+
+def test_news_pipeline_skips_seen_items():
+    item = ScrapedItem(id="seen-news", title="t", url="u", content="x")
+    sr = ScrapeResult(source_id="yissum", items=[item])
+    manifest = Manifest()
+    manifest.mark_seen("yissum", ["seen-news"])
+
+    proposals = builder.build_news_proposals(
+        [sr], FakeLLM(), manifest, ReviewConfig(min_confidence=0.5),
+        available_images=[],
+    )
+    assert proposals == []
+
+
+def test_news_pipeline_ignores_non_news_sources():
+    item = ScrapedItem(id="i", title="t", url="u", content="x")
+    sr = ScrapeResult(source_id="faculty_scholar", items=[item])
+    proposals = builder.build_news_proposals(
+        [sr], FakeLLM(), Manifest(), ReviewConfig(min_confidence=0.5),
+    )
+    assert proposals == []
+
+
+def test_news_slug_sanitizer_handles_garbage():
+    assert builder._sanitize_slug("Foo Bar BAZ!!!") == "foo-bar-baz"
+    assert builder._sanitize_slug("---hello---world---") == "hello-world"
+    assert builder._sanitize_slug("2026-05-13-תוכנית-ai") == "2026-05-13-ai"
+
+
+def test_news_scrub_replaces_em_dashes():
+    s = "Hello—world. Also—this."
+    out = builder._scrub(s)
+    assert "—" not in out
+    assert "world" in out

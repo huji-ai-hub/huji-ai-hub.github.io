@@ -44,20 +44,45 @@ max_retries = 3
 # Override `url` to point at a different page if HUJI moves things.
 # ---------------------------------------------------------------------------
 
+# DISABLED. cs.huji.ac.il sits behind an F5 BIG-IP JavaScript challenge that
+# requires a real browser to solve. The httpx-based scraper gets a redirect /
+# challenge page instead of the roster, so leave off until we either (a) move
+# to a headless-browser scraper (Playwright) or (b) get an API contract from
+# Shai. Re-enable here after either of those.
 [sources.huji_cs_faculty]
-enabled = true
+enabled = false
 url = "https://www.cs.huji.ac.il/people/faculty"
 
+# DISABLED. Same F5 anti-bot wall as huji_cs_faculty.
 [sources.huji_cs_news]
-enabled = true
+enabled = false
 url = "https://www.cs.huji.ac.il/news"
-# How many news items to consider per run.
 max_items = 25
 
+# DISABLED. The English HUJI marketing page (`/en/page/ai`) is also gated by
+# the same anti-bot challenge in our test runs. We'd be paying LLM tokens to
+# classify nothing. The Hebrew main news page (huji_main_news_he, below) is
+# our working substitute.
 [sources.huji_main_ai_news]
-enabled = true
+enabled = false
 url = "https://new.huji.ac.il/en/page/ai"
 max_items = 15
+
+# Hebrew main HUJI news index. Confirmed scrapeable (returns ~110KB HTML).
+# Some article links are JS-hydrated so the bot only sees a subset, but the
+# substantive ones come through and the LLM filter handles the rest.
+[sources.huji_main_news_he]
+enabled = true
+url = "https://new.huji.ac.il/%D7%97%D7%93%D7%A9%D7%95%D7%AA-0"
+max_items = 20
+
+# Yissum, HUJI's tech-transfer arm. Their /news page is rich with deal
+# announcements, AI/ML startup news, and university-industry partnerships
+# directly relevant to the Hub audience.
+[sources.yissum]
+enabled = true
+url = "https://www.yissum.co.il/news/"
+max_items = 25
 
 [sources.faculty_personal]
 # Per-faculty personal site checker — uses each faculty .md file's `website` field.
