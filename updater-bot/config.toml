@@ -1,0 +1,97 @@
+# Updater bot configuration.
+# Edit this file to enable/disable sources, change URLs, or tune thresholds.
+# Secrets (API keys, tokens) NEVER go here — they live in environment variables.
+
+[schedule]
+# Cron string for the GitHub Actions workflow. Default: weekly Monday 03:00 UTC.
+# This is documentation only — the actual schedule lives in .github/workflows/updater.yml.
+cron = "0 3 * * 1"
+enabled = true
+
+[site]
+# The deployed site URL, used by the dead-link checker.
+live_url = "https://huji-ai-hub.pages.dev"
+# Paths are relative to the repo root. Since this is a github.io repo,
+# repo root IS what was the 'site/' folder in the development workspace.
+faculty_dir = "src/content/faculty"
+data_dir = "src/data"
+
+[github]
+repo = "huji-ai-hub/huji-ai-hub.github.io"
+base_branch = "main"
+branch_prefix = "bot/auto-update"
+
+[review]
+# Hard cap on changes per PR. Anything over this gets the lowest-confidence
+# items deferred to next run.
+max_changes_per_pr = 20
+# Minimum confidence (0.0–1.0) for a Proposal to be included in the PR.
+min_confidence = 0.5
+
+[llm]
+provider = "anthropic"
+# Cheap classifier for ambiguous yes/no questions (stale dates, relevance gating).
+classifier_model = "claude-haiku-4-5"
+# Better model for content drafting and commit-message generation.
+content_model = "claude-sonnet-4-6"
+# Conservative defaults — adaptive thinking handles depth dynamically.
+max_tokens = 4096
+# Retry the LLM call this many times on transient errors.
+max_retries = 3
+
+# ---------------------------------------------------------------------------
+# Sources — flip `enabled = false` to skip a scraper without removing code.
+# Override `url` to point at a different page if HUJI moves things.
+# ---------------------------------------------------------------------------
+
+[sources.huji_cs_faculty]
+enabled = true
+url = "https://www.cs.huji.ac.il/people/faculty"
+
+[sources.huji_cs_news]
+enabled = true
+url = "https://www.cs.huji.ac.il/news"
+# How many news items to consider per run.
+max_items = 25
+
+[sources.huji_main_ai_news]
+enabled = true
+url = "https://new.huji.ac.il/en/page/ai"
+max_items = 15
+
+[sources.faculty_personal]
+# Per-faculty personal site checker — uses each faculty .md file's `website` field.
+enabled = true
+# Politeness throttle in seconds between requests.
+request_interval_sec = 1.0
+# Skip personal sites whose domain is in this list (e.g., known-flaky hosts).
+skip_domains = []
+
+[sources.faculty_scholar]
+enabled = true
+# Scholar is fragile — keep the throttle conservative.
+request_interval_sec = 2.0
+# How many recent publications to extract per faculty.
+max_publications = 10
+
+# ---------------------------------------------------------------------------
+# Checkers — flip `enabled = false` to skip a check without removing code.
+# ---------------------------------------------------------------------------
+
+[checkers.dead_links]
+enabled = true
+timeout_sec = 10
+# Allow these HTTP statuses (some servers block HEAD; we'll see 405 etc.).
+ignore_statuses = [403, 405, 429]
+# Don't crawl into these domains (saves time on deep external sites).
+external_skip = ["scholar.google.com", "twitter.com", "x.com", "linkedin.com"]
+
+[checkers.roster_diff]
+enabled = true
+# Fuzzy match threshold for name comparison (0.0–1.0). 0.85 = generous.
+name_match_threshold = 0.85
+
+[checkers.stale_dates]
+enabled = true
+# Date strings older than this many days that look "future-tense" trigger a flag.
+past_threshold_days = 1
