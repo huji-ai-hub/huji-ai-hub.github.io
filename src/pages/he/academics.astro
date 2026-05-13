@@ -3,21 +3,19 @@ import Base from '../../layouts/Base.astro';
 import { getCollection } from 'astro:content';
 import { marked } from 'marked';
 
-// Configure marked for the Hebrew bodies, minimal setup, GFM-flavored.
 marked.setOptions({ gfm: true, breaks: false });
 
 const programs = (await getCollection('programs'))
   .sort((a, b) => a.data.order - b.data.order);
 
-// Pre-render each Hebrew body string to HTML.
 const rendered = programs.map((p) => ({
   program: p,
   html: marked.parse(p.data.bodyHe ?? ''),
 }));
 
-const pageTitle = 'לימודים, בינה מלאכותית באוניברסיטה העברית';
+const pageTitle = 'לימודים | מרכז AI';
 const pageDescription =
-  'שלושה מסלולי תואר ראשון בבינה מלאכותית באוניברסיטה העברית: מסלול ההדגש ב-AI במדעי המחשב, מסלול מט"ר המשלב מתמטיקה, מדעי המחשב ופיזיקה, ותוכנית חד-חוגית במדעי המחשב וביולוגיה חישובית. בנוי לסטודנטים שרוצים להבין באמת איך מערכות AI עובדות.';
+  'שלוש תוכניות לתואר ראשון בבינה מלאכותית באוניברסיטה העברית: מסלול ההדגש ב-AI במדעי המחשב, תוכנית מט"ר במפגש של טכנולוגיה וחברה, ומסלול חד-חוגי במדעי המחשב וביולוגיה חישובית. בנוי לסטודנטים שרוצים להבין באמת איך מערכות AI עובדות.';
 
 const programLd = programs.map((p) => ({
   '@context': 'https://schema.org',
@@ -55,13 +53,12 @@ const programLd = programs.map((p) => ({
   <section class="hero-text">
     <div class="container">
       <div class="hero-split">
-        <h1>תארים בבינה מלאכותית באוניברסיטה העברית</h1>
+        <h1>תוכניות לימוד בבינה מלאכותית</h1>
         <p>
           כלי AI משנים את משמעות העיסוק במדעי המחשב, וזו בדיוק הסיבה שלימוד עמוק של התחום
-          חשוב היום יותר מתמיד. האנשים שמעצבים את מה ש-AI עושה, לאן הוא הולך, ואיך הוא נשאר
+          חשוב יותר מתמיד. האנשים שמעצבים את מה ש-AI עושה, לאן הוא הולך, ואיך הוא נשאר
           בטוח, הם אלה שמבינים איך הוא באמת עובד. התוכניות שלנו מכשירות אתכם להיות האנשים
-          האלה: יסודות מתמטיים, מדעי מחשב קלאסיים, וחופש להתמחות בפינה של התחום שמתאימה
-          לכם, ולמה שאתם רוצים לבנות.
+          האלה.
         </p>
       </div>
     </div>
@@ -71,10 +68,12 @@ const programLd = programs.map((p) => ({
     <div class="container">
       <nav class="program-cards" aria-label="מסלולי לימוד ב-AI">
         {programs.map((p, i) => (
-          <a
-            href={`#${p.data.slug}`}
+          <button
+            type="button"
             class={`program-card ${i === 0 ? 'card-active' : ''}`}
             data-tab={p.data.slug}
+            aria-controls={`panel-${p.data.slug}`}
+            aria-selected={i === 0 ? 'true' : 'false'}
           >
             {p.data.image && (
               <div class="card-img" style={`background-image: url('${p.data.image}');`}></div>
@@ -87,13 +86,18 @@ const programLd = programs.map((p) => ({
                 <span class="arrow">←</span>
               </span>
             </div>
-          </a>
+          </button>
         ))}
       </nav>
 
       <div class="panels">
         {rendered.map(({ program: p, html }, i) => (
-          <article id={p.data.slug} class={`panel ${i === 0 ? 'panel-default' : ''}`}>
+          <article
+            id={`panel-${p.data.slug}`}
+            data-panel={p.data.slug}
+            class={`panel ${i === 0 ? 'panel-visible' : ''}`}
+            aria-hidden={i === 0 ? 'false' : 'true'}
+          >
             <header class="panel-header">
               <p class="panel-eyebrow">
                 {p.data.degreeLevel === 'bsc' ? 'תואר ראשון' :
@@ -106,7 +110,35 @@ const programLd = programs.map((p) => ({
               <p class="panel-tagline">{p.data.taglineHe}</p>
             </header>
 
+            {p.data.highlights && p.data.highlights.length > 0 && (
+              <ul class="highlights" aria-label="עובדות על התוכנית">
+                {p.data.highlights.map((h) => (
+                  <li class="highlight-chip">
+                    <span class="highlight-label">{h.labelHe ?? h.label}</span>
+                    <span class="highlight-value">{h.valueHe ?? h.value}</span>
+                  </li>
+                ))}
+              </ul>
+            )}
+
             <div class="panel-body" set:html={html} />
+
+            {(p.data.whoItsForHe || p.data.whatComesAfterHe) && (
+              <div class="callout-grid">
+                {p.data.whoItsForHe && (
+                  <div class="callout">
+                    <h3 class="callout-title">למי זה מתאים</h3>
+                    <p>{p.data.whoItsForHe}</p>
+                  </div>
+                )}
+                {p.data.whatComesAfterHe && (
+                  <div class="callout">
+                    <h3 class="callout-title">מה אחרי</h3>
+                    <p>{p.data.whatComesAfterHe}</p>
+                  </div>
+                )}
+              </div>
+            )}
 
             <footer class="panel-footer">
               {p.data.officialWebsite && (
@@ -138,15 +170,41 @@ const programLd = programs.map((p) => ({
 </Base>
 
 <script>
-  function updateTabs() {
-    const hash = window.location.hash || `#${document.querySelector('.program-card')?.getAttribute('data-tab')}`;
+  function showPanel(slug, opts = { updateHash: true }) {
     document.querySelectorAll('.program-card').forEach((card) => {
-      const href = card.getAttribute('href');
-      card.classList.toggle('card-active', href === hash);
+      const isActive = card.getAttribute('data-tab') === slug;
+      card.classList.toggle('card-active', isActive);
+      card.setAttribute('aria-selected', isActive ? 'true' : 'false');
     });
+    document.querySelectorAll('.panel').forEach((panel) => {
+      const isActive = panel.getAttribute('data-panel') === slug;
+      panel.classList.toggle('panel-visible', isActive);
+      panel.setAttribute('aria-hidden', isActive ? 'false' : 'true');
+    });
+    if (opts.updateHash && window.location.hash !== `#${slug}`) {
+      history.replaceState(null, '', `#${slug}`);
+    }
   }
-  window.addEventListener('hashchange', updateTabs);
-  document.addEventListener('DOMContentLoaded', updateTabs);
+
+  function init() {
+    document.querySelectorAll('.program-card').forEach((card) => {
+      card.addEventListener('click', (e) => {
+        e.preventDefault();
+        const slug = card.getAttribute('data-tab');
+        if (slug) showPanel(slug);
+      });
+    });
+    const initial = window.location.hash.replace(/^#/, '');
+    if (initial && document.querySelector(`[data-panel="${initial}"]`)) {
+      showPanel(initial, { updateHash: false });
+    }
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', init);
+  } else {
+    init();
+  }
 </script>
 
 <style>
@@ -185,6 +243,8 @@ const programLd = programs.map((p) => ({
     grid-template-columns: repeat(3, 1fr);
     gap: 1.25rem;
     margin-bottom: 2.5rem;
+    list-style: none;
+    padding: 0;
   }
 
   .program-card {
@@ -196,6 +256,10 @@ const programLd = programs.map((p) => ({
     overflow: hidden;
     text-decoration: none;
     color: inherit;
+    text-align: start;
+    cursor: pointer;
+    font: inherit;
+    padding: 0;
     transition: transform 0.2s, box-shadow 0.2s, border-color 0.2s;
   }
 
@@ -203,7 +267,6 @@ const programLd = programs.map((p) => ({
     transform: translateY(-3px);
     box-shadow: var(--shadow-md);
     border-color: var(--huji-teal-light);
-    text-decoration: none;
   }
 
   .program-card:hover .arrow { transform: translateX(-3px); }
@@ -249,16 +312,12 @@ const programLd = programs.map((p) => ({
     color: var(--text-muted);
   }
 
-  .arrow {
-    color: var(--text-muted);
-    transition: transform 0.15s;
-  }
+  .arrow { color: var(--text-muted); transition: transform 0.15s; }
 
   .card-active {
     border-color: var(--huji-teal);
     box-shadow: 0 0 0 1px var(--huji-teal), var(--shadow-md);
   }
-
   .card-active .card-name { color: var(--huji-teal-dark); }
   .card-active .card-cta { color: var(--huji-teal); }
   .card-active .arrow { color: var(--huji-teal); }
@@ -271,12 +330,9 @@ const programLd = programs.map((p) => ({
   .card-active .cta-label { color: var(--huji-teal); }
 
   .panel { display: none; }
-  .panel:target { display: block; }
-  .panel-default { display: block; }
-  .panels:has(.panel:target) .panel-default:not(:target) { display: none; }
-  .panel { scroll-margin-top: 2rem; }
+  .panel-visible { display: block; }
 
-  .panel-header { margin-bottom: 1.75rem; }
+  .panel-header { margin-bottom: 1.5rem; }
 
   .panel-eyebrow {
     font-size: 0.78rem;
@@ -300,15 +356,47 @@ const programLd = programs.map((p) => ({
     line-height: 1.7;
   }
 
+  .highlights {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    list-style: none;
+    padding: 0;
+    margin: 0 0 1.75rem;
+  }
+
+  .highlight-chip {
+    display: inline-flex;
+    align-items: baseline;
+    gap: 0.4rem;
+    padding: 0.4rem 0.8rem;
+    background: var(--huji-teal-light);
+    border-radius: 999px;
+    font-size: 0.8rem;
+    line-height: 1;
+  }
+
+  .highlight-label {
+    color: var(--text-muted);
+    font-weight: 500;
+    letter-spacing: 0.04em;
+    font-size: 0.7rem;
+  }
+
+  .highlight-value {
+    color: var(--huji-teal-dark);
+    font-weight: 600;
+  }
+
   .panel-body {
     max-width: 760px;
     color: var(--text-primary);
   }
 
   .panel-body :global(h2) {
-    font-size: 1.2rem;
+    font-size: 1.15rem;
     font-weight: 700;
-    margin-top: 1.75rem;
+    margin-top: 1.5rem;
     margin-bottom: 0.6rem;
     color: var(--text-primary);
   }
@@ -316,20 +404,62 @@ const programLd = programs.map((p) => ({
   .panel-body :global(p) {
     font-size: 0.95rem;
     color: var(--text-secondary);
-    line-height: 1.9;
+    line-height: 1.85;
     margin-bottom: 0.9rem;
   }
+
+  .panel-body :global(ul) {
+    margin: 0.6rem 0 1rem;
+    padding-inline-start: 1.25rem;
+  }
+
+  .panel-body :global(li) {
+    font-size: 0.92rem;
+    color: var(--text-secondary);
+    line-height: 1.8;
+    margin-bottom: 0.45rem;
+  }
+
+  .panel-body :global(li strong) { color: var(--text-primary); }
 
   .panel-body :global(strong) { color: var(--text-primary); font-weight: 600; }
 
   .panel-body :global(blockquote) {
-    border-inline-start: 3px solid var(--border);
+    border-inline-start: 3px solid var(--huji-teal);
     background: var(--bg-secondary);
     padding: 0.85rem 1.1rem;
     border-radius: var(--radius);
     margin: 1rem 0;
     font-size: 0.9rem;
     color: var(--text-secondary);
+  }
+
+  .callout-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+    margin: 1.75rem 0 0;
+  }
+
+  .callout {
+    padding: 1.1rem 1.2rem;
+    background: var(--bg-secondary);
+    border-radius: var(--radius);
+    border-inline-start: 3px solid var(--huji-teal);
+  }
+
+  .callout-title {
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: var(--huji-teal-dark);
+    margin: 0 0 0.4rem;
+  }
+
+  .callout p {
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+    line-height: 1.8;
+    margin: 0;
   }
 
   .panel-footer {
@@ -352,7 +482,6 @@ const programLd = programs.map((p) => ({
     font-size: 0.9rem;
     transition: background 0.15s;
   }
-
   .cta-button:hover { background: var(--huji-teal); text-decoration: none; }
 
   .cta-link {
@@ -365,6 +494,7 @@ const programLd = programs.map((p) => ({
   @media (max-width: 900px) {
     .program-cards { grid-template-columns: 1fr; gap: 0.9rem; }
     .card-img { aspect-ratio: 16/9; }
+    .callout-grid { grid-template-columns: 1fr; }
   }
 
   @media (max-width: 768px) {

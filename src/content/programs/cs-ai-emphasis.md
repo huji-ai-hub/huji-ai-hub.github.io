@@ -14,8 +14,8 @@ image: "/images/pexels-googledeepmind-25626519.jpg"
 order: 1
 seoTitle: "B.Sc. Computer Science with AI Emphasis, Hebrew University"
 seoTitleHe: "תואר ראשון במדעי המחשב עם הדגש ב-AI, האוניברסיטה העברית"
-seoDescription: "The Hebrew University's flagship undergraduate AI program, three years of mathematical foundations, classical computer science, and advanced AI specialization. Designed for students who want to understand how AI systems actually work, not just how to use them."
-seoDescriptionHe: "התוכנית המובילה של האוניברסיטה העברית לתואר ראשון בבינה מלאכותית, שלוש שנים של יסודות מתמטיים, מדעי המחשב הקלאסיים, והתמחות מתקדמת ב-AI. מיועדת לסטודנטים שרוצים להבין איך מערכות AI באמת עובדות, לא רק להשתמש בהן."
+seoDescription: "The Hebrew University's flagship undergraduate AI program. Three years of mathematical foundations, classical computer science, and advanced AI specialization. For students who want to understand how AI systems actually work, not just how to use them."
+seoDescriptionHe: "התוכנית המובילה של האוניברסיטה העברית לתואר ראשון בבינה מלאכותית. שלוש שנים של יסודות מתמטיים, מדעי המחשב הקלאסיים, והתמחות מתקדמת ב-AI. מיועדת לסטודנטים שרוצים להבין איך מערכות AI באמת עובדות, לא רק להשתמש בהן."
 keywords:
   - AI degree Hebrew University
   - computer science AI specialization Israel
@@ -29,68 +29,40 @@ keywordsHe:
   - לימודי בינה מלאכותית ירושלים
   - תואר ראשון למידת מכונה
 needsReview: false
+
+highlights:
+  - { label: "Degree", value: "B.Sc.", labelHe: "תואר", valueHe: "ראשון" }
+  - { label: "Length", value: "3 years", labelHe: "משך", valueHe: "3 שנים" }
+  - { label: "Track type", value: "AI emphasis", labelHe: "סוג מסלול", valueHe: "הדגש AI" }
+  - { label: "School", value: "CS & Engineering", labelHe: "בית ספר", valueHe: 'הנדסה ומדעי המחשב' }
+
+whoItsFor: "Students with strong analytical instincts and real curiosity about how systems work under the hood. No prior programming experience required, readiness for serious math and abstract thinking is."
+whoItsForHe: "סטודנטים עם יכולות אנליטיות חזקות וסקרנות אמיתית להבין איך הדברים עובדים מתחת למכסה המנוע. אין צורך בניסיון תכנותי קודם, צריך מוכנות לעבודה רצינית במתמטיקה ובחשיבה אבסטרקטית."
+
+whatComesAfter: "M.Sc. and Ph.D. programs at HUJI and at leading institutions abroad, or research and engineering roles at companies on the AI frontier, from Google and Meta to Israeli startups. The alumni network is active and useful."
+whatComesAfterHe: "תואר שני ושלישי באוניברסיטה העברית או במוסדות מובילים בעולם, או תפקידי מחקר ופיתוח בחברות בחזית ה-AI, מ-Google ו-Meta ועד סטארטאפים ישראליים. קהילת הבוגרים פעילה ומסייעת."
+
 bodyHe: |
   בעולם שבו כלי AI כותבים קוד, מסכמים מסמכים ומציעים תשובות בלחיצת כפתור, השאלה
-  הנכונה אינה "האם עדיין כדאי ללמוד מדעי המחשב". השאלה היא "מי יבנה, ינתח ויפקח על
-  המערכות שכותבות את הקוד הזה". התשובה היא בוגרי מדעי מחשב עם הבנה עמוקה במתמטיקה,
-  אלגוריתמים, וביסודות ה-AI. בדיוק את זה התוכנית הזו מכשירה.
-
-  ## למה מדעי המחשב, ולמה דווקא עכשיו
-
-  בעידן שבו AI מבצע משימות בסיסיות במהירות חסרת תקדים, מי שמבין לעומק איך המערכות
-  האלה עובדות הופך ליקר ערך יותר, לא פחות. הפיתוח, ההבנה והשליטה במערכות AI דורשים
-  כישורים שאינם נלמדים בכמה ערבי קורסים, הם דורשים בסיס אקדמי רחב ועמוק. בוגרי
-  התוכנית שלנו הם אלה שיובילו את הדור הבא של AI בתעשייה, באקדמיה, ובמחקר.
+  הנכונה אינה "האם עדיין כדאי ללמוד מדעי המחשב". השאלה היא מי יבנה, ינתח ויפקח על
+  המערכות שכותבות את הקוד הזה. התשובה: בוגרי מדעי מחשב עם הבנה עמוקה במתמטיקה,
+  אלגוריתמים, וביסודות ה-AI.
 
   ## מה תלמדו
 
-  התוכנית בנויה לעומק ולא לרוחב מדומה. שלוש שנים, שמתחילות ביסודות מוצקים ומסתיימות
-  בקורסי AI מתקדמים בחזית התחום:
+  שלוש שנים, מהיסודות ועד חזית ה-AI:
 
-  **שנה א: הנחת היסודות.** חשבון אינפיניטסימלי, אלגברה לינארית, מתמטיקה דיסקרטית,
-  הסתברות, מבני נתונים, מבוא לתכנות. הבסיס שעליו כל השאר נבנה.
-
-  **שנה ב: בניית ארגז הכלים.** אלגוריתמים, סיבוכיות חישובית, סטטיסטיקה, ויסודות
-  למידת מכונה. תתחילו לעבוד על פרויקטי תכנות מהותיים ולהיחשף לרעיונות הליבה של
-  רשתות נוירונים מודרניות.
-
-  **שנה ג: התמחות ומחקר.** קורסי AI מתקדמים בלמידה עמוקה, ראייה ממוחשבת, עיבוד
-  שפה טבעית, למידה חיזוקית, ובטיחות AI. בוחרים קורסי בחירה שמתאימים לכיוון שלכם
-  ויכולים להצטרף למעבדות מחקר של הסגל כעוזרי מחקר עוד בתואר ראשון.
-
-  ## למי זה מתאים
-
-  סטודנטים עם יכולות אנליטיות גבוהות, מסירות, וסקרנות אמיתית להבין איך הדברים
-  עובדים מתחת למכסה המנוע. לא צריך ניסיון תכנותי קודם, צריך מוכנות לעבודה רצינית
-  במתמטיקה ובחשיבה אבסטרקטית.
-
-  ## מה אחרי
-
-  בוגרי התוכנית ממשיכים לתואר שני ושלישי באוניברסיטה העברית ובמוסדות מובילים
-  בעולם, או נכנסים ישירות לתפקידי מחקר ופיתוח בחברות הגדולות בתעשייה, מ-Google
-  ו-Meta ועד סטארטאפים ישראליים בחזית ה-AI. הקהילה הבוגרים שלנו פעילה ומסייעת.
+  - **שנה א — יסודות.** חשבון אינפיניטסימלי, אלגברה לינארית, מתמטיקה דיסקרטית, הסתברות, מבני נתונים, מבוא לתכנות.
+  - **שנה ב — ארגז כלים.** אלגוריתמים, סיבוכיות חישובית, סטטיסטיקה, יסודות למידת מכונה. פרויקטי תכנות מהותיים, חשיפה לרעיונות הליבה של רשתות נוירונים.
+  - **שנה ג — התמחות ומחקר.** קורסי AI מתקדמים: למידה עמוקה, ראייה ממוחשבת, עיבוד שפה טבעית, למידה חיזוקית, בטיחות AI. אפשרות להצטרף למעבדות מחקר של הסגל כעוזרי מחקר עוד בתואר ראשון.
 ---
 
-In a world where AI tools write code, summarize documents, and suggest answers with a single click, the right question isn't "is computer science still worth studying?" The right question is: *who will build, analyze, and oversee the systems that write that code?* The answer is computer science graduates with deep understanding of mathematics, algorithms, and the foundations of AI. That's what this program trains you to be.
-
-## Why CS, why now
-
-In an era where AI handles routine tasks at unprecedented speed, the people who deeply understand how those systems work become more valuable, not less. Building, understanding, and controlling AI systems demands skills that can't be picked up in a few evening courses, they require a broad and deep academic foundation. Graduates of this program are the ones who will lead the next generation of AI in industry, in academia, and in research.
+In a world where AI tools write code, summarize documents, and suggest answers in one click, the right question isn't *"is computer science still worth studying?"* It's *who will build, analyze, and oversee the systems writing that code?* The answer is graduates with deep understanding of mathematics, algorithms, and the foundations of AI.
 
 ## What you'll study
 
-The program is built for depth, not breadth-pretending-to-be-depth. Three years that start with solid foundations and end with advanced AI courses at the frontier of the field:
+Three years, from foundations to the AI frontier:
 
-**Year 1: Laying the foundations.** Calculus, linear algebra, discrete mathematics, probability, data structures, introduction to programming. The base everything else is built on.
-
-**Year 2: Building the toolkit.** Algorithms, computational complexity, statistics, and the foundations of machine learning. You'll start working on substantial programming projects and being exposed to the core ideas behind modern neural networks.
-
-**Year 3: Specialization and research.** Advanced AI courses across deep learning, computer vision, natural language processing, reinforcement learning, and AI safety. You choose electives matching your direction and can join faculty research labs as research assistants while still in your undergraduate years.
-
-## Who it's for
-
-Students with strong analytical abilities, dedication, and genuine curiosity about how things work under the hood. No prior programming experience required, what's required is readiness for serious work in mathematics and abstract thinking.
-
-## What comes after
-
-Graduates continue to M.Sc. and Ph.D. programs at the Hebrew University and at leading institutions worldwide, or move directly into research and engineering roles at the largest companies in industry, from Google and Meta to Israeli startups at the AI frontier. Our alumni community is active and helpful.
+- **Year 1 — Foundations.** Calculus, linear algebra, discrete mathematics, probability, data structures, intro to programming.
+- **Year 2 — Toolkit.** Algorithms, computational complexity, statistics, foundations of machine learning. Substantial programming projects and the core ideas behind modern neural networks.
+- **Year 3 — Specialization and research.** Advanced AI: deep learning, computer vision, NLP, reinforcement learning, AI safety. Electives by direction. Option to join faculty research labs as a research assistant while still in undergrad.

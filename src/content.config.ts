@@ -72,6 +72,21 @@ const programs = defineCollection({
     keywords: z.array(z.string()).optional(),     // English keyword cues
     keywordsHe: z.array(z.string()).optional(),   // Hebrew keyword cues
 
+    // Quick-facts strip rendered as chips at the top of the program panel.
+    // Each entry: {label, value} with optional Hebrew counterparts.
+    highlights: z.array(z.object({
+      label: z.string(),
+      value: z.string(),
+      labelHe: z.string().optional(),
+      valueHe: z.string().optional(),
+    })).default([]),
+
+    // Boxed callouts at the bottom of the panel. Short, scannable.
+    whoItsFor: z.string().optional(),
+    whoItsForHe: z.string().optional(),
+    whatComesAfter: z.string().optional(),
+    whatComesAfterHe: z.string().optional(),
+
     // Long-form body, Hebrew lives in frontmatter (YAML literal block) so the
     // markdown body field can stay clean for the English text. Editors who only
     // know one language can edit just one side without confusing themselves.

@@ -2,11 +2,9 @@
 import Base from '../layouts/Base.astro';
 import { getCollection, render } from 'astro:content';
 
-// Load programs and order by `order` field (lower numbers first).
 const programs = (await getCollection('programs'))
   .sort((a, b) => a.data.order - b.data.order);
 
-// Pre-render each program's markdown body so we can inline it inside its tab panel.
 const rendered = await Promise.all(
   programs.map(async (p) => {
     const { Content } = await render(p);
@@ -14,12 +12,10 @@ const rendered = await Promise.all(
   })
 );
 
-const pageTitle = 'Academics, AI at the Hebrew University';
+const pageTitle = 'Education | HUJI AI Hub';
 const pageDescription =
-  "Three undergraduate paths into AI at the Hebrew University: the CS+AI emphasis, the MaTaR excellence track combining math, CS and physics, and the single-major Computer Science & Computational Biology program. Built for students who want to understand how AI systems actually work.";
+  "Three undergraduate paths into AI at the Hebrew University: the CS+AI emphasis, the MaTaR honors program at the intersection of tech and society, and the single-major Computer Science & Computational Biology track. Built for students who want to understand how AI systems actually work.";
 
-// Build a JSON-LD EducationalOccupationalProgram block per program, Google's
-// rich-result schema for academic programs. Helps search visibility.
 const programLd = programs.map((p) => ({
   '@context': 'https://schema.org',
   '@type': 'EducationalOccupationalProgram',
@@ -55,14 +51,12 @@ const programLd = programs.map((p) => ({
   <section class="hero-text">
     <div class="container">
       <div class="hero-split">
-        <h1>AI degrees at the Hebrew University</h1>
+        <h1>Educational programs in AI</h1>
         <p>
           AI tools are rewriting what it means to be a computer scientist, and that's
-          exactly why deep computer science training matters more than ever. The people
-          who shape what AI does, where it goes, and how it stays safe are the ones who
-          understand how it actually works. Our programs train you to be those people:
-          mathematical foundations, classical computer science, and the freedom to
-          specialize in the corner of the field that matches what you want to build.
+          exactly why deep training matters more than ever. The people who shape what AI
+          does, where it goes, and how it stays safe are the ones who understand how it
+          actually works. Our programs train you to be those people.
         </p>
       </div>
     </div>
@@ -72,10 +66,12 @@ const programLd = programs.map((p) => ({
     <div class="container">
       <nav class="program-cards" aria-label="AI program tracks">
         {programs.map((p, i) => (
-          <a
-            href={`#${p.data.slug}`}
+          <button
+            type="button"
             class={`program-card ${i === 0 ? 'card-active' : ''}`}
             data-tab={p.data.slug}
+            aria-controls={`panel-${p.data.slug}`}
+            aria-selected={i === 0 ? 'true' : 'false'}
           >
             {p.data.image && (
               <div class="card-img" style={`background-image: url('${p.data.image}');`}></div>
@@ -88,13 +84,18 @@ const programLd = programs.map((p) => ({
                 <span class="arrow">→</span>
               </span>
             </div>
-          </a>
+          </button>
         ))}
       </nav>
 
       <div class="panels">
         {rendered.map(({ program: p, Content }, i) => (
-          <article id={p.data.slug} class={`panel ${i === 0 ? 'panel-default' : ''}`}>
+          <article
+            id={`panel-${p.data.slug}`}
+            data-panel={p.data.slug}
+            class={`panel ${i === 0 ? 'panel-visible' : ''}`}
+            aria-hidden={i === 0 ? 'false' : 'true'}
+          >
             <header class="panel-header">
               <p class="panel-eyebrow">
                 {p.data.degreeLevel === 'bsc' ? "Bachelor's program" :
@@ -107,9 +108,37 @@ const programLd = programs.map((p) => ({
               <p class="panel-tagline">{p.data.tagline}</p>
             </header>
 
+            {p.data.highlights && p.data.highlights.length > 0 && (
+              <ul class="highlights" aria-label="Program facts">
+                {p.data.highlights.map((h) => (
+                  <li class="highlight-chip">
+                    <span class="highlight-label">{h.label}</span>
+                    <span class="highlight-value">{h.value}</span>
+                  </li>
+                ))}
+              </ul>
+            )}
+
             <div class="panel-body">
               <Content />
             </div>
+
+            {(p.data.whoItsFor || p.data.whatComesAfter) && (
+              <div class="callout-grid">
+                {p.data.whoItsFor && (
+                  <div class="callout">
+                    <h3 class="callout-title">Who it's for</h3>
+                    <p>{p.data.whoItsFor}</p>
+                  </div>
+                )}
+                {p.data.whatComesAfter && (
+                  <div class="callout">
+                    <h3 class="callout-title">What comes after</h3>
+                    <p>{p.data.whatComesAfter}</p>
+                  </div>
+                )}
+              </div>
+            )}
 
             <footer class="panel-footer">
               {p.data.officialWebsite && (
@@ -141,16 +170,46 @@ const programLd = programs.map((p) => ({
 </Base>
 
 <script>
-  // Sync the active card with the current hash so the highlight follows the panel.
-  function updateTabs() {
-    const hash = window.location.hash || `#${document.querySelector('.program-card')?.getAttribute('data-tab')}`;
+  // JS-driven panel switching: swap content in place, NEVER scroll.
+  // URL hash updates via replaceState so deep links work and the back button
+  // doesn't trigger a scroll-to-anchor (which is the entire bug we're fixing).
+  function showPanel(slug, opts = { updateHash: true }) {
     document.querySelectorAll('.program-card').forEach((card) => {
-      const href = card.getAttribute('href');
-      card.classList.toggle('card-active', href === hash);
+      const isActive = card.getAttribute('data-tab') === slug;
+      card.classList.toggle('card-active', isActive);
+      card.setAttribute('aria-selected', isActive ? 'true' : 'false');
     });
+    document.querySelectorAll('.panel').forEach((panel) => {
+      const isActive = panel.getAttribute('data-panel') === slug;
+      panel.classList.toggle('panel-visible', isActive);
+      panel.setAttribute('aria-hidden', isActive ? 'false' : 'true');
+    });
+    if (opts.updateHash && window.location.hash !== `#${slug}`) {
+      // replaceState avoids both browser scroll AND a history entry per click.
+      history.replaceState(null, '', `#${slug}`);
+    }
   }
-  window.addEventListener('hashchange', updateTabs);
-  document.addEventListener('DOMContentLoaded', updateTabs);
+
+  function init() {
+    document.querySelectorAll('.program-card').forEach((card) => {
+      card.addEventListener('click', (e) => {
+        e.preventDefault();
+        const slug = card.getAttribute('data-tab');
+        if (slug) showPanel(slug);
+      });
+    });
+    // Honor deep links on load (e.g. /academics#matar)
+    const initial = window.location.hash.replace(/^#/, '');
+    if (initial && document.querySelector(`[data-panel="${initial}"]`)) {
+      showPanel(initial, { updateHash: false });
+    }
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', init);
+  } else {
+    init();
+  }
 </script>
 
 <style>
@@ -182,18 +241,16 @@ const programLd = programs.map((p) => ({
     padding-top: 0.4rem;
   }
 
-  .programs {
-    padding: 0 0 4rem;
-  }
+  .programs { padding: 0 0 4rem; }
 
-  /* Program selector, clickable cards modeled on the homepage pillars.
-     Image on top, name + tagline + arrow CTA below. Active card has a
-     strong teal accent so the current selection is unmistakable. */
+  /* Card selectors. Buttons (not links) so click never triggers a navigation. */
   .program-cards {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     gap: 1.25rem;
     margin-bottom: 2.5rem;
+    list-style: none;
+    padding: 0;
   }
 
   .program-card {
@@ -205,6 +262,10 @@ const programLd = programs.map((p) => ({
     overflow: hidden;
     text-decoration: none;
     color: inherit;
+    text-align: start;
+    cursor: pointer;
+    font: inherit;
+    padding: 0;
     transition: transform 0.2s, box-shadow 0.2s, border-color 0.2s;
   }
 
@@ -212,12 +273,9 @@ const programLd = programs.map((p) => ({
     transform: translateY(-3px);
     box-shadow: var(--shadow-md);
     border-color: var(--huji-teal-light);
-    text-decoration: none;
   }
 
-  .program-card:hover .arrow {
-    transform: translateX(3px);
-  }
+  .program-card:hover .arrow { transform: translateX(3px); }
 
   .card-img {
     aspect-ratio: 4/3;
@@ -260,17 +318,12 @@ const programLd = programs.map((p) => ({
     color: var(--text-muted);
   }
 
-  .arrow {
-    color: var(--text-muted);
-    transition: transform 0.15s;
-  }
+  .arrow { color: var(--text-muted); transition: transform 0.15s; }
 
-  /* Active state, current program. Strong teal accent on every visible edge. */
   .card-active {
     border-color: var(--huji-teal);
     box-shadow: 0 0 0 1px var(--huji-teal), var(--shadow-md);
   }
-
   .card-active .card-name { color: var(--huji-teal-dark); }
   .card-active .card-cta { color: var(--huji-teal); }
   .card-active .arrow { color: var(--huji-teal); }
@@ -282,19 +335,11 @@ const programLd = programs.map((p) => ({
   }
   .card-active .cta-label { color: var(--huji-teal); }
 
-  /* Tabbed panels: only the targeted one is shown.
-     The first panel shows by default when nothing is targeted. */
+  /* JS controls visibility. No :target. No scroll. */
   .panel { display: none; }
-  .panel:target { display: block; }
-  .panel-default { display: block; }
-  .panels:has(.panel:target) .panel-default:not(:target) { display: none; }
+  .panel-visible { display: block; }
 
-  /* Smooth scroll into view but don't fly past the sticky header. */
-  .panel { scroll-margin-top: 2rem; }
-
-  .panel-header {
-    margin-bottom: 1.75rem;
-  }
+  .panel-header { margin-bottom: 1.5rem; }
 
   .panel-eyebrow {
     font-size: 0.78rem;
@@ -325,15 +370,49 @@ const programLd = programs.map((p) => ({
     line-height: 1.6;
   }
 
+  /* Quick-facts chips: small pills with a quiet label and a stronger value. */
+  .highlights {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    list-style: none;
+    padding: 0;
+    margin: 0 0 1.75rem;
+  }
+
+  .highlight-chip {
+    display: inline-flex;
+    align-items: baseline;
+    gap: 0.4rem;
+    padding: 0.4rem 0.8rem;
+    background: var(--huji-teal-light);
+    border-radius: 999px;
+    font-size: 0.8rem;
+    line-height: 1;
+  }
+
+  .highlight-label {
+    color: var(--text-muted);
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    font-size: 0.7rem;
+  }
+
+  .highlight-value {
+    color: var(--huji-teal-dark);
+    font-weight: 600;
+  }
+
   .panel-body {
     max-width: 760px;
     color: var(--text-primary);
   }
 
   .panel-body :global(h2) {
-    font-size: 1.2rem;
+    font-size: 1.15rem;
     font-weight: 700;
-    margin-top: 1.75rem;
+    margin-top: 1.5rem;
     margin-bottom: 0.6rem;
     color: var(--text-primary);
   }
@@ -341,20 +420,66 @@ const programLd = programs.map((p) => ({
   .panel-body :global(p) {
     font-size: 0.95rem;
     color: var(--text-secondary);
-    line-height: 1.8;
+    line-height: 1.75;
     margin-bottom: 0.9rem;
   }
+
+  .panel-body :global(ul) {
+    margin: 0.6rem 0 1rem;
+    padding-inline-start: 1.25rem;
+  }
+
+  .panel-body :global(li) {
+    font-size: 0.92rem;
+    color: var(--text-secondary);
+    line-height: 1.7;
+    margin-bottom: 0.45rem;
+  }
+
+  .panel-body :global(li strong) { color: var(--text-primary); }
 
   .panel-body :global(strong) { color: var(--text-primary); font-weight: 600; }
 
   .panel-body :global(blockquote) {
-    border-inline-start: 3px solid var(--border);
+    border-inline-start: 3px solid var(--huji-teal);
     background: var(--bg-secondary);
     padding: 0.85rem 1.1rem;
     border-radius: var(--radius);
     margin: 1rem 0;
     font-size: 0.9rem;
     color: var(--text-secondary);
+    font-style: italic;
+  }
+
+  /* Boxed callouts: visual breakpoint between body prose and the "who/after" pair. */
+  .callout-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+    margin: 1.75rem 0 0;
+  }
+
+  .callout {
+    padding: 1.1rem 1.2rem;
+    background: var(--bg-secondary);
+    border-radius: var(--radius);
+    border-inline-start: 3px solid var(--huji-teal);
+  }
+
+  .callout-title {
+    font-size: 0.78rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--huji-teal-dark);
+    margin: 0 0 0.4rem;
+  }
+
+  .callout p {
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+    line-height: 1.7;
+    margin: 0;
   }
 
   .panel-footer {
@@ -377,25 +502,19 @@ const programLd = programs.map((p) => ({
     font-size: 0.9rem;
     transition: background 0.15s;
   }
-
-  .cta-button:hover {
-    background: var(--huji-teal);
-    text-decoration: none;
-  }
+  .cta-button:hover { background: var(--huji-teal); text-decoration: none; }
 
   .cta-link {
     font-size: 0.88rem;
     color: var(--huji-teal);
     text-decoration: none;
   }
-
-  .cta-link:hover {
-    text-decoration: underline;
-  }
+  .cta-link:hover { text-decoration: underline; }
 
   @media (max-width: 900px) {
     .program-cards { grid-template-columns: 1fr; gap: 0.9rem; }
     .card-img { aspect-ratio: 16/9; }
+    .callout-grid { grid-template-columns: 1fr; }
   }
 
   @media (max-width: 768px) {
