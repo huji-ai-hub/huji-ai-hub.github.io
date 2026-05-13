@@ -1,5 +1,6 @@
 ---
 import { getCollection } from 'astro:content';
+import { FIELDS } from '../data/fields';
 
 interface Props {
   title: string;
@@ -82,17 +83,24 @@ const educationChildren = programsForNav.map((p) => ({
   description: isHe ? p.taglineHe : p.tagline,
 }));
 
+// Build the Research dropdown children from the 8 fields.
+const researchChildren = FIELDS.map((f) => ({
+  href: `${prefix}/research/${f.slug}`,
+  label: isHe ? f.titleHe : f.title,
+  description: isHe ? f.subtitleHe : f.subtitle,
+}));
+
 const navItems = isHe
   ? [
       { href: '/he', label: 'ראשי' },
-      { href: '/he/research', label: 'מחקר' },
+      { href: '/he/research', label: 'מחקר', children: researchChildren },
       { href: '/he/academics', label: 'לימודים', children: educationChildren },
       { href: '/he/industry', label: 'תעשייה' },
       { href: '/he/faculty', label: 'סגל' },
     ]
   : [
       { href: '/', label: 'Home' },
-      { href: '/research', label: 'Research' },
+      { href: '/research', label: 'Research', children: researchChildren },
       { href: '/academics', label: 'Education', children: educationChildren },
       { href: '/industry', label: 'Industry' },
       { href: '/faculty', label: 'Faculty' },
