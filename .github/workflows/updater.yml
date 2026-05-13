@@ -1,0 +1,59 @@
+name: Updater bot
+
+# IMPORTANT: this workflow lives under updater-bot/.github/workflows/ in the
+# scaffold so it doesn't fire before Ella's reviewed it. Move to repo-root
+# .github/workflows/updater.yml to activate. See updater-bot/README.md §2g.
+
+on:
+  schedule:
+    # Mondays at 03:00 UTC.
+    - cron: "0 3 * * 1"
+  workflow_dispatch:
+
+# Only one updater run at a time — second run waits or skips.
+concurrency:
+  group: updater-bot
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Check out repo
+        uses: actions/checkout@v4
+        with:
+          # Need a writable token + full history so we can branch/push.
+          token: ${{ secrets.BOT_GITHUB_TOKEN }}
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version-file: updater-bot/.python-version
+          cache: pip
+
+      - name: Install dependencies
+        working-directory: updater-bot
+        run: |
+          python -m pip install --upgrade pip
+          pip install -e .
+
+      - name: Run updater bot
+        working-directory: updater-bot
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          BOT_GITHUB_TOKEN: ${{ secrets.BOT_GITHUB_TOKEN }}
+          LOG_FORMAT: text
+        run: python main.py
+
+      - name: Upload recovery artifact (if PR creation failed)
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: updater-bot-last-run
+          path: updater-bot/state/last-run-artifact.json
+          if-no-files-found: ignore
