@@ -68,20 +68,27 @@ enabled = false
 url = "https://new.huji.ac.il/en/page/ai"
 max_items = 15
 
-# Hebrew main HUJI news index. Confirmed scrapeable (returns ~110KB HTML).
-# Some article links are JS-hydrated so the bot only sees a subset, but the
-# substantive ones come through and the LLM filter handles the rest.
+# HUJI main news, via sitemap.xml + per-article OG metadata extraction.
+# The article HTML pages themselves are JS-hydrated (no body content in static
+# HTML), but every article exposes Open Graph tags server-side: og:title,
+# og:description, og:image, og:url. That's enough for the bot to propose a
+# news card; the link in the card sends readers to the original article for
+# the full read.
+#
+# Sitemap.xml is server-rendered XML, never JS-hydrated, so it's a reliable
+# index. The scraper walks /news/ URLs sorted by lastmod descending.
 [sources.huji_main_news_he]
 enabled = true
-url = "https://new.huji.ac.il/%D7%97%D7%93%D7%A9%D7%95%D7%AA-0"
-max_items = 20
+url = "https://new.huji.ac.il/sitemap.xml"
+max_items = 10
 
-# Yissum, HUJI's tech-transfer arm. Their /news page is rich with deal
-# announcements, AI/ML startup news, and university-industry partnerships
-# directly relevant to the Hub audience.
+# Yissum (HUJI's tech-transfer arm) via WordPress RSS.
+# RSS endpoints are designed for crawlers and aren't gated by Cloudflare's
+# anti-bot wall. Each item already has a clean title, link, summary, and
+# pubDate. No HTML scraping fragility, no JS hydration issues.
 [sources.yissum]
 enabled = true
-url = "https://www.yissum.co.il/news/"
+url = "https://www.yissum.co.il/rss"
 max_items = 25
 
 [sources.faculty_personal]
