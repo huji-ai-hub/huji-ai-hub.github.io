@@ -44,20 +44,52 @@ max_retries = 3
 # Override `url` to point at a different page if HUJI moves things.
 # ---------------------------------------------------------------------------
 
+# DISABLED. cs.huji.ac.il sits behind an F5 BIG-IP JavaScript challenge that
+# requires a real browser to solve. The httpx-based scraper gets a redirect /
+# challenge page instead of the roster, so leave off until we either (a) move
+# to a headless-browser scraper (Playwright) or (b) get an API contract from
+# Shai. Re-enable here after either of those.
 [sources.huji_cs_faculty]
-enabled = true
+enabled = false
 url = "https://www.cs.huji.ac.il/people/faculty"
 
+# DISABLED. Same F5 anti-bot wall as huji_cs_faculty.
 [sources.huji_cs_news]
-enabled = true
+enabled = false
 url = "https://www.cs.huji.ac.il/news"
-# How many news items to consider per run.
 max_items = 25
 
+# DISABLED. The English HUJI marketing page (`/en/page/ai`) is also gated by
+# the same anti-bot challenge in our test runs. We'd be paying LLM tokens to
+# classify nothing. The Hebrew main news page (huji_main_news_he, below) is
+# our working substitute.
 [sources.huji_main_ai_news]
-enabled = true
+enabled = false
 url = "https://new.huji.ac.il/en/page/ai"
 max_items = 15
+
+# HUJI main news, via sitemap.xml + per-article OG metadata extraction.
+# The article HTML pages themselves are JS-hydrated (no body content in static
+# HTML), but every article exposes Open Graph tags server-side: og:title,
+# og:description, og:image, og:url. That's enough for the bot to propose a
+# news card; the link in the card sends readers to the original article for
+# the full read.
+#
+# Sitemap.xml is server-rendered XML, never JS-hydrated, so it's a reliable
+# index. The scraper walks /news/ URLs sorted by lastmod descending.
+[sources.huji_main_news_he]
+enabled = true
+url = "https://new.huji.ac.il/sitemap.xml"
+max_items = 10
+
+# Yissum (HUJI's tech-transfer arm) via WordPress RSS.
+# RSS endpoints are designed for crawlers and aren't gated by Cloudflare's
+# anti-bot wall. Each item already has a clean title, link, summary, and
+# pubDate. No HTML scraping fragility, no JS hydration issues.
+[sources.yissum]
+enabled = true
+url = "https://www.yissum.co.il/rss"
+max_items = 25
 
 [sources.faculty_personal]
 # Per-faculty personal site checker — uses each faculty .md file's `website` field.

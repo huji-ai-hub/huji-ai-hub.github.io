@@ -1,0 +1,194 @@
+---
+import Base from '../../../layouts/Base.astro';
+import { getCollection } from 'astro:content';
+import { marked } from 'marked';
+
+marked.setOptions({ gfm: true, breaks: false });
+
+export async function getStaticPaths() {
+  const items = await getCollection('news');
+  return items.map((item) => ({
+    params: { slug: item.data.slug },
+    props: { item },
+  }));
+}
+
+const { item } = Astro.props;
+const bodyHtml = marked.parse(item.data.bodyHe ?? '');
+
+const formatted = item.data.date.toLocaleDateString('he-IL', {
+  year: 'numeric', month: 'long', day: 'numeric',
+});
+
+const pageTitle = item.data.seoTitleHe || `${item.data.titleHe} | מרכז AI האוניברסיטה העברית`;
+const pageDescription = item.data.seoDescriptionHe;
+const heroImage = item.data.image || '/images/pexels-googledeepmind-17483874.jpg';
+
+const newsLd = {
+  '@context': 'https://schema.org',
+  '@type': 'NewsArticle',
+  headline: item.data.titleHe,
+  alternativeHeadline: item.data.title,
+  description: item.data.seoDescriptionHe,
+  image: new URL(heroImage, Astro.site).toString(),
+  datePublished: item.data.date.toISOString(),
+  inLanguage: 'he',
+  isAccessibleForFree: true,
+  author: {
+    '@type': 'Organization',
+    name: 'מרכז ה-AI של האוניברסיטה העברית',
+    url: Astro.site?.toString(),
+  },
+  publisher: {
+    '@type': 'CollegeOrUniversity',
+    name: 'האוניברסיטה העברית בירושלים',
+    url: 'https://new.huji.ac.il/',
+    logo: {
+      '@type': 'ImageObject',
+      url: new URL('/favicon.svg', Astro.site).toString(),
+    },
+  },
+  mainEntityOfPage: {
+    '@type': 'WebPage',
+    '@id': new URL(`/he/news/${item.data.slug}`, Astro.site).toString(),
+  },
+  ...(item.data.sourceUrl ? { isBasedOn: item.data.sourceUrl } : {}),
+  ...(item.data.keywordsHe && item.data.keywordsHe.length > 0
+    ? { keywords: item.data.keywordsHe.join(', ') }
+    : {}),
+};
+---
+
+<Base title={pageTitle} description={pageDescription} image={heroImage} pageType="article" lang="he">
+  <script type="application/ld+json" set:html={JSON.stringify(newsLd)} />
+
+  <article class="news-article">
+    <div class="container">
+      <p class="article-eyebrow">
+        <a href="/he/news">חדשות</a>
+        <span class="sep">/</span>
+        <time datetime={item.data.date.toISOString()}>{formatted}</time>
+      </p>
+      <h1>{item.data.titleHe}</h1>
+      <p class="article-summary">{item.data.summaryHe}</p>
+
+      {item.data.image && (
+        <div class="article-hero" style={`background-image: url('${item.data.image}');`}></div>
+      )}
+
+      <div class="article-body" set:html={bodyHtml}></div>
+
+      {item.data.sourceUrl && item.data.sourceName && (
+        <p class="article-source">
+          דווח במקור על ידי{' '}
+          <a href={item.data.sourceUrl} target="_blank" rel="noopener">{item.data.sourceName} ↗</a>
+        </p>
+      )}
+
+      {item.data.tags && item.data.tags.length > 0 && (
+        <ul class="article-tags" aria-label="תגיות">
+          {item.data.tags.map((t) => <li>{t}</li>)}
+        </ul>
+      )}
+
+      <p class="article-back"><a href="/he/news">← חזרה לכל החדשות</a></p>
+    </div>
+  </article>
+</Base>
+
+<style>
+  .news-article { padding: 2.5rem 0 4rem; }
+
+  .article-eyebrow {
+    font-size: 0.82rem;
+    color: var(--text-muted);
+    margin-bottom: 0.6rem;
+  }
+  .article-eyebrow a { color: var(--text-muted); font-weight: 500; }
+  .article-eyebrow a:hover { color: var(--huji-teal); }
+  .article-eyebrow .sep { margin: 0 0.4rem; }
+
+  .news-article h1 {
+    font-size: 2rem;
+    font-weight: 700;
+    line-height: 1.3;
+    margin-bottom: 0.75rem;
+    max-width: 760px;
+  }
+
+  .article-summary {
+    font-size: 1.05rem;
+    color: var(--text-secondary);
+    line-height: 1.8;
+    margin-bottom: 1.75rem;
+    max-width: 720px;
+  }
+
+  .article-hero {
+    aspect-ratio: 16/7;
+    border-radius: var(--radius);
+    background-size: cover;
+    background-position: center;
+    margin-bottom: 2rem;
+  }
+
+  .article-body {
+    max-width: 720px;
+    color: var(--text-primary);
+  }
+
+  .article-body :global(h2) {
+    font-size: 1.2rem;
+    font-weight: 700;
+    margin-top: 1.75rem;
+    margin-bottom: 0.6rem;
+  }
+
+  .article-body :global(p) {
+    font-size: 0.98rem;
+    color: var(--text-secondary);
+    line-height: 1.95;
+    margin-bottom: 1rem;
+  }
+
+  .article-body :global(ul), .article-body :global(ol) {
+    padding-inline-start: 1.2rem;
+    margin: 0.6rem 0 1rem;
+  }
+  .article-body :global(li) {
+    font-size: 0.95rem;
+    color: var(--text-secondary);
+    line-height: 1.85;
+    margin-bottom: 0.4rem;
+  }
+
+  .article-source {
+    margin-top: 2rem;
+    padding-top: 1.25rem;
+    border-top: 1px solid var(--border-light);
+    font-size: 0.88rem;
+    color: var(--text-muted);
+  }
+
+  .article-tags {
+    list-style: none;
+    padding: 0;
+    margin: 1.25rem 0 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+  }
+  .article-tags li {
+    font-size: 0.72rem;
+    padding: 0.25rem 0.6rem;
+    background: var(--huji-teal-light);
+    color: var(--huji-teal-dark);
+    border-radius: 999px;
+    font-weight: 500;
+  }
+
+  .article-back {
+    margin-top: 2.5rem;
+    font-size: 0.9rem;
+  }
+</style>

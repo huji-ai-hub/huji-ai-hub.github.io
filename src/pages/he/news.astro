@@ -1,0 +1,129 @@
+---
+import Base from '../../layouts/Base.astro';
+import { getCollection } from 'astro:content';
+
+const items = (await getCollection('news'))
+  .sort((a, b) => b.data.date.getTime() - a.data.date.getTime());
+
+const pageTitle = 'חדשות | מרכז AI האוניברסיטה העברית';
+const pageDescription =
+  'חדשות ועדכונים ממרכז ה-AI באוניברסיטה העברית בירושלים: תוכניות לימוד חדשות, מחקרים של חברי סגל, שיתופי פעולה עם תעשייה והודעות העברת ידע בתחום הבינה המלאכותית.';
+
+function formatDateHe(d: Date): string {
+  return d.toLocaleDateString('he-IL', { year: 'numeric', month: 'short', day: 'numeric' });
+}
+---
+
+<Base title={pageTitle} description={pageDescription} lang="he">
+  <section class="hero-text">
+    <div class="container">
+      <h1>חדשות</h1>
+      <p>עדכונים ממרכז ה-AI: תוכניות לימוד חדשות, מחקרים של חברי סגל, עסקאות תעשייה.</p>
+    </div>
+  </section>
+
+  <section class="news-list">
+    <div class="container">
+      {items.length === 0 ? (
+        <p class="empty">אין פריטים עדיין.</p>
+      ) : (
+        <ul class="cards" role="list">
+          {items.map((n) => (
+            <li class="card">
+              <a href={`/he/news/${n.data.slug}`} class="card-link">
+                {n.data.image && (
+                  <div class="card-img" style={`background-image: url('${n.data.image}');`}></div>
+                )}
+                <div class="card-body">
+                  <p class="card-date">{formatDateHe(n.data.date)}</p>
+                  <h2 class="card-title">{n.data.titleHe}</h2>
+                  <p class="card-summary">{n.data.summaryHe}</p>
+                  {n.data.sourceName && (
+                    <p class="card-source">מקור: {n.data.sourceName}</p>
+                  )}
+                </div>
+              </a>
+            </li>
+          ))}
+        </ul>
+      )}
+    </div>
+  </section>
+</Base>
+
+<style>
+  .hero-text { padding: 3rem 0 2rem; }
+  .hero-text h1 { font-size: 2.2rem; font-weight: 700; line-height: 1.3; margin-bottom: 0.6rem; }
+  .hero-text p {
+    font-size: 0.98rem;
+    color: var(--text-secondary);
+    line-height: 1.85;
+    max-width: 620px;
+  }
+
+  .news-list { padding: 1rem 0 4rem; }
+  .empty { color: var(--text-muted); font-size: 0.95rem; }
+
+  .cards {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 1.5rem;
+  }
+
+  .card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    overflow: hidden;
+    transition: transform 0.2s, box-shadow 0.2s, border-color 0.2s;
+  }
+  .card:hover {
+    transform: translateY(-3px);
+    box-shadow: var(--shadow-md);
+    border-color: var(--huji-teal-light);
+  }
+
+  .card-link { display: block; color: inherit; text-decoration: none; }
+  .card-link:hover { text-decoration: none; }
+
+  .card-img {
+    aspect-ratio: 16/9;
+    background-size: cover;
+    background-position: center;
+    background-color: var(--bg-secondary);
+  }
+
+  .card-body { padding: 1rem 1.1rem 1.1rem; }
+
+  .card-date {
+    font-size: 0.78rem;
+    color: var(--text-muted);
+    margin-bottom: 0.35rem;
+    font-weight: 500;
+    letter-spacing: 0.02em;
+  }
+
+  .card-title {
+    font-size: 1.02rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    line-height: 1.4;
+    margin-bottom: 0.45rem;
+  }
+
+  .card-summary {
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    line-height: 1.7;
+    margin-bottom: 0.5rem;
+  }
+
+  .card-source {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    margin-top: 0.4rem;
+  }
+</style>

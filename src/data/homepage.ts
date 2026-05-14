@@ -9,14 +9,6 @@ export interface PillarCard {
   image: string;
 }
 
-export interface NewsCard {
-  href: string;
-  hrefHe: string;
-  label: string;
-  labelHe: string;
-  image: string;
-}
-
 export const HOMEPAGE = {
   heroImage: '/images/pexels-googledeepmind-17483874.jpg',
 
@@ -69,23 +61,8 @@ export const HOMEPAGE = {
     ctaHrefHe: '/he/academics',
   },
 
+  // Section heading on the homepage. The actual cards now come from the
+  // `news` content collection, filtered to `featured: true`.
   newsTitle: 'Latest in AI at Hebrew University',
   newsTitleHe: 'חדש ב-AI באוניברסיטה העברית',
-
-  news: [
-    {
-      href: '/academics',
-      hrefHe: '/he/academics',
-      label: 'CS AI Program',
-      labelHe: 'תוכנית AI במדעי המחשב',
-      image: '/images/pexels-googledeepmind-25626519.jpg',
-    },
-    {
-      href: '/academics',
-      hrefHe: '/he/academics',
-      label: 'New Course: Programming with AI Agents',
-      labelHe: 'קורס חדש: תכנות עם סוכני AI',
-      image: '/images/pexels-googledeepmind-18069241.jpg',
-    },
-  ] satisfies NewsCard[],
 };

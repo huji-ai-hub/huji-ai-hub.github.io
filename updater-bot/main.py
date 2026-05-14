@@ -22,7 +22,7 @@ from src.llm.provider import LLMProvider
 from src.proposals import applier, builder
 from src.proposals.models import Proposal
 from src.scrapers import ScrapeResult
-from src.scrapers import faculty_personal, faculty_scholar, huji_cs_news, huji_main_news
+from src.scrapers import faculty_personal, faculty_scholar, huji_cs_news, huji_main_news, yissum
 from src.site import faculty as faculty_io
 from src.site.content_paths import ContentPaths
 from src.state import Manifest
@@ -100,6 +100,13 @@ def main() -> int:
     proposals = builder.build_from_scrapes(
         scrape_results, faculty_list, llm, manifest, cfg.review
     )
+    # News pipeline: emits new files under src/content/news/ from scraped sources.
+    available_images = _list_available_images(REPO_ROOT)
+    proposals += builder.build_news_proposals(
+        scrape_results, llm, manifest, cfg.review,
+        available_images=available_images,
+        max_drafts=3,
+    )
     proposals += builder.build_from_findings(findings, llm)
     proposals = builder.cap_to_limit(proposals, cfg.review.max_changes_per_pr)
     log.info("built %d proposals after LLM filtering and cap", len(proposals))
@@ -167,17 +174,36 @@ def run_scrapers(cfg: Config, faculty_list) -> list[ScrapeResult]:
     results: list[ScrapeResult] = []
     src = cfg.sources
 
+    # huji_cs_news: legacy, only runs if explicitly re-enabled in config (the
+    # CS school site is currently behind an F5 BIG-IP JS challenge, so the
+    # scraper returns empty until that changes).
     if src.get("huji_cs_news") and src["huji_cs_news"].enabled:
         try:
             results.append(huji_cs_news.scrape(src["huji_cs_news"]))
         except Exception as e:
             log.error("huji_cs_news scraper crashed: %s", e)
 
+    # huji_main_ai_news: legacy English page, also blocked. Off by default.
     if src.get("huji_main_ai_news") and src["huji_main_ai_news"].enabled:
         try:
-            results.append(huji_main_news.scrape(src["huji_main_ai_news"]))
+            results.append(huji_main_news.scrape("huji_main_ai_news", src["huji_main_ai_news"]))
         except Exception as e:
-            log.error("huji_main_news scraper crashed: %s", e)
+            log.error("huji_main_ai_news scraper crashed: %s", e)
+
+    # huji_main_news_he: Hebrew main HUJI news page. Returns less than the JS
+    # version but pulls real internal article URLs we can hand to the LLM.
+    if src.get("huji_main_news_he") and src["huji_main_news_he"].enabled:
+        try:
+            results.append(huji_main_news.scrape("huji_main_news_he", src["huji_main_news_he"]))
+        except Exception as e:
+            log.error("huji_main_news_he scraper crashed: %s", e)
+
+    # yissum: HUJI's tech-transfer arm. Real news + LinkedIn-embed deal copy.
+    if src.get("yissum") and src["yissum"].enabled:
+        try:
+            results.append(yissum.scrape(src["yissum"]))
+        except Exception as e:
+            log.error("yissum scraper crashed: %s", e)
 
     if src.get("faculty_personal") and src["faculty_personal"].enabled:
         try:
@@ -197,6 +223,18 @@ def run_scrapers(cfg: Config, faculty_list) -> list[ScrapeResult]:
         else:
             log.warning("scraper %s: error: %s", r.source_id, r.error)
     return results
+
+
+def _list_available_images(repo_root: Path) -> list[str]:
+    """Return public image paths the bot can suggest as news hero images."""
+    images_dir = repo_root / "public" / "images"
+    if not images_dir.exists():
+        return []
+    return sorted(
+        f"/images/{p.name}"
+        for p in images_dir.iterdir()
+        if p.is_file() and p.suffix.lower() in {".jpg", ".jpeg", ".png", ".webp"}
+    )
 
 
 def run_checkers(cfg: Config, faculty_list, paths: ContentPaths):

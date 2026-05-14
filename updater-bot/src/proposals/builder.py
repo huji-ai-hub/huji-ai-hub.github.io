@@ -4,17 +4,32 @@ from __future__ import annotations
 
 import hashlib
 import logging
+import re
+from datetime import datetime, timezone
 from pathlib import Path
+
+import yaml
 
 from ..checkers import Finding
 from ..config import ReviewConfig
-from ..llm.provider import LLMProvider
+from ..llm.provider import LLMProvider, NewsDraft
 from ..scrapers import ScrapedItem, ScrapeResult
 from ..site.faculty import FacultyEntry
 from ..state import Manifest
 from .models import Proposal
 
 log = logging.getLogger(__name__)
+
+# Source IDs that should be routed through the news pipeline (not the
+# faculty-bio pipeline). Anything not in here is ignored by build_news_proposals.
+NEWS_SOURCE_IDS = {"yissum", "huji_main_news_he", "huji_main_ai_news"}
+
+# Source-id -> human display name for "Originally reported by" attribution.
+NEWS_SOURCE_LABELS = {
+    "yissum": "Yissum",
+    "huji_main_news_he": "HUJI News",
+    "huji_main_ai_news": "HUJI News",
+}
 
 
 def build_from_scrapes(
@@ -65,6 +80,200 @@ def build_from_scrapes(
             )
 
     return proposals
+
+
+def build_news_proposals(
+    scrape_results: list[ScrapeResult],
+    llm: LLMProvider,
+    manifest: Manifest,
+    review_cfg: ReviewConfig,
+    available_images: list[str] | None = None,
+    max_drafts: int = 3,
+) -> list[Proposal]:
+    """Find news-worthy scraped items and ask Claude to draft full bilingual cards.
+
+    Pipeline:
+    1. Filter to scrape sources flagged as news (NEWS_SOURCE_IDS).
+    2. Skip items already seen (manifest dedupe).
+    3. Cheap LLM classifier per item: is_newsworthy?
+    4. Sort surviving items by classifier confidence, take top max_drafts.
+    5. For each survivor, expensive LLM call to draft the full bilingual card.
+    6. Emit a `new_file` Proposal targeting src/content/news/<slug>.md.
+    """
+    proposals: list[Proposal] = []
+    images = available_images or []
+
+    # Step 1+2: collect candidate items across all news sources.
+    candidates: list[tuple[ScrapeResult, ScrapedItem]] = []
+    for sr in scrape_results:
+        if sr.source_id not in NEWS_SOURCE_IDS:
+            continue
+        if not sr.ok:
+            log.warning("news pipeline: skipping %s (error: %s)", sr.source_id, sr.error)
+            continue
+        for item in sr.items:
+            if not manifest.is_new(sr.source_id, item.id):
+                continue
+            candidates.append((sr, item))
+
+    if not candidates:
+        log.info("news pipeline: 0 candidates after dedupe")
+        return proposals
+
+    log.info("news pipeline: %d candidates to classify", len(candidates))
+
+    # Step 3: classify each candidate (cheap call).
+    scored: list[tuple[float, ScrapeResult, ScrapedItem, str]] = []
+    for sr, item in candidates:
+        try:
+            verdict = llm.classify_news_item(
+                title=item.title,
+                url=item.url,
+                content_snippet=item.content,
+                source_id=sr.source_id,
+            )
+        except Exception as e:
+            log.warning("news classify failed for %s/%s: %s", sr.source_id, item.id, e)
+            continue
+        if not verdict.is_newsworthy or verdict.confidence < review_cfg.min_confidence:
+            log.debug("news classify rejected %s (conf=%.2f, reason=%s)",
+                      item.url, verdict.confidence, verdict.reason)
+            continue
+        scored.append((verdict.confidence, sr, item, verdict.reason))
+
+    log.info("news pipeline: %d items survived classifier", len(scored))
+
+    # Step 4: top-N by confidence.
+    scored.sort(key=lambda x: x[0], reverse=True)
+    scored = scored[:max_drafts]
+
+    # Step 5+6: draft + build proposal for each survivor.
+    used_slugs: set[str] = set()
+    for confidence, sr, item, reason in scored:
+        try:
+            draft = llm.draft_news_card(
+                title=item.title,
+                url=item.url,
+                content_snippet=item.content,
+                source_id=sr.source_id,
+                source_name=NEWS_SOURCE_LABELS.get(sr.source_id, sr.source_id),
+                available_images=images,
+            )
+        except Exception as e:
+            log.warning("news draft failed for %s/%s: %s", sr.source_id, item.id, e)
+            continue
+
+        # Sanitize slug, ensure uniqueness within this run.
+        slug = _sanitize_slug(draft.slug)
+        if not slug:
+            log.warning("news draft for %s produced empty slug, skipping", item.url)
+            continue
+        # If slug collides with another draft this run, add a short suffix.
+        original_slug = slug
+        suffix = 2
+        while slug in used_slugs:
+            slug = f"{original_slug}-{suffix}"
+            suffix += 1
+        used_slugs.add(slug)
+        draft.slug = slug
+
+        markdown = _render_news_markdown(
+            draft=draft,
+            sourceUrl=item.url,
+            sourceName=NEWS_SOURCE_LABELS.get(sr.source_id, sr.source_id),
+        )
+
+        proposals.append(
+            Proposal(
+                source_id=sr.source_id,
+                item_id=item.id,
+                file_path=f"src/content/news/{slug}.md",
+                change_type="new_file",
+                old_content=None,
+                new_content=markdown,
+                reason=f"News pipeline: {reason}",
+                confidence=confidence,
+                raw_evidence={
+                    "scraped_url": item.url,
+                    "scraped_title": item.title,
+                    "draft_slug": slug,
+                    **item.meta,
+                },
+            )
+        )
+
+    log.info("news pipeline: produced %d proposals", len(proposals))
+    return proposals
+
+
+def _sanitize_slug(s: str) -> str:
+    """Force a slug to lowercase ASCII kebab-case. Strip anything else."""
+    s = s.lower().strip()
+    s = re.sub(r"[^a-z0-9-]+", "-", s)
+    s = re.sub(r"-+", "-", s).strip("-")
+    return s[:80]
+
+
+def _render_news_markdown(
+    draft: NewsDraft,
+    sourceUrl: str,
+    sourceName: str,
+) -> str:
+    """Build the full markdown file: YAML frontmatter + English body."""
+    today_iso = datetime.now(timezone.utc).strftime("%Y-%m-%d")
+
+    frontmatter: dict = {
+        "slug": draft.slug,
+        "title": _scrub(draft.title),
+        "titleHe": _scrub(draft.titleHe),
+        "summary": _scrub(draft.summary),
+        "summaryHe": _scrub(draft.summaryHe),
+        "date": today_iso,
+        "featured": False,
+        "tags": list(draft.tags or []),
+        "sourceUrl": sourceUrl,
+        "sourceName": sourceName,
+        "seoTitle": _scrub(draft.seoTitle),
+        "seoTitleHe": _scrub(draft.seoTitleHe),
+        "seoDescription": _scrub(draft.seoDescription),
+        "seoDescriptionHe": _scrub(draft.seoDescriptionHe),
+        "keywords": list(draft.keywords or []),
+        "keywordsHe": list(draft.keywordsHe or []),
+        "needsReview": True,
+        "needsReviewNote": "Bot-drafted from external source. Verify facts and translation before merging.",
+        "bodyHe": _scrub(draft.bodyHe),
+    }
+    if draft.image:
+        frontmatter["image"] = draft.image
+
+    yaml_block = yaml.safe_dump(
+        frontmatter,
+        sort_keys=False,
+        allow_unicode=True,
+        default_flow_style=False,
+        width=1000,
+    )
+
+    return f"---\n{yaml_block}---\n\n{_scrub(draft.body).strip()}\n"
+
+
+# Em dashes are forbidden anywhere in rendered site content (project rule).
+# Strip them defensively in case the model slipped one through.
+_EM_DASH_REPLACEMENTS = {
+    "—": ", ",   # em dash
+    "–": ", ",   # en dash (also forbidden as a workaround)
+    "--": ", ",  # double-hyphen workaround
+}
+
+
+def _scrub(s: str) -> str:
+    if not s:
+        return s
+    for bad, good in _EM_DASH_REPLACEMENTS.items():
+        s = s.replace(bad, good)
+    # Collapse any accidental ", , " sequences left over.
+    s = re.sub(r"(,\s*){2,}", ", ", s)
+    return s
 
 
 def build_from_findings(findings: list[Finding], llm: LLMProvider) -> list[Proposal]:

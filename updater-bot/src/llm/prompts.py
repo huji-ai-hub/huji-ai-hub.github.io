@@ -78,5 +78,93 @@ Change details:
 - Source: {source_id}
 - Reason: {reason}
 
-Reply with the commit-message line only — no quotes, no explanation.
+Reply with the commit-message line only. No quotes, no explanation.
+"""
+
+# News classifier: cheap yes/no on each scraped link.
+NEWS_CLASSIFY_TEMPLATE = """\
+Decide whether this scraped item is a real, news-worthy item suitable for the
+HUJI AI Hub website's news feed.
+
+News-worthy means: a substantive announcement, story, or update relevant to AI
+research, AI education, AI industry partnerships, faculty achievements, new
+courses or programs, grants, awards, or tech-transfer deals out of HUJI.
+
+NOT news-worthy: navigation links, generic page titles ("About", "Contact"),
+calls-to-action ("Read more", "Subscribe"), social media boilerplate,
+generic university announcements unrelated to AI / CS / research.
+
+SCRAPED ITEM:
+- Source: {source_id}
+- Title / link text: {title}
+- URL: {url}
+- Surrounding text snippet: {content_snippet}
+
+Reply with strict JSON, nothing else:
+{{
+  "is_newsworthy": true | false,
+  "confidence": 0.0-1.0,
+  "reason": "<one short sentence>"
+}}
+"""
+
+# News drafter: produces the full bilingual card.
+# IMPORTANT formatting rules baked into the prompt:
+# - No em dashes anywhere in rendered text (use commas, colons, parentheses)
+# - Both Hebrew and English required for every field
+# - Slug must be kebab-case, date-prefixed
+NEWS_DRAFT_TEMPLATE = """\
+Draft a complete bilingual news card for the HUJI AI Hub website based on the
+scraped item below.
+
+SCRAPED ITEM:
+- Source: {source_id} ({source_name})
+- Title / link text: {title}
+- URL: {url}
+- Snippet: {content_snippet}
+
+Today's date: {today}
+
+REQUIREMENTS (read carefully):
+1. Output BOTH English and Hebrew for every field. Translate honestly. If the
+   source is Hebrew, write the English; if the source is English, write the Hebrew.
+2. NEVER use em dashes (—). Use commas, colons, parentheses, or restart the
+   sentence. Em dashes are an absolute no.
+3. Slug: kebab-case, date-prefixed. Format: {today}-<short-keywords>. Example:
+   {today}-yissum-ai-startup-deal. Lowercase ASCII, hyphens only.
+4. Title: under 80 chars. Headline-style, no clickbait.
+5. Summary: 1 to 2 lines (under 200 chars). What happened + why it matters.
+6. Body: 2 to 4 short paragraphs, plain markdown. Be factual, no marketing
+   hype. Don't invent facts beyond what the snippet supports. If detail is
+   missing, keep the body short and add a "needsReview" flag mentally (the
+   editor will flesh it out).
+7. SEO: seoTitle ends with " | HUJI AI Hub" (English) or " | מרכז AI האוניברסיטה העברית" (Hebrew).
+   seoDescription is 130-180 chars, includes keywords naturally.
+8. Keywords: 3-5 short search phrases the audience would actually type.
+9. Tags: 1-3 lowercase kebab-case tags from this list when fits: faculty,
+   research, industry, academics, grant, award, new-course, partnership,
+   tech-transfer, student-life. Add others if needed.
+10. Image: pick one from this list, or null if none fits. Pick by topical
+    relevance (deep-learning visuals for ML stories, classroom shots for
+    education stories, generic if nothing matches better):
+{available_images}
+
+Reply with strict JSON only, this exact shape, no preamble:
+{{
+  "slug": "string",
+  "title": "string",
+  "titleHe": "string",
+  "summary": "string",
+  "summaryHe": "string",
+  "body": "string (markdown, multiple paragraphs OK)",
+  "bodyHe": "string (markdown, multiple paragraphs OK)",
+  "seoTitle": "string",
+  "seoTitleHe": "string",
+  "seoDescription": "string",
+  "seoDescriptionHe": "string",
+  "keywords": ["string", ...],
+  "keywordsHe": ["string", ...],
+  "tags": ["string", ...],
+  "image": "string or null"
+}}
 """

@@ -1,6 +1,11 @@
 ---
 import Base from '../../layouts/Base.astro';
+import { getCollection } from 'astro:content';
 import { HOMEPAGE } from '../../data/homepage';
+
+const featuredNews = (await getCollection('news', (n) => n.data.featured))
+  .sort((a, b) => b.data.date.getTime() - a.data.date.getTime())
+  .slice(0, 3);
 ---
 
 <Base
@@ -52,13 +57,18 @@ import { HOMEPAGE } from '../../data/homepage';
 
   <section class="news">
     <div class="container">
-      <h2>{HOMEPAGE.newsTitleHe}</h2>
+      <div class="news-head">
+        <h2>{HOMEPAGE.newsTitleHe}</h2>
+        <a href="/he/news" class="news-all">כל החדשות ←</a>
+      </div>
       <div class="news-grid">
-        {HOMEPAGE.news.map(n => (
-          <a href={n.hrefHe} class="news-card">
-            <div class="news-img" style={`background-image: url('${n.image}');`}></div>
+        {featuredNews.map(n => (
+          <a href={`/he/news/${n.data.slug}`} class="news-card">
+            {n.data.image && (
+              <div class="news-img" style={`background-image: url('${n.data.image}');`}></div>
+            )}
             <div class="news-label">
-              <span>{n.labelHe}</span>
+              <span>{n.data.titleHe}</span>
               <span class="arrow">←</span>
             </div>
           </a>
@@ -191,12 +201,25 @@ import { HOMEPAGE } from '../../data/homepage';
 
   .news { background: var(--bg-secondary); padding: 3.5rem 0; }
 
+  .news-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    margin-bottom: 1.5rem;
+  }
+
   .news h2 {
     font-size: 1.4rem;
     font-weight: 700;
-    margin-bottom: 1.5rem;
     color: var(--text-primary);
   }
+
+  .news-all {
+    font-size: 0.85rem;
+    color: var(--huji-teal);
+    font-weight: 500;
+  }
+  .news-all:hover { text-decoration: underline; }
 
   .news-grid {
     display: grid;

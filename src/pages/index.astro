@@ -1,6 +1,14 @@
 ---
 import Base from '../layouts/Base.astro';
+import { getCollection } from 'astro:content';
 import { HOMEPAGE } from '../data/homepage';
+
+// Featured news items live in the `news` content collection.
+// Editors add a new file under src/content/news/ with `featured: true` to surface it here.
+// Bot-generated items land as PRs and only show on the homepage once a human flips the flag.
+const featuredNews = (await getCollection('news', (n) => n.data.featured))
+  .sort((a, b) => b.data.date.getTime() - a.data.date.getTime())
+  .slice(0, 3);
 ---
 
 <Base
@@ -51,13 +59,18 @@ import { HOMEPAGE } from '../data/homepage';
 
   <section class="news">
     <div class="container">
-      <h2>{HOMEPAGE.newsTitle}</h2>
+      <div class="news-head">
+        <h2>{HOMEPAGE.newsTitle}</h2>
+        <a href="/news" class="news-all">All news →</a>
+      </div>
       <div class="news-grid">
-        {HOMEPAGE.news.map(n => (
-          <a href={n.href} class="news-card">
-            <div class="news-img" style={`background-image: url('${n.image}');`}></div>
+        {featuredNews.map(n => (
+          <a href={`/news/${n.data.slug}`} class="news-card">
+            {n.data.image && (
+              <div class="news-img" style={`background-image: url('${n.data.image}');`}></div>
+            )}
             <div class="news-label">
-              <span>{n.label}</span>
+              <span>{n.data.title}</span>
               <span class="arrow">→</span>
             </div>
           </a>
@@ -209,12 +222,25 @@ import { HOMEPAGE } from '../data/homepage';
     padding: 3.5rem 0;
   }
 
+  .news-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    margin-bottom: 1.5rem;
+  }
+
   .news h2 {
     font-size: 1.4rem;
     font-weight: 700;
-    margin-bottom: 1.5rem;
     color: var(--text-primary);
   }
+
+  .news-all {
+    font-size: 0.85rem;
+    color: var(--huji-teal);
+    font-weight: 500;
+  }
+  .news-all:hover { text-decoration: underline; }
 
   .news-grid {
     display: grid;

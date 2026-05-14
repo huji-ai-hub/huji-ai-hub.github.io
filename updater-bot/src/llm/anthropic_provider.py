@@ -5,12 +5,13 @@ from __future__ import annotations
 import json
 import logging
 import time
+from datetime import datetime, timezone
 from typing import Any
 
 import anthropic
 
 from . import prompts
-from .provider import LLMProvider, RelevanceVerdict, StaleDateVerdict
+from .provider import LLMProvider, NewsDraft, NewsVerdict, RelevanceVerdict, StaleDateVerdict
 
 log = logging.getLogger(__name__)
 
@@ -63,6 +64,44 @@ class AnthropicProvider(LLMProvider):
         text = self._call(self.classifier_model, user, max_tokens=128)
         # Strip quotes / extra whitespace if the model added any.
         return text.strip().strip('"').splitlines()[0][:120]
+
+    def classify_news_item(
+        self,
+        title: str,
+        url: str,
+        content_snippet: str,
+        source_id: str,
+    ) -> NewsVerdict:
+        user = prompts.NEWS_CLASSIFY_TEMPLATE.format(
+            source_id=source_id,
+            title=title,
+            url=url,
+            content_snippet=(content_snippet or "(none)")[:1500],
+        )
+        text = self._call(self.classifier_model, user, max_tokens=400)
+        return _parse_json(text, NewsVerdict)
+
+    def draft_news_card(
+        self,
+        title: str,
+        url: str,
+        content_snippet: str,
+        source_id: str,
+        source_name: str,
+        available_images: list[str],
+    ) -> NewsDraft:
+        today = datetime.now(timezone.utc).strftime("%Y-%m-%d")
+        user = prompts.NEWS_DRAFT_TEMPLATE.format(
+            source_id=source_id,
+            source_name=source_name,
+            title=title,
+            url=url,
+            content_snippet=(content_snippet or "(none)")[:2000],
+            today=today,
+            available_images="\n".join(f"  - {img}" for img in available_images) or "  (none available)",
+        )
+        text = self._call(self.content_model, user, max_tokens=4000)
+        return _parse_json(text, NewsDraft)
 
     # ---- internals --------------------------------------------------------
 

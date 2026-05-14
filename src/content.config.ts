@@ -98,4 +98,45 @@ const programs = defineCollection({
   }),
 });
 
-export const collections = { faculty, labs, programs };
+// News items. One markdown file per item under src/content/news/.
+// Bot-generated items land here as PRs; humans review + merge.
+// English body lives in the markdown body (under the frontmatter); Hebrew body
+// lives in the `bodyHe` frontmatter field (YAML literal block).
+const news = defineCollection({
+  loader: glob({ pattern: '**/*.md', base: './src/content/news' }),
+  schema: z.object({
+    // Identity
+    slug: z.string(),                        // url path, e.g. "2026-05-13-yissum-ai-deal"
+    title: z.string(),                       // English headline
+    titleHe: z.string(),                     // Hebrew headline
+
+    // Display
+    summary: z.string(),                     // 1-2 lines for cards (EN)
+    summaryHe: z.string(),                   // 1-2 lines for cards (HE)
+    date: z.coerce.date(),                   // ISO date; controls archive sort order
+    image: z.string().optional(),            // hero image path under /public
+    featured: z.boolean().default(false),    // surfaced on the homepage
+    tags: z.array(z.string()).default([]),
+
+    // Source attribution. Set when the item is bot-generated from an external page.
+    sourceUrl: z.string().url().optional(),
+    sourceName: z.string().optional(),       // human label, e.g. "Yissum", "HUJI News"
+
+    // SEO
+    seoTitle: z.string().optional(),
+    seoTitleHe: z.string().optional(),
+    seoDescription: z.string(),
+    seoDescriptionHe: z.string(),
+    keywords: z.array(z.string()).optional(),
+    keywordsHe: z.array(z.string()).optional(),
+
+    // Hebrew long-form body (markdown). English body sits in the file body.
+    bodyHe: z.string(),
+
+    // Editorial flags
+    needsReview: z.boolean().default(false),
+    needsReviewNote: z.string().optional(),
+  }),
+});
+
+export const collections = { faculty, labs, programs, news };
