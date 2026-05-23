@@ -21,13 +21,22 @@ class GitRepo:
 
     def _run(self, *args: str, check: bool = True) -> subprocess.CompletedProcess:
         log.debug("git %s", " ".join(args))
-        return subprocess.run(
+        result = subprocess.run(
             ["git", *args],
             cwd=self.root,
-            check=check,
             capture_output=True,
             text=True,
         )
+        if check and result.returncode != 0:
+            # Surface stderr in the exception message — the default
+            # CalledProcessError loses it, leaving only "exit status N".
+            stderr = (result.stderr or "").strip()
+            stdout = (result.stdout or "").strip()
+            detail = stderr or stdout or "(no output)"
+            raise RuntimeError(
+                f"git {' '.join(args)} failed (exit {result.returncode}): {detail}"
+            )
+        return result
 
     def configure_identity(self, name: str, email: str) -> None:
         self._run("config", "user.name", name)
@@ -50,6 +59,14 @@ class GitRepo:
         self._run("commit", "-m", message)
 
     def push(self, branch: str) -> None:
-        # Push via HTTPS using the token. Format: https://x-access-token:TOKEN@github.com/owner/repo
-        push_url = f"https://x-access-token:{self.token}@github.com/{self.repo_slug}.git"
-        self._run("push", push_url, f"HEAD:{branch}", "--force-with-lease")
+        # Push via HTTPS using the token.
+        # Use 'oauth2:TOKEN' as the credential — works for classic PATs
+        # (ghp_*), fine-grained PATs (github_pat_*), and GitHub App tokens.
+        # The previously-used 'x-access-token:TOKEN' is for App installation
+        # tokens specifically and rejects classic PATs.
+        push_url = f"https://oauth2:{self.token}@github.com/{self.repo_slug}.git"
+        # Drop --force-with-lease: the bot uses a fresh date-based branch name
+        # per run, so there's no remote ref to lease against; force-with-lease
+        # against a non-existent remote ref behaves inconsistently across git
+        # versions. A plain push to a new branch is what we actually want.
+        self._run("push", push_url, f"HEAD:{branch}")
