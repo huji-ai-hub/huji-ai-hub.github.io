@@ -82,17 +82,52 @@ Reply with the commit-message line only. No quotes, no explanation.
 """
 
 # News classifier: cheap yes/no on each scraped link.
+# IMPORTANT: this site is specifically an AI Hub, not a general HUJI news feed.
+# Items need an EXPLICIT AI / ML / CS connection, not just "HUJI faculty
+# published in a major journal." Past mistakes: cannabis/liver research,
+# astrophysics/exoplanets, and similar excellent-but-off-topic items were
+# misclassified as news-worthy. This prompt is tighter to prevent that.
 NEWS_CLASSIFY_TEMPLATE = """\
-Decide whether this scraped item is a real, news-worthy item suitable for the
-HUJI AI Hub website's news feed.
+Decide whether this scraped item belongs on the HUJI AI Hub website's news feed.
 
-News-worthy means: a substantive announcement, story, or update relevant to AI
-research, AI education, AI industry partnerships, faculty achievements, new
-courses or programs, grants, awards, or tech-transfer deals out of HUJI.
+The site is specifically about ARTIFICIAL INTELLIGENCE. It is NOT a general
+HUJI news feed. The audience is prospective AI students, AI researchers,
+journalists writing about AI, and HUJI faculty in AI-adjacent fields. Items
+that don't speak to that audience should be rejected even if they are
+otherwise excellent HUJI research.
 
-NOT news-worthy: navigation links, generic page titles ("About", "Contact"),
-calls-to-action ("Read more", "Subscribe"), social media boilerplate,
-generic university announcements unrelated to AI / CS / research.
+ACCEPT (is_newsworthy = true) if the item is about ONE OR MORE of:
+- AI / machine learning / deep learning / data science research at HUJI
+- HUJI research that USES AI or ML methods substantively (e.g. ML for protein
+  folding, AI for medical diagnosis, computer vision for X). The AI angle
+  must be clear from the title or snippet, not assumed.
+- AI education at HUJI: new courses, new programs, curriculum changes
+- AI faculty achievements: grants, awards, appointments specifically for AI
+  work
+- AI industry partnerships, tech-transfer, startups spun out of HUJI AI labs
+- AI policy / ethics / regulation research at HUJI
+- Computational neuroscience that explicitly informs AI (rare; require the
+  AI link to be stated, not implied)
+
+REJECT (is_newsworthy = false) if any of these apply, even if the item is
+substantive HUJI research published in a major journal:
+- The research has no AI / ML / CS / computational angle stated in the snippet.
+  Examples that LOOK important but should be REJECTED for THIS site:
+  - "HUJI pharmacy team finds new treatment for liver disease" (not AI)
+  - "HUJI astrophysicist proposes new theory of habitable worlds" (not AI)
+  - "HUJI archaeology team dates ancient artifacts" (not AI)
+  - "HUJI medical researcher publishes in Nature" (without AI angle)
+- The link is navigation, footer, page boilerplate, "Read more", "Subscribe",
+  contact info, calls to action, or social-media chrome.
+- The item is a generic announcement (open house, holiday hours, building
+  closure) unrelated to AI research or education.
+- The AI connection is speculative, not stated: e.g. "this neuroscience
+  finding could be relevant to AI someday" is not enough. The source must
+  state the AI angle, not us infer it.
+
+WHEN IN DOUBT, REJECT. We would rather miss a borderline item than dilute the
+AI focus of the site. A human reviewer can always promote a missed item
+manually; they cannot easily unsee a junk PR.
 
 SCRAPED ITEM:
 - Source: {source_id}
@@ -104,7 +139,7 @@ Reply with strict JSON, nothing else:
 {{
   "is_newsworthy": true | false,
   "confidence": 0.0-1.0,
-  "reason": "<one short sentence>"
+  "reason": "<one short sentence stating WHY, including the explicit AI link if you accepted>"
 }}
 """
 
@@ -130,23 +165,35 @@ REQUIREMENTS (read carefully):
    source is Hebrew, write the English; if the source is English, write the Hebrew.
 2. NEVER use em dashes (—). Use commas, colons, parentheses, or restart the
    sentence. Em dashes are an absolute no.
-3. Slug: kebab-case, date-prefixed. Format: {today}-<short-keywords>. Example:
+3. HEBREW QUALITY (critical, past mistakes):
+   - When referring to the Hebrew University in Hebrew, use the FULL name
+     "האוניברסיטה העברית" or "האוניברסיטה העברית בירושלים". NEVER use
+     "עברית" alone — that means "the Hebrew language", not the university.
+     Wrong: "מחקר עברית". Right: "מחקר מהאוניברסיטה העברית".
+   - Spell-check carefully. Hebrew words must be written with full letters,
+     no dropped characters. Past bug: "ויתית" instead of "ויזואלית". If you
+     are unsure of a Hebrew spelling, pick a simpler word you are sure of.
+   - Use natural, professional Hebrew suitable for an academic website.
+     Match the register of existing HUJI marketing copy.
+4. Slug: kebab-case, date-prefixed. Format: {today}-<short-keywords>. Example:
    {today}-yissum-ai-startup-deal. Lowercase ASCII, hyphens only.
-4. Title: under 80 chars. Headline-style, no clickbait.
-5. Summary: 1 to 2 lines (under 200 chars). What happened + why it matters.
-6. Body: 2 to 4 short paragraphs, plain markdown. Be factual, no marketing
+5. Title: under 80 chars. Headline-style, no clickbait.
+6. Summary: 1 to 2 lines (under 200 chars). What happened + why it matters.
+7. Body: 2 to 4 short paragraphs, plain markdown. Be factual, no marketing
    hype. Don't invent facts beyond what the snippet supports. If detail is
    missing, keep the body short and add a "needsReview" flag mentally (the
    editor will flesh it out).
-7. SEO: seoTitle ends with " | HUJI AI Hub" (English) or " | מרכז AI האוניברסיטה העברית" (Hebrew).
+8. SEO: seoTitle ends with " | HUJI AI Hub" (English) or " | מרכז AI האוניברסיטה העברית" (Hebrew).
    seoDescription is 130-180 chars, includes keywords naturally.
-8. Keywords: 3-5 short search phrases the audience would actually type.
-9. Tags: 1-3 lowercase kebab-case tags from this list when fits: faculty,
-   research, industry, academics, grant, award, new-course, partnership,
-   tech-transfer, student-life. Add others if needed.
-10. Image: pick one from this list, or null if none fits. Pick by topical
+9. Keywords: 3-5 short search phrases the audience would actually type.
+10. Tags: 1-3 lowercase kebab-case tags from this list when fits: faculty,
+    research, industry, academics, grant, award, new-course, partnership,
+    tech-transfer, student-life. Add others if needed.
+11. Image: pick one from this list, or null if none fits. Pick by topical
     relevance (deep-learning visuals for ML stories, classroom shots for
-    education stories, generic if nothing matches better):
+    education stories, generic if nothing matches better). If two items in
+    the same batch would pick the same image, prefer null for one of them
+    to avoid every news card looking identical:
 {available_images}
 
 Reply with strict JSON only, this exact shape, no preamble:
