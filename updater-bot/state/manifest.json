@@ -1,4 +1,19 @@
 {
   "schema_version": 1,
-  "sources": {}
+  "sources": {
+    "faculty_personal": {
+      "dismissed_ids": [],
+      "last_run": null,
+      "seen_ids": []
+    },
+    "huji_main_news_he": {
+      "dismissed_ids": [],
+      "last_run": "2026-05-23T20:45:42.797740+00:00",
+      "seen_ids": [
+        "896f3525c90c3833",
+        "97cefb828abbd077",
+        "9ece0502e6d88f9e"
+      ]
+    }
+  }
 }
