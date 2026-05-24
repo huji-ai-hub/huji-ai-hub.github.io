@@ -22,13 +22,14 @@ log = logging.getLogger(__name__)
 
 # Source IDs that should be routed through the news pipeline (not the
 # faculty-bio pipeline). Anything not in here is ignored by build_news_proposals.
-NEWS_SOURCE_IDS = {"yissum", "huji_main_news_he", "huji_main_ai_news"}
+NEWS_SOURCE_IDS = {"yissum", "huji_main_news_he", "huji_main_ai_news", "email_inbox"}
 
 # Source-id -> human display name for "Originally reported by" attribution.
 NEWS_SOURCE_LABELS = {
     "yissum": "Yissum",
     "huji_main_news_he": "HUJI News",
     "huji_main_ai_news": "HUJI News",
+    "email_inbox": "HUJI Marketing",
 }
 
 

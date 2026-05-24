@@ -82,6 +82,17 @@ enabled = true
 url = "https://new.huji.ac.il/sitemap.xml"
 max_items = 10
 
+# Email inbox: forwarded HUJI marketing emails, Scholar Alerts, and any other
+# curated content a human routes to huji.ai.hub.bot.inbox@gmail.com. Bypasses
+# Cloudflare/F5 anti-bot walls entirely (it's email, not HTTP scraping).
+# Requires the BOT_INBOX_EMAIL + BOT_INBOX_APP_PASSWORD repo secrets to be set.
+[sources.email_inbox]
+enabled = true
+imap_host = "imap.gmail.com"
+folder = "INBOX"
+since_days = 14
+max_items = 25
+
 # Yissum (HUJI's tech-transfer arm) via WordPress RSS.
 # RSS endpoints are designed for crawlers and aren't gated by Cloudflare's
 # anti-bot wall. Each item already has a clean title, link, summary, and

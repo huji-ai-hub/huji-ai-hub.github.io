@@ -22,7 +22,7 @@ from src.llm.provider import LLMProvider
 from src.proposals import applier, builder
 from src.proposals.models import Proposal
 from src.scrapers import ScrapeResult
-from src.scrapers import faculty_personal, faculty_scholar, huji_cs_news, huji_main_news, yissum
+from src.scrapers import email_inbox, faculty_personal, faculty_scholar, huji_cs_news, huji_main_news, yissum
 from src.site import faculty as faculty_io
 from src.site.content_paths import ContentPaths
 from src.state import Manifest
@@ -204,6 +204,15 @@ def run_scrapers(cfg: Config, faculty_list) -> list[ScrapeResult]:
             results.append(yissum.scrape(src["yissum"]))
         except Exception as e:
             log.error("yissum scraper crashed: %s", e)
+
+    # email_inbox: forwarded HUJI marketing emails, Scholar Alerts, anything
+    # a human routes to the bot's Gmail. Curated by definition, so usually
+    # the highest signal-to-noise of any source.
+    if src.get("email_inbox") and src["email_inbox"].enabled:
+        try:
+            results.append(email_inbox.scrape(src["email_inbox"], cfg.secrets))
+        except Exception as e:
+            log.error("email_inbox scraper crashed: %s", e)
 
     if src.get("faculty_personal") and src["faculty_personal"].enabled:
         try:

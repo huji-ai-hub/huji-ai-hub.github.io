@@ -47,6 +47,9 @@ jobs:
         env:
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
           BOT_GITHUB_TOKEN: ${{ secrets.BOT_GITHUB_TOKEN }}
+          # Optional, only used if email_inbox source is enabled in config.toml.
+          BOT_INBOX_EMAIL: ${{ secrets.BOT_INBOX_EMAIL }}
+          BOT_INBOX_APP_PASSWORD: ${{ secrets.BOT_INBOX_APP_PASSWORD }}
           LOG_FORMAT: text
         run: python main.py
 
