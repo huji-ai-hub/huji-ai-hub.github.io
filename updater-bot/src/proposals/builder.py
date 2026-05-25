@@ -137,9 +137,20 @@ def build_news_proposals(
             log.warning("news classify failed for %s/%s: %s", sr.source_id, item.id, e)
             continue
         if not verdict.is_newsworthy or verdict.confidence < review_cfg.min_confidence:
-            log.debug("news classify rejected %s (conf=%.2f, reason=%s)",
-                      item.url, verdict.confidence, verdict.reason)
+            # INFO-level so we see rejection reasons in the GitHub Actions log.
+            # Cheap to log; invaluable when debugging "why did the bot reject
+            # this clearly-AI story" without having to re-run with debug on.
+            log.info(
+                "news classify REJECT %s/%s (conf=%.2f) title=%r reason=%s",
+                sr.source_id, item.id, verdict.confidence,
+                item.title[:80], verdict.reason,
+            )
             continue
+        log.info(
+            "news classify ACCEPT %s/%s (conf=%.2f) title=%r reason=%s",
+            sr.source_id, item.id, verdict.confidence,
+            item.title[:80], verdict.reason,
+        )
         scored.append((verdict.confidence, sr, item, verdict.reason))
 
     log.info("news pipeline: %d items survived classifier", len(scored))
