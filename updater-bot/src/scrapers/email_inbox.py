@@ -40,6 +40,7 @@ import hashlib
 import imaplib
 import logging
 import re
+import urllib.parse as _urllib_parse
 from datetime import datetime, timedelta, timezone
 from email.message import Message
 from email.utils import parsedate_to_datetime
@@ -58,17 +59,28 @@ DEFAULT_IMAP_PORT = 993
 DEFAULT_FOLDER = "INBOX"
 DEFAULT_SINCE_DAYS = 14
 
-# URL patterns that point to a real HUJI news article. Anchors matching
-# these inside a newsletter email are treated as "story links": each one
+# URL patterns that point to a real HUJI news article. An anchor matching
+# this inside a newsletter email is treated as a "story link": each one
 # becomes its own ScrapedItem so the classifier judges each story on its
 # own (not the mixed-topic newsletter blob).
+#
+# We deliberately match the pattern ANYWHERE in the URL (not just at the
+# start) so links wrapped in marketing-platform redirectors still match.
+# Example: marketing emails commonly wrap real URLs in tracking links like
+# "https://savion.huji.ac.il/r/?id=xyz&url=https://new.huji.ac.il/news/..."
+# or "https://email.huji.ac.il/track/click?u=...&p=new.huji.ac.il%2Fnews%2F..."
+# The substring search handles both directly-encoded and URL-encoded forms.
 #
 # Covers Hebrew (/news/<slug>) and English (/en/news/<slug>) variants,
 # plus /page/ which HUJI also uses for some research stories.
 _STORY_URL_RE = re.compile(
-    r"^https?://new\.huji\.ac\.il/(?:en/)?(?:news|page)/[^?#]+",
+    r"new\.huji\.ac\.il(?:/|%2F)(?:en(?:/|%2F))?(?:news|page)(?:/|%2F)[^\s\"'>?#&]+",
     re.IGNORECASE,
 )
+
+# Pull the actual article URL out of a marketing-platform tracking link,
+# so the ScrapedItem's url field points at the real article (not the
+# tracker). See _resolve_story_url().
 
 # Link text we should NEVER treat as a story title: it's just the CTA.
 # Used to skip "Read more" anchors when picking out the story headline.
@@ -242,24 +254,39 @@ def _parse_newsletter_stories(html: str) -> list[dict]:
 
     soup = BeautifulSoup(html, "lxml")
 
-    # Find all anchors that point to a real HUJI news article.
-    story_anchors = []
+    # Find all anchors that point to a real HUJI news article. We search
+    # the FULL URL (after percent-decoding) so links wrapped in marketing
+    # platform tracking redirectors still match.
+    story_anchors: list[tuple[object, str]] = []  # (anchor, resolved_article_url)
+    all_hrefs_sample: list[str] = []  # for diagnostic logging
     for a in soup.find_all("a", href=True):
         href = a["href"].strip()
-        if _STORY_URL_RE.match(href):
-            story_anchors.append(a)
+        if href and len(all_hrefs_sample) < 5:
+            all_hrefs_sample.append(href[:150])
+        article_url = _resolve_story_url(href)
+        if article_url:
+            story_anchors.append((a, article_url))
 
     if len(story_anchors) < 2:
+        # Diagnostic: log a few sample hrefs so we can see what patterns
+        # we're failing to match. Quiet on real newsletters (only fires
+        # when splitting doesn't happen). Lets future-Ella debug without
+        # piping IMAP creds anywhere.
+        if all_hrefs_sample:
+            log.info(
+                "%s: no newsletter structure detected (found %d HUJI-news anchors out of %d total). Sample hrefs: %s",
+                SOURCE_ID, len(story_anchors), len(soup.find_all("a", href=True)),
+                " | ".join(all_hrefs_sample),
+            )
         return []
 
     stories: list[dict] = []
     seen_urls: set[str] = set()
 
-    for anchor in story_anchors:
-        url = anchor["href"].strip()
+    for anchor, resolved_url in story_anchors:
         # Normalize: drop trailing fragment/query so HE + EN variants of the
-        # same article (rare) dedupe properly.
-        url = url.split("#")[0].split("?")[0].rstrip("/")
+        # same article dedupe properly.
+        url = resolved_url.split("#")[0].split("?")[0].rstrip("/")
         if url in seen_urls:
             continue
 
@@ -285,25 +312,69 @@ def _parse_newsletter_stories(html: str) -> list[dict]:
     return stories
 
 
+def _resolve_story_url(href: str) -> str | None:
+    """Return the canonical https://new.huji.ac.il/news/<slug> URL embedded
+    in `href`, or None if no match. Handles three cases:
+
+      1. Direct link:    https://new.huji.ac.il/news/foo
+      2. Tracker with the article URL in a query parameter (percent-encoded):
+         https://savion.huji.ac.il/r/?id=x&url=https%3A%2F%2Fnew.huji.ac.il%2Fnews%2Ffoo
+      3. Tracker that just contains the article URL inline (no encoding):
+         https://email.huji.ac.il/c/eJxNjU.../new.huji.ac.il/news/foo
+    """
+    if not href:
+        return None
+
+    # First try the raw href (case 1 and case 3).
+    m = _STORY_URL_RE.search(href)
+    if m:
+        # Reconstruct a clean https://new.huji.ac.il/... URL. Strip any
+        # percent-encoded slashes back to real ones.
+        extracted = m.group(0).replace("%2F", "/").replace("%2f", "/")
+        return "https://" + extracted
+
+    # Then try percent-decoded (case 2: URL hidden inside a query param).
+    try:
+        decoded = _urllib_parse.unquote(href)
+    except Exception:
+        decoded = href
+    if decoded != href:
+        m = _STORY_URL_RE.search(decoded)
+        if m:
+            extracted = m.group(0).replace("%2F", "/").replace("%2f", "/")
+            return "https://" + extracted
+
+    return None
+
+
 def _find_story_container(anchor) -> object | None:
-    """Walk up from a story link to find the smallest container holding
-    the title + summary + image. HUJI newsletters use table-based layout
-    so the container is usually a <td>, <tr>, or wrapping <table>."""
+    """Walk up from a story link to find the smallest per-story container.
+
+    HUJI newsletters use table-based layout: each story sits in its own
+    <td> (or <div>) with an image + title + blurb + CTA. We want THAT
+    cell, NOT the wrapping <table> that holds every story (which would
+    return the same container for every anchor and lose per-story
+    boundaries).
+
+    Strategy: walk up looking for the FIRST per-story-cell-shaped node:
+    a <td>/<div>/<li> that contains both an <img> and meaningful text.
+    Stop there. Do not climb past it into the table.
+    """
     node = anchor
     for _ in range(8):  # Bounded climb; don't walk all the way to <body>.
         parent = node.parent
         if parent is None or parent.name in ("body", "html"):
             break
         node = parent
-        # A <td> that contains an image plus meaningful text is the
-        # usual newsletter cell. Same for a <table> with a couple rows.
-        if node.name in ("td", "tr", "table", "div"):
-            has_img = node.find("img") is not None
-            text_len = len(node.get_text(strip=True))
-            if has_img and text_len > 60:
+        # The first per-story cell wins. Image presence is the cheap
+        # signal that we're inside a story block (not a list-of-links
+        # block at the bottom of the email).
+        if node.name in ("td", "div", "li") and node.find("img") is not None:
+            if len(node.get_text(strip=True)) > 20:
                 return node
-    # Couldn't find a strong container; return whatever we ended at if
-    # it has some text. Better than nothing.
+    # No per-story container found; fall back to whatever we ended at
+    # if it has some text. Worst case we'll get a too-broad block but
+    # _parse_newsletter_stories will dedupe by URL so we don't double-emit.
     if node and len(node.get_text(strip=True)) > 30:
         return node
     return None
