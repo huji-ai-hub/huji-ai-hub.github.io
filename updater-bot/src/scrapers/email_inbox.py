@@ -14,9 +14,19 @@ Why this beats HTML scraping:
   - Items are already editorially curated (a human chose to forward them).
   - Signal-to-noise is much higher than blind scraping.
 
-Dedupe strategy: each email gets a stable ID from its Message-ID header.
-The manifest tracks seen IDs the same way as any other scraper, so a
-re-run that pulls the same emails doesn't re-propose anything.
+Newsletter splitting:
+  HUJI marketing emails ("חדשות העברית") are newsletters with 6+ stories
+  per email. If we treat one email as one item, the classifier sees a mixed
+  blob (war + bacteria + AI + archaeology) and rejects it as "not specifically
+  AI". So we detect newsletter structure and emit one ScrapedItem per story,
+  each with the real article URL, story title, and story snippet. The
+  classifier then judges each story on its own merits.
+
+Dedupe strategy:
+  - Single-item email: stable ID from Message-ID header.
+  - Newsletter story: stable ID from a hash of the article URL, so the
+    same story forwarded twice (or once via newsletter + once via sitemap)
+    doesn't double-propose.
 
 Time-window strategy: fetch only emails received in the last N days
 (configurable, default 14). Manifest handles dedupe; the time window
@@ -47,6 +57,27 @@ DEFAULT_IMAP_HOST = "imap.gmail.com"
 DEFAULT_IMAP_PORT = 993
 DEFAULT_FOLDER = "INBOX"
 DEFAULT_SINCE_DAYS = 14
+
+# URL patterns that point to a real HUJI news article. Anchors matching
+# these inside a newsletter email are treated as "story links": each one
+# becomes its own ScrapedItem so the classifier judges each story on its
+# own (not the mixed-topic newsletter blob).
+#
+# Covers Hebrew (/news/<slug>) and English (/en/news/<slug>) variants,
+# plus /page/ which HUJI also uses for some research stories.
+_STORY_URL_RE = re.compile(
+    r"^https?://new\.huji\.ac\.il/(?:en/)?(?:news|page)/[^?#]+",
+    re.IGNORECASE,
+)
+
+# Link text we should NEVER treat as a story title: it's just the CTA.
+# Used to skip "Read more" anchors when picking out the story headline.
+_CTA_LINK_TEXT = {
+    "read more", "read the article", "read article",
+    "learn more", "continue reading",
+    "המשך לקרוא", "קראו עוד", "להמשך הקריאה", "לקריאת הכתבה",
+    "לכתבה המלאה", "לכתבה", "לקריאה",
+}
 
 
 def scrape(cfg: SourceConfig, secrets: Secrets) -> ScrapeResult:
@@ -97,27 +128,31 @@ def scrape(cfg: SourceConfig, secrets: Secrets) -> ScrapeResult:
             msg_ids = list(reversed(msg_ids))[:max_items]
 
             for msg_id in msg_ids:
-                item = _fetch_and_parse(imap, msg_id)
-                if item is not None:
-                    result.items.append(item)
+                items = _fetch_and_parse(imap, msg_id)
+                result.items.extend(items)
 
     except Exception as e:
         result.error = f"IMAP session error: {e}"
         return result
 
+    log.info(
+        "%s: produced %d items (after newsletter splitting)",
+        SOURCE_ID, len(result.items),
+    )
     return result
 
 
-def _fetch_and_parse(imap: imaplib.IMAP4_SSL, msg_id: bytes) -> ScrapedItem | None:
-    """Fetch one message, parse headers + body, return a ScrapedItem.
+def _fetch_and_parse(imap: imaplib.IMAP4_SSL, msg_id: bytes) -> list[ScrapedItem]:
+    """Fetch one message, return zero or more ScrapedItems.
 
-    Uses BODY.PEEK so we don't mark the message as read on the server.
-    The manifest handles dedupe; we don't want IMAP state to drift.
+    Returns multiple items if the email is detected as a newsletter
+    (2+ HUJI news article links inside); returns a single item if it's
+    a normal email. Uses BODY.PEEK so we don't mark as read.
     """
     status, data = imap.fetch(msg_id, "(BODY.PEEK[])")
     if status != "OK" or not data or not isinstance(data[0], tuple):
         log.warning("%s: fetch failed for msg %s", SOURCE_ID, msg_id)
-        return None
+        return []
 
     raw = data[0][1]
     msg = email.message_from_bytes(raw)
@@ -128,38 +163,227 @@ def _fetch_and_parse(imap: imaplib.IMAP4_SSL, msg_id: bytes) -> ScrapedItem | No
     message_id_hdr = msg.get("Message-ID", "").strip()
 
     if not subject:
-        return None
+        return []
 
-    # Build a stable item ID. Prefer the email's own Message-ID; fall back
-    # to a hash of the raw bytes so we still get something stable.
     if message_id_hdr:
-        item_id = hashlib.sha256(message_id_hdr.encode("utf-8")).hexdigest()[:16]
+        email_item_id = hashlib.sha256(message_id_hdr.encode("utf-8")).hexdigest()[:16]
     else:
-        item_id = hashlib.sha256(raw).hexdigest()[:16]
-
-    body = _extract_body(msg)
-
-    # Pseudo-URL: emails don't have URLs, but the news pipeline expects one.
-    # Use a `mid:` scheme with the message ID so it's at least addressable.
-    # The card's actual sourceUrl comes from links inside the email body,
-    # which the LLM drafter extracts.
-    pseudo_url = f"mid:{message_id_hdr or item_id}"
+        email_item_id = hashlib.sha256(raw).hexdigest()[:16]
 
     published_iso = _parse_date(date_raw)
 
-    return ScrapedItem(
-        id=item_id,
+    base_meta = {
+        "source_host": "email_inbox",
+        "sender": sender,
+        "raw_date": date_raw,
+        "message_id": message_id_hdr,
+        "email_subject": subject,
+    }
+
+    # Try newsletter splitting first. Needs HTML body, not text/plain.
+    html_body = _extract_html(msg)
+    if html_body:
+        stories = _parse_newsletter_stories(html_body)
+        if len(stories) >= 2:
+            log.info(
+                "%s: newsletter detected (%d stories) in %r",
+                SOURCE_ID, len(stories), subject[:60],
+            )
+            items: list[ScrapedItem] = []
+            seen_urls: set[str] = set()
+            for story in stories:
+                if story["url"] in seen_urls:
+                    continue
+                seen_urls.add(story["url"])
+                # Stable ID: hash of the article URL, so the same story
+                # via two sources (newsletter + sitemap) dedupes.
+                story_id = hashlib.sha256(story["url"].encode("utf-8")).hexdigest()[:16]
+                items.append(ScrapedItem(
+                    id=story_id,
+                    title=story["title"][:300],
+                    url=story["url"],
+                    content=story["content"][:6000],
+                    published_at=published_iso,
+                    meta={
+                        **base_meta,
+                        "newsletter_email_id": email_item_id,
+                        "story_image": story.get("image"),
+                    },
+                ))
+            return items
+
+    # Fallback: single-item email (not a newsletter, or splitter found <2 stories).
+    body_text = _extract_body(msg)
+    pseudo_url = f"mid:{message_id_hdr or email_item_id}"
+
+    return [ScrapedItem(
+        id=email_item_id,
         title=subject[:300],
         url=pseudo_url,
-        content=body[:6000],
+        content=body_text[:6000],
         published_at=published_iso,
-        meta={
-            "source_host": "email_inbox",
-            "sender": sender,
-            "raw_date": date_raw,
-            "message_id": message_id_hdr,
-        },
-    )
+        meta=base_meta,
+    )]
+
+
+def _parse_newsletter_stories(html: str) -> list[dict]:
+    """Detect repeating story blocks in a newsletter email's HTML.
+
+    Strategy: every story in a HUJI newsletter has a "Read more" link
+    pointing to new.huji.ac.il/news/<slug>. Walk up from each such anchor
+    to find the surrounding story block, then pull out the title text,
+    summary text, and lead image from inside that block.
+
+    Returns a list of dicts with: url, title, content, image.
+    Empty list = "not a newsletter, fall back to single-item behavior."
+    """
+    if not html:
+        return []
+
+    soup = BeautifulSoup(html, "lxml")
+
+    # Find all anchors that point to a real HUJI news article.
+    story_anchors = []
+    for a in soup.find_all("a", href=True):
+        href = a["href"].strip()
+        if _STORY_URL_RE.match(href):
+            story_anchors.append(a)
+
+    if len(story_anchors) < 2:
+        return []
+
+    stories: list[dict] = []
+    seen_urls: set[str] = set()
+
+    for anchor in story_anchors:
+        url = anchor["href"].strip()
+        # Normalize: drop trailing fragment/query so HE + EN variants of the
+        # same article (rare) dedupe properly.
+        url = url.split("#")[0].split("?")[0].rstrip("/")
+        if url in seen_urls:
+            continue
+
+        block = _find_story_container(anchor)
+        if block is None:
+            continue
+
+        title = _extract_story_title(block, anchor)
+        if not title:
+            continue
+
+        content = _extract_story_text(block, anchor)
+        image = _extract_story_image(block)
+
+        seen_urls.add(url)
+        stories.append({
+            "url": url,
+            "title": title,
+            "content": content,
+            "image": image,
+        })
+
+    return stories
+
+
+def _find_story_container(anchor) -> object | None:
+    """Walk up from a story link to find the smallest container holding
+    the title + summary + image. HUJI newsletters use table-based layout
+    so the container is usually a <td>, <tr>, or wrapping <table>."""
+    node = anchor
+    for _ in range(8):  # Bounded climb; don't walk all the way to <body>.
+        parent = node.parent
+        if parent is None or parent.name in ("body", "html"):
+            break
+        node = parent
+        # A <td> that contains an image plus meaningful text is the
+        # usual newsletter cell. Same for a <table> with a couple rows.
+        if node.name in ("td", "tr", "table", "div"):
+            has_img = node.find("img") is not None
+            text_len = len(node.get_text(strip=True))
+            if has_img and text_len > 60:
+                return node
+    # Couldn't find a strong container; return whatever we ended at if
+    # it has some text. Better than nothing.
+    if node and len(node.get_text(strip=True)) > 30:
+        return node
+    return None
+
+
+def _extract_story_title(block, anchor) -> str:
+    """Find the best title-like string in a story block.
+
+    Heuristic order:
+      1. <h1>-<h4> inside the block
+      2. <strong> or <b> with reasonably-long text
+      3. The first non-CTA short line of text in the block
+    """
+    for tag_name in ("h1", "h2", "h3", "h4"):
+        h = block.find(tag_name)
+        if h:
+            text = _clean(h.get_text(separator=" "))
+            if text and len(text) > 4:
+                return text
+
+    for tag_name in ("strong", "b"):
+        for s in block.find_all(tag_name):
+            text = _clean(s.get_text(separator=" "))
+            if text and 5 <= len(text) <= 200 and text.lower() not in _CTA_LINK_TEXT:
+                return text
+
+    # Fallback: first text-bearing element that's not the CTA link.
+    anchor_text = _clean(anchor.get_text(separator=" ")).lower()
+    for el in block.descendants:
+        if getattr(el, "name", None) in (None, "br"):
+            continue
+        text = _clean(el.get_text(separator=" ")) if hasattr(el, "get_text") else ""
+        if not text or len(text) < 8 or len(text) > 200:
+            continue
+        if text.lower() in _CTA_LINK_TEXT or text.lower() == anchor_text:
+            continue
+        return text
+
+    return ""
+
+
+def _extract_story_text(block, anchor) -> str:
+    """Return the body text of the story, with the CTA link removed."""
+    # Make a working copy so we can mutate without affecting siblings.
+    copy = BeautifulSoup(str(block), "lxml")
+    # Strip script/style noise.
+    for tag in copy.find_all(["script", "style"]):
+        tag.decompose()
+    # Strip the CTA anchor (and clones of it) so it doesn't pollute snippet.
+    cta_lower = _clean(anchor.get_text(separator=" ")).lower()
+    for a in copy.find_all("a"):
+        a_text = _clean(a.get_text(separator=" ")).lower()
+        if a_text in _CTA_LINK_TEXT or a_text == cta_lower:
+            a.decompose()
+
+    text = copy.get_text(separator=" ")
+    return _clean(text)
+
+
+def _extract_story_image(block) -> str | None:
+    """Return the first <img src> inside the block, if any. Skips 1x1
+    tracking pixels and tiny icons by ignoring tiny declared widths."""
+    for img in block.find_all("img"):
+        src = (img.get("src") or "").strip()
+        if not src or src.startswith("data:"):
+            continue
+        # Skip obvious tracking pixels: explicit width="1" or height="1".
+        w = img.get("width", "")
+        h = img.get("height", "")
+        if w in ("1", "0") or h in ("1", "0"):
+            continue
+        return src
+    return None
+
+
+def _clean(s: str) -> str:
+    """Collapse whitespace; trim."""
+    if not s:
+        return ""
+    return re.sub(r"\s+", " ", s).strip()
 
 
 def _decode_header(value: str) -> str:
@@ -182,12 +406,30 @@ def _decode_header(value: str) -> str:
     return "".join(decoded)
 
 
+def _extract_html(msg: Message) -> str:
+    """Return the text/html part of an email if present, else empty string.
+
+    Newsletter splitting needs HTML structure: text/plain is a flattened
+    blob that loses story boundaries.
+    """
+    if msg.is_multipart():
+        for part in msg.walk():
+            ctype = part.get_content_type()
+            disposition = (part.get("Content-Disposition") or "").lower()
+            if "attachment" in disposition:
+                continue
+            if ctype == "text/html":
+                return _decode_payload(part)
+    elif msg.get_content_type() == "text/html":
+        return _decode_payload(msg)
+    return ""
+
+
 def _extract_body(msg: Message) -> str:
     """Return the best plaintext body from an email. Multipart-aware.
 
     Prefers text/plain over text/html; falls back to HTML with tags stripped.
-    Skips attachments. Decodes Content-Transfer-Encoding (quoted-printable
-    and base64 are handled by email.message.get_payload(decode=True)).
+    Used only as the single-item fallback (non-newsletter emails).
     """
     text_part = None
     html_part = None
