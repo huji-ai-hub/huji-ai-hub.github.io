@@ -195,7 +195,16 @@ def _fetch_and_parse(imap: imaplib.IMAP4_SSL, msg_id: bytes) -> list[ScrapedItem
     # Try newsletter splitting first. Needs HTML body, not text/plain.
     html_body = _extract_html(msg)
     if html_body:
+        # Two strategies in order:
+        #   1. Pattern-based: anchor URLs that contain /news/<slug>. Works
+        #      when emails contain direct HUJI links (rare for HUJI marketing,
+        #      common for forwarded news from other sources).
+        #   2. Structural: image+text+link clusters, regardless of URL
+        #      pattern. Works for HUJI marketing emails that wrap everything
+        #      in webversion.net trackers.
         stories = _parse_newsletter_stories(html_body)
+        if len(stories) < 2 and _looks_like_huji_newsletter(sender, html_body):
+            stories = _parse_structural_newsletter(html_body)
         if len(stories) >= 2:
             log.info(
                 "%s: newsletter detected (%d stories) in %r",
@@ -302,6 +311,122 @@ def _parse_newsletter_stories(html: str) -> list[dict]:
         image = _extract_story_image(block)
 
         seen_urls.add(url)
+        stories.append({
+            "url": url,
+            "title": title,
+            "content": content,
+            "image": image,
+        })
+
+    return stories
+
+
+def _looks_like_huji_newsletter(sender: str, html: str) -> bool:
+    """Heuristic: is this email a HUJI marketing newsletter?
+
+    Triggered by sender domain (savion.huji.ac.il + marketing prefix) and
+    by structural fingerprint (lots of webversion.net tracker links + lots
+    of images = the email-marketing-platform shape).
+
+    The sender check is the strong signal. Structural fingerprint catches
+    forwarded copies where the From: header is Ella's Gmail, not HUJI's.
+    """
+    sender_lower = sender.lower()
+    if "savion.huji.ac.il" in sender_lower:
+        return True
+    if "marketing" in sender_lower and "huji.ac.il" in sender_lower:
+        return True
+    # Forwarded: the original sender appears inside the body.
+    if "marketing@savion.huji.ac.il" in html.lower():
+        return True
+    # Structural: lots of webversion.net trackers = bulk email tool.
+    if html.lower().count("webversion.net/") >= 5:
+        return True
+    return False
+
+
+# Non-story URLs commonly found in HUJI newsletter chrome (top/bottom of email,
+# social-media row, "view in browser" link, unsubscribe footer). The structural
+# splitter skips anchors with these characteristics so junk doesn't become a card.
+_NON_STORY_URL_PARTS = (
+    "myaccount.google.com", "accounts.google.com",
+    "facebook.com", "twitter.com/", "x.com/",
+    "youtube.com", "linkedin.com", "instagram.com",
+    "tiktok.com", "telegram.me", "t.me/",
+    "unsubscribe", "/preferences", "mailto:", "tel:",
+    "javascript:", "/whatsapp", "wa.me/",
+)
+
+_NON_STORY_LINK_TEXTS = {
+    "subscribe", "unsubscribe", "view in browser", "web version",
+    "להסיר מרשימת התפוצה", "להסיר", "לצפייה בדפדפן",
+    "facebook", "twitter", "linkedin", "instagram", "youtube",
+}
+
+
+def _parse_structural_newsletter(html: str) -> list[dict]:
+    """Structure-based splitter for HUJI marketing newsletters.
+
+    The newsletter wraps every link in a tracker URL (webversion.net/<hex>...)
+    so we can't pattern-match on /news/<slug>. Instead, find the recurring
+    "image + title + summary + CTA" story blocks by walking up from each
+    promising anchor.
+
+    Returns a list of dicts: {url, title, content, image}. Empty list if
+    nothing story-shaped was found.
+    """
+    if not html:
+        return []
+
+    soup = BeautifulSoup(html, "lxml")
+
+    stories: list[dict] = []
+    seen_urls: set[str] = set()
+    seen_titles: set[str] = set()
+
+    for a in soup.find_all("a", href=True):
+        href = a["href"].strip()
+        if not href:
+            continue
+        href_lower = href.lower()
+        if any(p in href_lower for p in _NON_STORY_URL_PARTS):
+            continue
+
+        link_text = _clean(a.get_text(separator=" ")).lower()
+        if link_text in _NON_STORY_LINK_TEXTS:
+            continue
+        # Single-emoji or super-short anchor text is usually a social icon.
+        if 0 < len(link_text) <= 2:
+            continue
+
+        block = _find_story_container(a)
+        if block is None:
+            continue
+
+        title = _extract_story_title(block, a)
+        if not title or len(title) < 8:
+            continue
+        if title.lower() in _NON_STORY_LINK_TEXTS:
+            continue
+
+        # Dedupe by URL (typical) and by title (handles cases where the
+        # image-link and the "read more" link share a story but have
+        # different tracker URLs).
+        url = href.split("#")[0].rstrip("/")
+        title_key = title.lower()[:120]
+        if url in seen_urls or title_key in seen_titles:
+            continue
+        seen_urls.add(url)
+        seen_titles.add(title_key)
+
+        content = _extract_story_text(block, a)
+        # If the content snippet is just the title repeated, the block was
+        # too small to be a real story. Skip.
+        if len(content) < len(title) + 20:
+            continue
+
+        image = _extract_story_image(block)
+
         stories.append({
             "url": url,
             "title": title,
