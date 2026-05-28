@@ -49,6 +49,7 @@ from bs4 import BeautifulSoup
 
 from ..config import SourceConfig, Secrets
 from . import ScrapedItem, ScrapeResult
+from ._http import client as _http_client
 
 log = logging.getLogger(__name__)
 
@@ -195,24 +196,35 @@ def _fetch_and_parse(imap: imaplib.IMAP4_SSL, msg_id: bytes) -> list[ScrapedItem
     # Try newsletter splitting first. Needs HTML body, not text/plain.
     html_body = _extract_html(msg)
     if html_body:
-        # Two strategies in order:
+        # Three strategies in order:
         #   1. Pattern-based: anchor URLs that contain /news/<slug>. Works
         #      when emails contain direct HUJI links (rare for HUJI marketing,
         #      common for forwarded news from other sources).
-        #   2. Structural: image+text+link clusters, regardless of URL
-        #      pattern. Works for HUJI marketing emails that wrap everything
-        #      in webversion.net trackers.
+        #   2. Tracker-follow for HUJI marketing emails: each story is an
+        #      <a><img></a> with an opaque webversion.net href. Follow each
+        #      tracker, fetch the article's Open Graph metadata for title +
+        #      description. This is the path that actually works for HUJI's
+        #      image-only newsletter design.
+        #   3. (Legacy) structural splitter for emails with inline text:
+        #      tr/td/table containers with image+anchor+meaningful text.
+        #      Kept as a final fallback for non-HUJI newsletters.
         stories = _parse_newsletter_stories(html_body)
         if len(stories) < 2 and _looks_like_huji_newsletter(sender, html_body):
             log.info(
-                "%s: pattern splitter found %d stories; running structural splitter on %r",
+                "%s: HUJI newsletter detected (%d pattern stories so far); following trackers in %r",
                 SOURCE_ID, len(stories), subject[:60],
             )
-            stories = _parse_structural_newsletter(html_body)
-            log.info(
-                "%s: structural splitter produced %d stories",
-                SOURCE_ID, len(stories),
-            )
+            tracker_stories = _resolve_tracker_to_article(BeautifulSoup(html_body, "lxml"))
+            if len(tracker_stories) >= 1:
+                stories = tracker_stories
+            else:
+                # Fall back to text-structural splitter (won't help for
+                # image-only HUJI emails, but logs useful diagnostic).
+                stories = _parse_structural_newsletter(html_body)
+                log.info(
+                    "%s: text-structural splitter produced %d stories",
+                    SOURCE_ID, len(stories),
+                )
             # If we still have nothing, dump generous windows so we can
             # iterate the splitter locally without IMAP credentials.
             # Two windows per email:
@@ -257,7 +269,11 @@ def _fetch_and_parse(imap: imaplib.IMAP4_SSL, msg_id: bytes) -> list[ScrapedItem
                 # (b) last webversion.net anchor
                 last_wv = html_body.lower().rfind("webversion.net/")
                 _dump("around-last-tracker-link", last_wv, 4500, 1500)
-        if len(stories) >= 2:
+        # Threshold is 1+ stories when the tracker-follow path resolved
+        # anything: each canonical HUJI article URL is high-quality enough
+        # to emit on its own (full OG metadata, real destination URL).
+        # Pattern/structural paths still need 2+ to feel newsletter-shaped.
+        if len(stories) >= 1:
             log.info(
                 "%s: newsletter detected (%d stories) in %r",
                 SOURCE_ID, len(stories), subject[:60],
@@ -414,6 +430,136 @@ _NON_STORY_LINK_TEXTS = {
     "להסיר מרשימת התפוצה", "להסיר", "לצפייה בדפדפן",
     "facebook", "twitter", "linkedin", "instagram", "youtube",
 }
+
+
+def _extract_og_from_html(html: str) -> dict[str, str]:
+    """Pull og:* and description meta from an article page. Same shape as
+    huji_main_news._extract_og — duplicated here to avoid a cross-scraper
+    import. If we extract this to a shared module later, both can use it."""
+    soup = BeautifulSoup(html, "lxml")
+    out: dict[str, str] = {}
+    for tag in soup.find_all("meta"):
+        prop = tag.get("property") or tag.get("name") or ""
+        content = tag.get("content")
+        if not content:
+            continue
+        c = content.strip()
+        if prop == "og:title":
+            out["title"] = c
+        elif prop == "og:description":
+            out["description"] = c
+        elif prop == "og:image":
+            out["image"] = c
+        elif prop == "og:url":
+            out["url"] = c
+        elif prop == "description" and "description" not in out:
+            out["description"] = c
+    if "title" not in out:
+        title_el = soup.find("title")
+        if title_el and title_el.text:
+            out["title"] = title_el.text.strip()
+    return out
+
+
+def _resolve_tracker_to_article(soup: BeautifulSoup) -> list[dict]:
+    """For a HUJI marketing newsletter, find every <a><img></a> pair (those
+    ARE the story cards: each story is a clickable image, no inline text)
+    and follow each tracker URL to its canonical article page. Returns a
+    list of {url, title, content, image} dicts built from OG metadata.
+
+    Why: HUJI marketing emails are designed in a tool that renders each
+    story as a 564x251 image with the title and blurb baked into the
+    pixels. The HTML contains no extractable text per story. The actual
+    article URL is reachable only by following the webversion.net tracker
+    redirect chain to the new.huji.ac.il/news/<slug> destination.
+
+    Costs ~1-3 HTTP requests per story (one to follow the tracker, one to
+    fetch the article HTML). For a 6-story newsletter that's 6-18 requests
+    plus latency, ~10-30 seconds total. Tolerable in a weekly cron.
+    """
+    stories: list[dict] = []
+    seen_urls: set[str] = set()
+
+    # Find image-wrapped anchors: <a href="..."><img src="..."></a>.
+    # These are the story cards in HUJI marketing emails. Skip 1x1 pixels.
+    candidates: list[tuple[str, str | None]] = []  # (tracker_href, image_src)
+    for a in soup.find_all("a", href=True):
+        href = a["href"].strip()
+        if not href:
+            continue
+        href_lower = href.lower()
+        if any(p in href_lower for p in _NON_STORY_URL_PARTS):
+            continue
+        img = a.find("img")
+        if img is None or not _is_real_image(img):
+            continue
+        # Skip if the wrapping anchor also has meaningful text content
+        # OTHER than the image (those are usually CTA buttons next to
+        # an image, not the story-card image itself). The story-card
+        # is image-only.
+        text_outside_img = _clean(a.get_text(separator=" "))
+        if text_outside_img and len(text_outside_img) > 5:
+            # Mixed link, not a pure image card. Skip to avoid drafting
+            # cards from CTA buttons.
+            continue
+        img_src = (img.get("src") or "").strip() or None
+        candidates.append((href, img_src))
+
+    if not candidates:
+        log.info("%s: no <a><img></a> story-card anchors found in this newsletter", SOURCE_ID)
+        return []
+
+    log.info("%s: found %d story-card anchors; following trackers to canonicalize",
+             SOURCE_ID, len(candidates))
+
+    # Some marketing emails repeat the same story-card link twice (image-link
+    # + button-link). Dedupe by tracker URL first to avoid follow-redirects
+    # twice on the same destination.
+    seen_trackers: set[str] = set()
+    unique_candidates: list[tuple[str, str | None]] = []
+    for tracker, img_src in candidates:
+        if tracker in seen_trackers:
+            continue
+        seen_trackers.add(tracker)
+        unique_candidates.append((tracker, img_src))
+
+    # Follow each tracker. Use browser UA + redirect-following. Time-bound
+    # the whole batch to ~30s by capping per-request timeout to 8s.
+    import httpx
+    per_request_timeout = httpx.Timeout(8.0, connect=4.0)
+    with _http_client(browser_ua=True, timeout=per_request_timeout) as http:
+        for tracker, img_src in unique_candidates:
+            try:
+                resp = http.get(tracker)
+            except Exception as e:
+                log.info("%s: tracker fetch failed for %s: %s",
+                         SOURCE_ID, tracker[:60], e)
+                continue
+            final_url = str(resp.url)
+            if "new.huji.ac.il" not in final_url.lower():
+                log.info(
+                    "%s: tracker %s resolved to non-HUJI URL %s; skipping",
+                    SOURCE_ID, tracker[:60], final_url[:120],
+                )
+                continue
+            if final_url in seen_urls:
+                continue
+            seen_urls.add(final_url)
+            og = _extract_og_from_html(resp.text)
+            title = og.get("title", "").strip()
+            if not title:
+                log.info("%s: tracker %s resolved to %s but page had no OG title",
+                         SOURCE_ID, tracker[:60], final_url[:120])
+                continue
+            stories.append({
+                "url": og.get("url") or final_url,
+                "title": title,
+                "content": og.get("description", "") or title,
+                "image": og.get("image") or img_src,
+            })
+
+    log.info("%s: resolved %d trackers to canonical HUJI articles", SOURCE_ID, len(stories))
+    return stories
 
 
 def _is_real_image(img) -> bool:
