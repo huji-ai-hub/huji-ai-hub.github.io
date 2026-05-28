@@ -213,21 +213,50 @@ def _fetch_and_parse(imap: imaplib.IMAP4_SSL, msg_id: bytes) -> list[ScrapedItem
                 "%s: structural splitter produced %d stories",
                 SOURCE_ID, len(stories),
             )
-            # If we still have nothing, dump a window of the raw HTML
-            # around the first webversion.net anchor so we can inspect
-            # the actual layout offline. One window per email is plenty.
+            # If we still have nothing, dump generous windows so we can
+            # iterate the splitter locally without IMAP credentials.
+            # Two windows per email:
+            #   (a) around the first real (non-tracking-pixel) image, which
+            #       sits inside an actual story block.
+            #   (b) around the LAST webversion.net anchor, which is usually
+            #       near the bottom of the email past all story content.
             if not stories:
-                idx = html_body.lower().find("webversion.net/")
-                if idx >= 0:
-                    window_start = max(0, idx - 800)
-                    window_end = min(len(html_body), idx + 1600)
-                    snippet = html_body[window_start:window_end]
-                    # Newlines kill log readability; collapse to spaces.
-                    snippet = " ".join(snippet.split())
+                soup = BeautifulSoup(html_body, "lxml")
+
+                # (a) first real image
+                first_img_idx = -1
+                for img in soup.find_all("img"):
+                    src = (img.get("src") or "").strip()
+                    if not src or src.startswith("data:"):
+                        continue
+                    w = str(img.get("width", "")).strip()
+                    h = str(img.get("height", "")).strip()
+                    if w in ("1", "0") or h in ("1", "0"):
+                        continue
+                    needle = f'src="{src}"'
+                    pos = html_body.find(needle)
+                    if pos == -1:
+                        pos = html_body.find(src)
+                    if pos >= 0:
+                        first_img_idx = pos
+                        break
+
+                def _dump(label: str, idx: int, before: int, after: int) -> None:
+                    if idx < 0:
+                        return
+                    ws = max(0, idx - before)
+                    we = min(len(html_body), idx + after)
+                    snippet = " ".join(html_body[ws:we].split())
                     log.info(
-                        "%s: failing-newsletter HTML window (chars %d-%d, total %d): %s",
-                        SOURCE_ID, window_start, window_end, len(html_body), snippet,
+                        "%s: failing-newsletter %s window (chars %d-%d of %d): %s",
+                        SOURCE_ID, label, ws, we, len(html_body), snippet,
                     )
+
+                _dump("around-first-real-image", first_img_idx, 1500, 4500)
+
+                # (b) last webversion.net anchor
+                last_wv = html_body.lower().rfind("webversion.net/")
+                _dump("around-last-tracker-link", last_wv, 4500, 1500)
         if len(stories) >= 2:
             log.info(
                 "%s: newsletter detected (%d stories) in %r",
