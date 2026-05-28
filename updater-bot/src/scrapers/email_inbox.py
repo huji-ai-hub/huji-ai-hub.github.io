@@ -204,7 +204,15 @@ def _fetch_and_parse(imap: imaplib.IMAP4_SSL, msg_id: bytes) -> list[ScrapedItem
         #      in webversion.net trackers.
         stories = _parse_newsletter_stories(html_body)
         if len(stories) < 2 and _looks_like_huji_newsletter(sender, html_body):
+            log.info(
+                "%s: pattern splitter found %d stories; running structural splitter on %r",
+                SOURCE_ID, len(stories), subject[:60],
+            )
             stories = _parse_structural_newsletter(html_body)
+            log.info(
+                "%s: structural splitter produced %d stories",
+                SOURCE_ID, len(stories),
+            )
         if len(stories) >= 2:
             log.info(
                 "%s: newsletter detected (%d stories) in %r",
@@ -486,7 +494,7 @@ def _find_story_container(anchor) -> object | None:
     Stop there. Do not climb past it into the table.
     """
     node = anchor
-    for _ in range(8):  # Bounded climb; don't walk all the way to <body>.
+    for _ in range(10):  # Bounded climb; don't walk all the way to <body>.
         parent = node.parent
         if parent is None or parent.name in ("body", "html"):
             break
@@ -494,9 +502,18 @@ def _find_story_container(anchor) -> object | None:
         # The first per-story cell wins. Image presence is the cheap
         # signal that we're inside a story block (not a list-of-links
         # block at the bottom of the email).
-        if node.name in ("td", "div", "li") and node.find("img") is not None:
-            if len(node.get_text(strip=True)) > 20:
-                return node
+        #
+        # Include <tr> because HUJI newsletters frequently put the image
+        # in a left <td> and the title+CTA in a right <td>, so the
+        # smallest container holding both is the <tr> wrapping them.
+        if node.name in ("td", "tr", "div", "li") and node.find("img") is not None:
+            text_len = len(node.get_text(strip=True))
+            if text_len > 20:
+                # Sanity ceiling: if the "container" holds more than 2000
+                # characters of text, it's the wrapping table-of-stories,
+                # not a single story cell. Keep walking.
+                if text_len < 2000:
+                    return node
     # No per-story container found; fall back to whatever we ended at
     # if it has some text. Worst case we'll get a too-broad block but
     # _parse_newsletter_stories will dedupe by URL so we don't double-emit.
