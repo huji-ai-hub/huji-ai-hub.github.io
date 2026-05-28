@@ -432,6 +432,60 @@ _NON_STORY_LINK_TEXTS = {
 }
 
 
+def _title_from_url(url: str) -> str:
+    """Derive a human-readable title from a news URL when the page itself is
+    unreachable (Cloudflare 403, etc).
+
+    Strategy: take the last non-empty path segment, strip a trailing file
+    extension and any leading ISO-style date prefix, replace dashes with
+    spaces, and title-case it. Returns "" when the URL has nothing slug-shaped
+    (e.g. just a path like /news/ with no article id).
+
+    Examples:
+      /news/2026-03-rare-disease-ai-breakthrough.html
+        -> "Rare disease AI breakthrough"
+      /news/2026-05-streetlights-trigger-bizarre-death-spirals.html
+        -> "Streetlights trigger bizarre death spirals"
+      /article-893017  (jpost-style numeric)
+        -> ""  (numeric ids carry no title signal)
+    """
+    try:
+        path = _urllib_parse.urlparse(url).path
+    except Exception:
+        return ""
+    segments = [s for s in path.split("/") if s]
+    if not segments:
+        return ""
+    slug = segments[-1]
+    # Strip a trailing extension (.html, .htm, .php, .aspx).
+    slug = re.sub(r"\.(html?|php|aspx?)$", "", slug, flags=re.IGNORECASE)
+    # Strip a leading ISO date prefix like "2026-03-" or "2026-03-15-".
+    slug = re.sub(r"^\d{4}-\d{2}(?:-\d{2})?-", "", slug)
+    # Require at least one separator (slug looks like "word-word-..."). Random
+    # alphanumeric IDs (ynet "hj0uzcuiwx", jpost "article-893017") carry no
+    # title signal even though they pass the letter-count check.
+    if "-" not in slug and "_" not in slug:
+        return ""
+    if not re.search(r"[a-zA-Z]{4,}", slug):
+        return ""
+    if re.fullmatch(r"[a-zA-Z]*-?\d+", slug):
+        return ""
+    # Replace separators with spaces, collapse, capitalize first letter.
+    text = slug.replace("-", " ").replace("_", " ").strip()
+    text = re.sub(r"\s+", " ", text)
+    if not text:
+        return ""
+    # Sentence-case, then re-uppercase common research/tech acronyms that
+    # would otherwise be lowercased and lose their meaning (and signal to
+    # the classifier).
+    text = text[0].upper() + text[1:]
+    _ACRONYMS = ("AI", "ML", "DL", "LLM", "NLP", "RNA", "DNA", "CRISPR", "GPT",
+                 "HUJI", "CS", "EU", "USA", "UK", "IDF")
+    for acronym in _ACRONYMS:
+        text = re.sub(rf"\b{acronym}\b", acronym, text, flags=re.IGNORECASE)
+    return text
+
+
 def _extract_og_from_html(html: str) -> dict[str, str]:
     """Pull og:* and description meta from an article page. Same shape as
     huji_main_news._extract_og — duplicated here to avoid a cross-scraper
@@ -542,10 +596,31 @@ def _resolve_tracker_to_article(soup: BeautifulSoup) -> list[dict]:
             # The classifier judges relevance per item; here we just need a
             # title, description, and URL.
             if resp.status_code >= 400:
-                log.info(
-                    "%s: tracker %s -> %s returned HTTP %d; skipping",
-                    SOURCE_ID, tracker[:60], final_url[:120], resp.status_code,
-                )
+                # Cloudflare and similar walls 403 us on medicalxpress, phys.org,
+                # etc. We still know the URL, and the URL slug almost always
+                # contains the story headline (kebab-case, sometimes with a date
+                # prefix). Build a fallback title from the slug so we don't lose
+                # the story entirely. The classifier can still judge it.
+                fallback = _title_from_url(final_url)
+                if fallback:
+                    if final_url in seen_urls:
+                        continue
+                    seen_urls.add(final_url)
+                    log.info(
+                        "%s: tracker %s -> %s 403'd; using URL-slug title %r",
+                        SOURCE_ID, tracker[:60], final_url[:100], fallback[:80],
+                    )
+                    stories.append({
+                        "url": final_url,
+                        "title": fallback,
+                        "content": f"Press coverage from {_urllib_parse.urlparse(final_url).netloc}: {fallback}.",
+                        "image": img_src,
+                    })
+                else:
+                    log.info(
+                        "%s: tracker %s -> %s returned HTTP %d (no usable slug); skipping",
+                        SOURCE_ID, tracker[:60], final_url[:120], resp.status_code,
+                    )
                 continue
             if final_url in seen_urls:
                 continue
