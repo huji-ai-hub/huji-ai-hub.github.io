@@ -213,6 +213,21 @@ def _fetch_and_parse(imap: imaplib.IMAP4_SSL, msg_id: bytes) -> list[ScrapedItem
                 "%s: structural splitter produced %d stories",
                 SOURCE_ID, len(stories),
             )
+            # If we still have nothing, dump a window of the raw HTML
+            # around the first webversion.net anchor so we can inspect
+            # the actual layout offline. One window per email is plenty.
+            if not stories:
+                idx = html_body.lower().find("webversion.net/")
+                if idx >= 0:
+                    window_start = max(0, idx - 800)
+                    window_end = min(len(html_body), idx + 1600)
+                    snippet = html_body[window_start:window_end]
+                    # Newlines kill log readability; collapse to spaces.
+                    snippet = " ".join(snippet.split())
+                    log.info(
+                        "%s: failing-newsletter HTML window (chars %d-%d, total %d): %s",
+                        SOURCE_ID, window_start, window_end, len(html_body), snippet,
+                    )
         if len(stories) >= 2:
             log.info(
                 "%s: newsletter detected (%d stories) in %r",
@@ -382,6 +397,9 @@ def _parse_structural_newsletter(html: str) -> list[dict]:
 
     Returns a list of dicts: {url, title, content, image}. Empty list if
     nothing story-shaped was found.
+
+    Heavily diagnostic: keeps per-anchor reject counters and dumps them at
+    end so future-debugging doesn't need IMAP creds to know what failed.
     """
     if not html:
         return []
@@ -392,29 +410,64 @@ def _parse_structural_newsletter(html: str) -> list[dict]:
     seen_urls: set[str] = set()
     seen_titles: set[str] = set()
 
+    # Counters: anchors rejected at each filter stage. INFO-logged at end.
+    rej = {
+        "empty_href": 0,
+        "junk_url": 0,
+        "junk_text": 0,
+        "tiny_text": 0,
+        "no_container": 0,
+        "no_title": 0,
+        "title_too_short": 0,
+        "title_junk": 0,
+        "url_dup": 0,
+        "title_dup": 0,
+        "content_too_thin": 0,
+        "accepted": 0,
+    }
+    sample_rejects: list[str] = []  # short trace of why each rejected anchor failed
+
+    def trace(reason: str, href: str, extra: str = "") -> None:
+        if len(sample_rejects) < 8:
+            sample_rejects.append(f"{reason}|{href[:80]}|{extra[:80]}")
+
     for a in soup.find_all("a", href=True):
         href = a["href"].strip()
         if not href:
+            rej["empty_href"] += 1
             continue
         href_lower = href.lower()
         if any(p in href_lower for p in _NON_STORY_URL_PARTS):
+            rej["junk_url"] += 1
             continue
 
         link_text = _clean(a.get_text(separator=" ")).lower()
         if link_text in _NON_STORY_LINK_TEXTS:
+            rej["junk_text"] += 1
             continue
         # Single-emoji or super-short anchor text is usually a social icon.
         if 0 < len(link_text) <= 2:
+            rej["tiny_text"] += 1
             continue
 
         block = _find_story_container(a)
         if block is None:
+            rej["no_container"] += 1
+            trace("no_container", href)
             continue
 
         title = _extract_story_title(block, a)
-        if not title or len(title) < 8:
+        if not title:
+            rej["no_title"] += 1
+            trace("no_title", href, f"block={block.name}")
+            continue
+        if len(title) < 8:
+            rej["title_too_short"] += 1
+            trace("title_too_short", href, f"title={title!r}")
             continue
         if title.lower() in _NON_STORY_LINK_TEXTS:
+            rej["title_junk"] += 1
+            trace("title_junk", href, f"title={title!r}")
             continue
 
         # Dedupe by URL (typical) and by title (handles cases where the
@@ -422,7 +475,11 @@ def _parse_structural_newsletter(html: str) -> list[dict]:
         # different tracker URLs).
         url = href.split("#")[0].rstrip("/")
         title_key = title.lower()[:120]
-        if url in seen_urls or title_key in seen_titles:
+        if url in seen_urls:
+            rej["url_dup"] += 1
+            continue
+        if title_key in seen_titles:
+            rej["title_dup"] += 1
             continue
         seen_urls.add(url)
         seen_titles.add(title_key)
@@ -431,16 +488,28 @@ def _parse_structural_newsletter(html: str) -> list[dict]:
         # If the content snippet is just the title repeated, the block was
         # too small to be a real story. Skip.
         if len(content) < len(title) + 20:
+            rej["content_too_thin"] += 1
+            trace("thin_content", href, f"clen={len(content)} tlen={len(title)}")
             continue
 
         image = _extract_story_image(block)
 
+        rej["accepted"] += 1
         stories.append({
             "url": url,
             "title": title,
             "content": content,
             "image": image,
         })
+
+    # One INFO line summarizing the per-anchor outcomes. Verbose but
+    # invaluable for diagnosing "why 0 stories" without IMAP access.
+    log.info(
+        "%s: structural anchor outcomes: %s; samples: %s",
+        SOURCE_ID,
+        ", ".join(f"{k}={v}" for k, v in rej.items() if v),
+        " || ".join(sample_rejects) if sample_rejects else "(none)",
+    )
 
     return stories
 
