@@ -1,11 +1,11 @@
 # HUJI AI Hub
 
-The website for the AI Hub at the Hebrew University of Jerusalem — research, academic programs, faculty profiles, and industry collaboration. A bilingual (English / Hebrew) static site, built with Astro and deployed on Cloudflare Pages.
+The website for the AI Hub at the Hebrew University of Jerusalem: research, academic programs, faculty profiles, and industry collaboration. A bilingual (English / Hebrew) static site, built with Astro and deployed on Cloudflare Pages.
 
 - **Live site:** https://huji-ai-hub.pages.dev
 - **Repository:** https://github.com/huji-ai-hub/huji-ai-hub.github.io
 
-The site replaces an older Drupal-based version. The design goal was that anyone — not just a developer — should be able to update content, and the next maintainer should inherit a project that doesn't depend on tribal knowledge to keep running.
+The site replaces an older Drupal-based version. The design goal was that anyone (not just a developer) should be able to update content, and the next maintainer should inherit a project that doesn't depend on tribal knowledge to keep running.
 
 ---
 
@@ -13,7 +13,7 @@ The site replaces an older Drupal-based version. The design goal was that anyone
 
 | Goal | Where to go |
 |---|---|
-| Edit a faculty bio | `src/content/faculty/<slug>.md` — open it on github.com, click the pencil, edit, commit |
+| Edit a faculty bio | `src/content/faculty/<slug>.md`. Open it on github.com, click the pencil, edit, commit |
 | Add a new faculty member | Create a new `src/content/faculty/<their-name>.md` (copy an existing one as a template) and add their photo to `public/photos/` |
 | Change a homepage section | `src/data/homepage.ts` |
 | Add or edit a research field | `src/data/fields.ts` |
@@ -35,7 +35,7 @@ There are three ways to do the "edit a file" step, depending on who you are:
 
 1. **In the browser.** Open the file on github.com, click the pencil icon, edit in the GitHub UI, save. GitHub creates the commit and prompts you to open a pull request. No software to install.
 2. **On your computer.** Clone the repo, edit any file in your text editor of choice, commit, push. Suitable for someone who edits frequently or wants to preview locally first.
-3. **Via the auto-update bot.** A scheduled agent (planned, not yet running in production) scans HUJI faculty pages, university marketing, and Google Scholar for new AI-related content and proposes updates as pull requests. The same human review and merge step applies before anything goes live. See `output/updater-bot-design.md` in the project workspace for the design doc.
+3. **Via the auto-update bot.** A scheduled agent runs weekly (Monday 03:00 UTC, plus manual triggers from the Actions tab). It pulls candidate news from the HUJI main news sitemap, a curated email inbox (`huji.ai.hub.bot.inbox@gmail.com`, where humans forward newsletters and Scholar alerts), and each faculty member's personal site, then asks Claude to classify what's AI-relevant and draft bilingual cards. Every run opens a pull request for human review. Nothing reaches the live site without a merge. See `output/updater-bot-design.md` for the architecture and `output/bot-handover.md` for credentials and operational notes.
 
 In all three cases, no CMS login, no admin panel, no database. The repository is the content source of truth.
 
@@ -47,9 +47,12 @@ In all three cases, no CMS login, no admin panel, no database. The repository is
 site/
 ├── src/
 │   ├── content/
-│   │   └── faculty/            ← One markdown file per faculty member
+│   │   ├── faculty/            ← One markdown file per faculty member
+│   │   ├── labs/               ← One markdown file per lab (currently sparse)
+│   │   ├── news/               ← News cards (mostly bot-drafted, human-merged)
+│   │   └── programs/           ← Academic programs (rendered as tabs on /academics)
 │   ├── data/                   ← Structured page content (homepage, research fields, industry data)
-│   ├── pages/                  ← Routes — each .astro file becomes a URL
+│   ├── pages/                  ← Routes, each .astro file becomes a URL
 │   │   ├── faculty/
 │   │   ├── research/
 │   │   └── he/                 ← Hebrew mirror of every English route
@@ -62,14 +65,18 @@ site/
 │   ├── photos/                 ← Faculty headshots
 │   ├── favicon.svg
 │   └── robots.txt
+├── updater-bot/                ← The weekly news bot (Python). See its own README inside.
+├── .github/workflows/
+│   ├── deploy.yml              ← Builds and publishes to GitHub Pages on every push to main
+│   └── updater.yml             ← Weekly cron + manual trigger for the news bot
 ├── astro.config.mjs            ← Build configuration (one-line site URL)
-├── package.json                ← Dependencies (4 packages)
+├── package.json                ← Dependencies (3 packages: Astro core + sitemap integration + marked)
 └── README.md                   ← This file
 ```
 
 **Content vs code.** Content lives under `src/content/`, `src/data/`, and `public/`. Code lives under `src/pages/`, `src/layouts/`, and `src/components/`. They share a repository but they're cleanly separated by folder, with different change patterns. A content edit doesn't touch any code; a code change doesn't touch any content. The build runs in either case.
 
-This is the standard pattern for content sites with the modern static-site frameworks (Astro, Next.js, Hugo, Eleventy). The older approach of separating into two systems — code in one place, content in a CMS database — solved a problem (rebuilding code was once expensive) that doesn't exist anymore. A static-site build runs in seconds; the operational cost of a database (backups, migrations, version compatibility, hosting) is no longer justified for a site that doesn't need user accounts or runtime-generated pages.
+This is the standard pattern for content sites with the modern static-site frameworks (Astro, Next.js, Hugo, Eleventy). The older approach of separating into two systems, code in one place and content in a CMS database, solved a problem (rebuilding code was once expensive) that doesn't exist anymore. A static-site build runs in seconds; the operational cost of a database (backups, migrations, version compatibility, hosting) is no longer justified for a site that doesn't need user accounts or runtime-generated pages.
 
 ---
 
@@ -79,7 +86,7 @@ This is the standard pattern for content sites with the modern static-site frame
 |---|---|---|
 | Static-site generator | [Astro](https://astro.build) | Best current tool for content sites with multiple contributors. Markdown-first. Native Hebrew/RTL support. Zero JavaScript shipped to the browser unless explicitly added. |
 | Content storage | Markdown + TypeScript data files in the repository | Anyone can edit with a text editor. AI agents can write to markdown trivially. No CMS API required. |
-| Hosting | [Cloudflare Pages](https://pages.cloudflare.com) | Per-pull-request preview URLs out of the box, free, fast CDN. Output is plain static files — the host is interchangeable if needed. |
+| Hosting | [Cloudflare Pages](https://pages.cloudflare.com) | Per-pull-request preview URLs out of the box, free, fast CDN. Output is plain static files, so the host is interchangeable if needed. |
 | Repository host | github.com | Outside HUJI institutional control, won't disappear if internal infrastructure changes. Standard tooling, free unlimited collaborators, GitHub Actions native. |
 | Permissions | GitHub branch protection | Edits go through pull requests; only repo collaborators can merge. No site-level login required. |
 
@@ -89,7 +96,7 @@ This is the standard pattern for content sites with the modern static-site frame
 
 Every English route at `/foo` has a parallel Hebrew route at `/he/foo`. The `Base.astro` layout sets `<html lang="he" dir="rtl">` for Hebrew pages and the corresponding `lang/dir` for English. Hebrew uses the Heebo font; English uses Inter. Each page's English ↔ Hebrew counterpart is linked in the head via `<link rel="alternate" hreflang="...">` so search engines route language-specific queries correctly.
 
-Faculty content is currently shared between languages — one markdown file per person, with English bios. Adding Hebrew bios is a content change (add a `bioHe` frontmatter field, conditionally render in the Hebrew template); structurally supported, awaiting a translation pass.
+Faculty content is currently shared between languages: one markdown file per person, with English bios. Adding Hebrew bios is a content change (add a `bioHe` frontmatter field, conditionally render in the Hebrew template); structurally supported, awaiting a translation pass.
 
 ---
 
@@ -112,7 +119,7 @@ After the site is publicly deployed: submit the sitemap to Google Search Console
 
 ## Permissions and governance
 
-- The `main` branch is protected — direct pushes are blocked.
+- The `main` branch is protected: direct pushes are blocked.
 - Changes land via pull request and require at least one approving review from a repo collaborator.
 - Repo collaborators control who can merge.
 - There is no separate site-level login. Authorization to edit the site = authorization to merge to `main` = membership in the GitHub repo with merge rights.
@@ -123,12 +130,14 @@ If a logged-in editing surface for non-technical editors is later required, a he
 
 ## Hosting and DNS
 
-- **Hosting:** Cloudflare Pages, free tier.
-- **Production URL:** `huji-ai-hub.pages.dev`
-- **HUJI subdomain:** awaiting confirmation from HUJI IT on whether a CNAME from a HUJI subdomain (proposed: `ai.cs.huji.ac.il`) is feasible. When confirmed, Cloudflare's custom domain feature handles the DNS side; the only code change is updating the `site` field in `astro.config.mjs`.
-- **Backup deploy:** a workflow at `.github/workflows/deploy.yml` is also configured for GitHub Pages — currently inactive in production but kept for portability if hosting needs to change.
+The site builds to plain static files, so it can run on any static host. Currently it ships to two destinations in parallel:
 
-The build output is plain static files. The site can be served from any static host (a HUJI server with nginx, GitHub Pages, S3, Netlify, etc.) without code changes.
+- **Cloudflare Pages** at `https://huji-ai-hub.pages.dev`. Free tier, fast CDN, automatic per-pull-request preview URLs. Primary review surface.
+- **GitHub Pages** at `https://huji-ai-hub.github.io`. Auto-deployed on every push to `main` by `.github/workflows/deploy.yml`. Live in parallel to Cloudflare; kept active as a fallback and as the candidate target for the HUJI subdomain CNAME.
+
+**HUJI subdomain (target):** `ai-hub.cs.huji.ac.il`. The CS school's policy is that anything CS-related must be served from inside HUJI infrastructure (DNS audit confirmed: every `*.cs.huji.ac.il` subdomain points to a HUJI-internal IP). The agreed plan: a git hook syncs `main` from github.com to `github.cs.huji.ac.il`, and a HUJI CS server pulls the mirror and serves it at the target URL. Awaiting provisioning from CS IT. When the cutover happens, the only code change needed is updating the `site` field in `astro.config.mjs`.
+
+Either the GitHub Pages or the Cloudflare deploy can stay running indefinitely as a preview / backup environment without affecting the production URL.
 
 ---
 

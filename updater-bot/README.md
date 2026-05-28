@@ -1,4 +1,4 @@
-# HUJI AI Hub — Updater Bot
+# HUJI AI Hub: Updater Bot
 
 A small Python program that runs once a week on GitHub Actions, scans the HUJI AI Hub website and a handful of HUJI sources for content that's gone out of date, and opens a single pull request proposing every change it found. A human reviews the PR and merges, edits, or closes it. No CMS, no logins, no surprises.
 
@@ -9,10 +9,14 @@ A small Python program that runs once a week on GitHub Actions, scans the HUJI A
 Every Monday at 03:00 UTC, the bot:
 
 1. Loads the website's faculty list and content files.
-2. Scrapes the HUJI CS faculty page, HUJI news, and each faculty member's personal site + Google Scholar.
-3. Checks the live site for dead links, missing/extra faculty, and stale dates.
-4. Sends ambiguous cases to Claude (Anthropic's API) for classification or drafting.
-5. Opens **one pull request** with every change as a separate commit, plus a markdown summary you can skim in 2 minutes.
+2. Pulls candidate news from three live sources (configurable in `config.toml`):
+   - The HUJI main news sitemap (`new.huji.ac.il/sitemap.xml`) plus Open Graph metadata per article.
+   - A curated email inbox (`huji.ai.hub.bot.inbox@gmail.com`), where a human forwards HUJI newsletters and Scholar alerts. The bot reads via IMAP and splits multi-story newsletters into individual cards.
+   - Each faculty member's personal site (one HTTP request each, throttled).
+   Two more sources are wired up but currently disabled because they sit behind anti-bot walls: Yissum RSS (Cloudflare blocks runner IPs) and the HUJI CS school pages (F5 BIG-IP challenge). Re-enable in `config.toml` if you find a path through.
+3. Checks the live site for dead links, missing/extra faculty entries, and stale dates.
+4. Sends each candidate to Claude (Anthropic) twice: cheap Haiku for "is this AI-relevant" classification, better Sonnet for drafting the bilingual EN+HE card on items that pass.
+5. Opens **one pull request** with every accepted change as a separate commit, plus a markdown summary you can skim in 2 minutes.
 
 You review. You merge. The site redeploys.
 
@@ -22,7 +26,7 @@ If nothing changed, the bot opens no PR and logs `no changes proposed`.
 
 ## 2. One-time setup (do this once, ever)
 
-Should take 20–30 minutes total.
+Should take 20-30 minutes total.
 
 ### 2a. Create the bot's GitHub account
 
@@ -59,7 +63,7 @@ While signed in as `huji-ai-hub-bot`:
      - **Contents:** Read and write
      - **Pull requests:** Read and write
      - (Leave everything else as "No access".)
-5. Click **Generate token**. **Copy the token immediately** — you won't see it again.
+5. Click **Generate token**. **Copy the token immediately**, you won't see it again.
 
 > _(Screenshot helpful: the permissions selection screen.)_
 
@@ -77,11 +81,15 @@ While signed in as `huji-ai-hub-bot`:
 Back on your **personal** account, in the website repo:
 
 1. **Settings** → **Secrets and variables** → **Actions** → **New repository secret**.
-2. Add two secrets:
+2. Add four secrets:
    - Name: `ANTHROPIC_API_KEY`, Value: the Anthropic key from step 2d.
    - Name: `BOT_GITHUB_TOKEN`, Value: the PAT from step 2c.
+   - Name: `BOT_INBOX_EMAIL`, Value: the bot Gmail address (e.g. `huji.ai.hub.bot.inbox@gmail.com`).
+   - Name: `BOT_INBOX_APP_PASSWORD`, Value: a Google App Password for that Gmail (generate at `myaccount.google.com/apppasswords`; requires 2FA on the bot Gmail).
 
-> _(Screenshot helpful: the Actions secrets page with both entries.)_
+The last two are only needed if you keep the `email_inbox` source enabled. Without them the bot logs a warning and skips that source, which is fine for a faculty-pages-only deployment.
+
+> _(Screenshot helpful: the Actions secrets page with all four entries.)_
 
 ### 2f. Push the bot to the repo
 
@@ -137,10 +145,10 @@ uv pip install -e .
 cp .env.example .env
 # edit .env, paste your ANTHROPIC_API_KEY and a GITHUB_TOKEN
 
-# dry run — scrape + propose, but don't actually open a PR
+# dry run: scrape + propose, but don't actually open a PR
 python -m main --dry-run
 
-# real run — opens a PR (use a test repo for this!)
+# real run: opens a PR (use a test repo for this!)
 python -m main
 ```
 
@@ -153,6 +161,9 @@ Logs go to stdout. Set `LOG_FORMAT=json` for structured logs.
 Edit `updater-bot/config.toml`. Find the relevant section, set `enabled = false`, commit. Examples:
 
 ```toml
+[sources.email_inbox]
+enabled = false   # stop reading the forwarded-email inbox this week
+
 [sources.faculty_scholar]
 enabled = false   # don't scrape Google Scholar this week
 
@@ -164,6 +175,8 @@ To pause the entire bot: set `enabled = false` under `[schedule]` and commit. (O
 
 To change a URL (e.g., HUJI moved a page): edit the `url` field under that source's section. No code change needed.
 
+To re-enable a source that's currently disabled because of an anti-bot wall (`huji_cs_faculty`, `huji_cs_news`, `huji_main_ai_news`, `yissum`): flip `enabled = true`, but first verify the source returns 200 from a GitHub Actions runner IP (they're aggressively blocked by Cloudflare and F5). A local 200 from your laptop doesn't predict a CI 200.
+
 ---
 
 ## 5. Reading a generated PR
@@ -174,9 +187,9 @@ Every bot PR has the same shape:
 
 **Body sections:**
 
-1. **Summary table** — one row per proposed change, with file path, source, and confidence score. Use the checkboxes as a personal reading aid (checking them does nothing automatic).
-2. **Per-change rationale** — for each change, the bot explains *why* and links to the source it scraped. This is the most important section. Read this before merging.
-3. **Commits** — one per logical change, with a descriptive message and the source ID + confidence in the body.
+1. **Summary table**: one row per proposed change, with file path, source, and confidence score. Use the checkboxes as a personal reading aid (checking them does nothing automatic).
+2. **Per-change rationale**: for each change, the bot explains *why* and links to the source it scraped. This is the most important section. Read this before merging.
+3. **Commits**: one per logical change, with a descriptive message and the source ID + confidence in the body.
 
 **How to act:**
 
@@ -185,11 +198,11 @@ Every bot PR has the same shape:
 - **Want to edit the wording:** click any file in the PR's **Files changed** tab, click the pencil icon, edit, commit. Then merge.
 - **Whole PR is wrong:** click **Close pull request** with a comment explaining why. The bot will not re-propose the same items next week (it remembers via `state/manifest.json`).
 
-**Confidence scores** are not magic numbers — they're the bot's rough estimate. Use them as a sorting hint, not a decision rule:
-- `> 0.9` — high confidence, usually safe to merge after a quick read.
-- `0.7 – 0.9` — likely correct but worth checking the evidence link.
-- `0.5 – 0.7` — verify before merging.
-- Below 0.5 — bot doesn't propose these.
+**Confidence scores** are not magic numbers; they're the bot's rough estimate. Use them as a sorting hint, not a decision rule:
+- `> 0.9`: high confidence, usually safe to merge after a quick read.
+- `0.7 to 0.9`: likely correct but worth checking the evidence link.
+- `0.5 to 0.7`: verify before merging.
+- Below 0.5: bot doesn't propose these.
 
 ---
 
@@ -199,10 +212,10 @@ Every bot PR has the same shape:
 | -------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------- |
 | Workflow run failed with `401 Unauthorized`        | `BOT_GITHUB_TOKEN` is wrong, expired, or missing the right permissions. Regenerate (step 2c) and update the secret (2e).     |
 | Workflow run failed with `403` from Anthropic      | `ANTHROPIC_API_KEY` is wrong or you've hit a rate limit. Check console.anthropic.com.                                        |
-| One scraper logs an error but the run continues    | Expected — scrapers are isolated. If the same one fails 3 weeks in a row, look at the scraper file (`src/scrapers/<name>.py`) and the test fixture (`tests/fixtures/`). HUJI probably changed their HTML. |
+| One scraper logs an error but the run continues    | Expected, scrapers are isolated. If the same one fails 3 weeks in a row, look at the scraper file (`src/scrapers/<name>.py`) and the test fixture (`tests/fixtures/`). HUJI probably changed their HTML. |
 | Bot opens a PR with weird/wrong content           | Open an issue, reject the PR (close it with a comment). Look at `state/manifest.json` to see what triggered it.              |
 | Bot hasn't opened a PR in weeks but logs success   | Probably nothing genuinely changed. Check the logs of the most recent run for `no changes proposed`.                         |
-| You merged a PR and the site didn't update         | Check the Cloudflare Pages deploy log — it's a separate workflow. The updater bot doesn't deploy; the existing site workflow does. |
+| You merged a PR and the site didn't update         | Check the Cloudflare Pages and the GitHub Pages deploy logs (both are separate workflows). The updater bot doesn't deploy; the existing site workflow does. |
 | You want to test a scraper without opening a PR    | Run locally (Section 3) with `--dry-run`.                                                                                    |
 
 ---
@@ -218,7 +231,7 @@ If something breaks and you can't figure it out, the fastest path is:
 
 Claude will give you a concrete next step. If it's wrong, paste the result and iterate.
 
-For larger changes (adding a new scraper, moving to a different LLM provider): open a Claude Code session in this repo and ask. The architecture is simple enough that most changes are 1–2 file edits.
+For larger changes (adding a new scraper, moving to a different LLM provider): open a Claude Code session in this repo and ask. The architecture is simple enough that most changes are 1 to 2 file edits.
 
 ---
 
