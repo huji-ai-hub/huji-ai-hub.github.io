@@ -387,19 +387,35 @@ _NON_STORY_LINK_TEXTS = {
 }
 
 
+def _is_real_image(img) -> bool:
+    """Skip 1x1 tracking pixels and tiny icons."""
+    src = (img.get("src") or "").strip()
+    if not src or src.startswith("data:"):
+        return False
+    w = str(img.get("width", "")).strip()
+    h = str(img.get("height", "")).strip()
+    if w in ("1", "0") or h in ("1", "0"):
+        return False
+    return True
+
+
 def _parse_structural_newsletter(html: str) -> list[dict]:
     """Structure-based splitter for HUJI marketing newsletters.
 
-    The newsletter wraps every link in a tracker URL (webversion.net/<hex>...)
-    so we can't pattern-match on /news/<slug>. Instead, find the recurring
-    "image + title + summary + CTA" story blocks by walking up from each
-    promising anchor.
+    HUJI newsletters arrive as deeply-nested Outlook/Word-style HTML tables
+    where each story is its own inner <table> or <tr> with: real image,
+    title text, blurb, and a webversion.net "Read more" anchor. Stories
+    don't share a parent until the outer ~600px-wide email table.
 
-    Returns a list of dicts: {url, title, content, image}. Empty list if
-    nothing story-shaped was found.
+    Strategy: scan every <tr> / <td> / <table> in the document for ones
+    that look like a single story: contain a real (non-tracking-pixel)
+    image AND at least one webversion.net anchor AND text in the 60-1500
+    char range (longer = wrapping container, shorter = decorative cell).
+    Each match becomes one story. Dedupe by URL and by title.
 
-    Heavily diagnostic: keeps per-anchor reject counters and dumps them at
-    end so future-debugging doesn't need IMAP creds to know what failed.
+    Returns a list of dicts: {url, title, content, image}.
+
+    Heavily diagnostic: counters + sample reject traces in one INFO line.
     """
     if not html:
         return []
@@ -410,70 +426,85 @@ def _parse_structural_newsletter(html: str) -> list[dict]:
     seen_urls: set[str] = set()
     seen_titles: set[str] = set()
 
-    # Counters: anchors rejected at each filter stage. INFO-logged at end.
+    # Counters: containers rejected at each filter stage. INFO-logged at end.
     rej = {
-        "empty_href": 0,
-        "junk_url": 0,
-        "junk_text": 0,
-        "tiny_text": 0,
-        "no_container": 0,
+        "no_real_image": 0,
+        "no_story_anchor": 0,
+        "text_too_short": 0,
+        "text_too_long": 0,
         "no_title": 0,
         "title_too_short": 0,
         "title_junk": 0,
         "url_dup": 0,
         "title_dup": 0,
-        "content_too_thin": 0,
         "accepted": 0,
     }
-    sample_rejects: list[str] = []  # short trace of why each rejected anchor failed
+    sample_rejects: list[str] = []  # short trace of why each rejected container failed
 
-    def trace(reason: str, href: str, extra: str = "") -> None:
+    def trace(reason: str, extra: str = "") -> None:
         if len(sample_rejects) < 8:
-            sample_rejects.append(f"{reason}|{href[:80]}|{extra[:80]}")
+            sample_rejects.append(f"{reason}|{extra[:120]}")
 
-    for a in soup.find_all("a", href=True):
-        href = a["href"].strip()
-        if not href:
-            rej["empty_href"] += 1
-            continue
-        href_lower = href.lower()
-        if any(p in href_lower for p in _NON_STORY_URL_PARTS):
-            rej["junk_url"] += 1
-            continue
+    # Walk every plausible single-story container. tr / td / table are
+    # the shapes Outlook/Word-style email HTML uses.
+    candidates = soup.find_all(["tr", "td", "table"])
 
-        link_text = _clean(a.get_text(separator=" ")).lower()
-        if link_text in _NON_STORY_LINK_TEXTS:
-            rej["junk_text"] += 1
-            continue
-        # Single-emoji or super-short anchor text is usually a social icon.
-        if 0 < len(link_text) <= 2:
-            rej["tiny_text"] += 1
+    for container in candidates:
+        # Must have a real image (not a 1x1 tracking pixel).
+        real_imgs = [img for img in container.find_all("img") if _is_real_image(img)]
+        if not real_imgs:
+            rej["no_real_image"] += 1
             continue
 
-        block = _find_story_container(a)
-        if block is None:
-            rej["no_container"] += 1
-            trace("no_container", href)
+        # Must have at least one webversion.net (or similar tracker) anchor
+        # that isn't junk. We're permissive on URL pattern because trackers
+        # are opaque.
+        story_anchors = []
+        for a in container.find_all("a", href=True):
+            href = a["href"].strip()
+            if not href:
+                continue
+            href_lower = href.lower()
+            if any(p in href_lower for p in _NON_STORY_URL_PARTS):
+                continue
+            link_text = _clean(a.get_text(separator=" ")).lower()
+            if link_text in _NON_STORY_LINK_TEXTS:
+                continue
+            # webversion.net is the HUJI tracker domain; allow any non-junk
+            # external URL too to handle other newsletter platforms.
+            story_anchors.append(a)
+        if not story_anchors:
+            rej["no_story_anchor"] += 1
             continue
 
-        title = _extract_story_title(block, a)
+        text = _clean(container.get_text(separator=" "))
+        text_len = len(text)
+        if text_len < 60:
+            rej["text_too_short"] += 1
+            continue
+        # Wrapping containers (the whole email, the 600px main table) have
+        # thousands of chars. Single stories are usually 80-800 chars.
+        # 1500 gives buffer for stories with long Hebrew descriptions.
+        if text_len > 1500:
+            rej["text_too_long"] += 1
+            continue
+
+        # Title: the longest non-CTA-shaped text snippet inside.
+        title = _extract_best_title(container)
         if not title:
             rej["no_title"] += 1
-            trace("no_title", href, f"block={block.name}")
+            trace("no_title", f"tag={container.name} tlen={text_len}")
             continue
         if len(title) < 8:
             rej["title_too_short"] += 1
-            trace("title_too_short", href, f"title={title!r}")
+            trace("title_short", f"title={title!r}")
             continue
         if title.lower() in _NON_STORY_LINK_TEXTS:
             rej["title_junk"] += 1
-            trace("title_junk", href, f"title={title!r}")
             continue
 
-        # Dedupe by URL (typical) and by title (handles cases where the
-        # image-link and the "read more" link share a story but have
-        # different tracker URLs).
-        url = href.split("#")[0].rstrip("/")
+        # Use the first non-junk webversion link as the story URL.
+        url = story_anchors[0]["href"].strip().split("#")[0].rstrip("/")
         title_key = title.lower()[:120]
         if url in seen_urls:
             rej["url_dup"] += 1
@@ -484,34 +515,65 @@ def _parse_structural_newsletter(html: str) -> list[dict]:
         seen_urls.add(url)
         seen_titles.add(title_key)
 
-        content = _extract_story_text(block, a)
-        # If the content snippet is just the title repeated, the block was
-        # too small to be a real story. Skip.
-        if len(content) < len(title) + 20:
-            rej["content_too_thin"] += 1
-            trace("thin_content", href, f"clen={len(content)} tlen={len(title)}")
-            continue
-
-        image = _extract_story_image(block)
+        # Story image = first real image in the container.
+        image = real_imgs[0].get("src", "").strip() or None
 
         rej["accepted"] += 1
         stories.append({
             "url": url,
             "title": title,
-            "content": content,
+            "content": text[:6000],
             "image": image,
         })
 
-    # One INFO line summarizing the per-anchor outcomes. Verbose but
-    # invaluable for diagnosing "why 0 stories" without IMAP access.
     log.info(
-        "%s: structural anchor outcomes: %s; samples: %s",
+        "%s: structural container outcomes: %s; samples: %s",
         SOURCE_ID,
         ", ".join(f"{k}={v}" for k, v in rej.items() if v),
         " || ".join(sample_rejects) if sample_rejects else "(none)",
     )
 
     return stories
+
+
+def _extract_best_title(container) -> str:
+    """Find the most title-like string anywhere inside the container.
+
+    Looks at headings first, then bold/strong text. Returns the longest
+    candidate that's not a CTA / junk text and is reasonable length.
+    """
+    candidates: list[str] = []
+
+    # Headings get strong preference.
+    for tag_name in ("h1", "h2", "h3", "h4"):
+        for h in container.find_all(tag_name):
+            text = _clean(h.get_text(separator=" "))
+            if text and 8 <= len(text) <= 200:
+                candidates.append(text)
+    if candidates:
+        # Return longest heading.
+        return max(candidates, key=len)
+
+    # Fall back to bold-styled text (HUJI titles are often styled bold +
+    # colored, with no semantic heading tag).
+    for tag_name in ("strong", "b"):
+        for s in container.find_all(tag_name):
+            text = _clean(s.get_text(separator=" "))
+            if text and 8 <= len(text) <= 200 and text.lower() not in _CTA_LINK_TEXT:
+                candidates.append(text)
+    if candidates:
+        return max(candidates, key=len)
+
+    # Last resort: longest <p> or <span> text in the right size range.
+    for tag_name in ("p", "span", "td"):
+        for el in container.find_all(tag_name):
+            text = _clean(el.get_text(separator=" "))
+            if text and 10 <= len(text) <= 200 and text.lower() not in _CTA_LINK_TEXT:
+                candidates.append(text)
+    if candidates:
+        return max(candidates, key=len)
+
+    return ""
 
 
 def _resolve_story_url(href: str) -> str | None:
