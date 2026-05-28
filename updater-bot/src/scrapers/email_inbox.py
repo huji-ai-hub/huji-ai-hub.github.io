@@ -536,10 +536,15 @@ def _resolve_tracker_to_article(soup: BeautifulSoup) -> list[dict]:
                          SOURCE_ID, tracker[:60], e)
                 continue
             final_url = str(resp.url)
-            if "new.huji.ac.il" not in final_url.lower():
+            # IMPORTANT: HUJI marketing emails link to PRESS COVERAGE of HUJI
+            # research (medicalxpress, jpost, ynet, neurosciencenews, etc),
+            # NOT to articles on new.huji.ac.il. So we accept any destination.
+            # The classifier judges relevance per item; here we just need a
+            # title, description, and URL.
+            if resp.status_code >= 400:
                 log.info(
-                    "%s: tracker %s resolved to non-HUJI URL %s; skipping",
-                    SOURCE_ID, tracker[:60], final_url[:120],
+                    "%s: tracker %s -> %s returned HTTP %d; skipping",
+                    SOURCE_ID, tracker[:60], final_url[:120], resp.status_code,
                 )
                 continue
             if final_url in seen_urls:
@@ -548,9 +553,15 @@ def _resolve_tracker_to_article(soup: BeautifulSoup) -> list[dict]:
             og = _extract_og_from_html(resp.text)
             title = og.get("title", "").strip()
             if not title:
-                log.info("%s: tracker %s resolved to %s but page had no OG title",
-                         SOURCE_ID, tracker[:60], final_url[:120])
+                log.info(
+                    "%s: tracker %s -> %s but no OG title; skipping",
+                    SOURCE_ID, tracker[:60], final_url[:120],
+                )
                 continue
+            log.info(
+                "%s: tracker resolved -> %s | title=%r",
+                SOURCE_ID, final_url[:100], title[:80],
+            )
             stories.append({
                 "url": og.get("url") or final_url,
                 "title": title,
