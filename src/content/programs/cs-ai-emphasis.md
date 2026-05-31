@@ -52,9 +52,9 @@ bodyHe: |
 
   שלוש שנים, מהיסודות ועד חזית ה-AI:
 
-  - **שנה א — יסודות.** חשבון אינפיניטסימלי, אלגברה לינארית, מתמטיקה דיסקרטית, הסתברות, מבני נתונים, מבוא לתכנות.
-  - **שנה ב — ארגז כלים.** אלגוריתמים, סיבוכיות חישובית, סטטיסטיקה, יסודות למידת מכונה. פרויקטי תכנות מהותיים, חשיפה לרעיונות הליבה של רשתות נוירונים.
-  - **שנה ג — התמחות ומחקר.** קורסי AI מתקדמים: למידה עמוקה, ראייה ממוחשבת, עיבוד שפה טבעית, למידה חיזוקית, בטיחות AI. אפשרות להצטרף למעבדות מחקר של הסגל כעוזרי מחקר עוד בתואר ראשון.
+  - **שנה א : יסודות.** חשבון אינפיניטסימלי, אלגברה לינארית, מתמטיקה דיסקרטית, הסתברות, מבני נתונים, מבוא לתכנות.
+  - **שנה ב : ארגז כלים.** אלגוריתמים, סיבוכיות חישובית, סטטיסטיקה, יסודות למידת מכונה. פרויקטי תכנות מהותיים, חשיפה לרעיונות הליבה של רשתות נוירונים.
+  - **שנה ג : התמחות ומחקר.** קורסי AI מתקדמים: למידה עמוקה, ראייה ממוחשבת, עיבוד שפה טבעית, למידה חיזוקית, בטיחות AI. אפשרות להצטרף למעבדות מחקר של הסגל כעוזרי מחקר עוד בתואר ראשון.
 ---
 
 In a world where AI tools write code, summarize documents, and suggest answers in one click, the right question isn't *"is computer science still worth studying?"* It's *who will build, analyze, and oversee the systems writing that code?* The answer is graduates with deep understanding of mathematics, algorithms, and the foundations of AI.
@@ -63,6 +63,6 @@ In a world where AI tools write code, summarize documents, and suggest answers i
 
 Three years, from foundations to the AI frontier:
 
-- **Year 1 — Foundations.** Calculus, linear algebra, discrete mathematics, probability, data structures, intro to programming.
-- **Year 2 — Toolkit.** Algorithms, computational complexity, statistics, foundations of machine learning. Substantial programming projects and the core ideas behind modern neural networks.
-- **Year 3 — Specialization and research.** Advanced AI: deep learning, computer vision, NLP, reinforcement learning, AI safety. Electives by direction. Option to join faculty research labs as a research assistant while still in undergrad.
+- **Year 1 : Foundations.** Calculus, linear algebra, discrete mathematics, probability, data structures, intro to programming.
+- **Year 2 : Toolkit.** Algorithms, computational complexity, statistics, foundations of machine learning. Substantial programming projects and the core ideas behind modern neural networks.
+- **Year 3 : Specialization and research.** Advanced AI: deep learning, computer vision, NLP, reinforcement learning, AI safety. Electives by direction. Option to join faculty research labs as a research assistant while still in undergrad.

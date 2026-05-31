@@ -272,9 +272,11 @@ import { FIELDS } from '../../data/fields';
     padding: 3.5rem 0;
   }
 
+  /* Flex (not grid) so the trailing partial row (2 of 5) centers nicely. */
   .labs-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
     gap: 1.25rem;
   }
 
@@ -282,6 +284,9 @@ import { FIELDS } from '../../data/fields';
     text-decoration: none;
     color: inherit;
     transition: transform 0.2s;
+    /* Three per row at desktop widths: 33% minus the gap allotment. */
+    flex: 0 1 calc((100% - 2.5rem) / 3);
+    min-width: 240px;
   }
 
   .lab-card:hover {

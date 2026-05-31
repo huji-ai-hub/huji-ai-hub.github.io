@@ -118,6 +118,11 @@ const news = defineCollection({
     featured: z.boolean().default(false),    // surfaced on the homepage
     tags: z.array(z.string()).default([]),
 
+    // Optional override: when set, the homepage news card links here instead
+    // of /news/<slug>. Use a path that starts with /, no language prefix
+    // (the homepage adds /he for the Hebrew side). Example: "/academics/".
+    linkTo: z.string().optional(),
+
     // Source attribution. Set when the item is bot-generated from an external page.
     sourceUrl: z.string().url().optional(),
     sourceName: z.string().optional(),       // human label, e.g. "Yissum", "HUJI News"

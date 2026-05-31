@@ -92,7 +92,7 @@ const researchChildren = FIELDS.map((f) => ({
 
 const navItems = isHe
   ? [
-      { href: '/he', label: 'ראשי' },
+      { href: '/he', label: 'בית' },
       { href: '/he/research', label: 'מחקר', children: researchChildren },
       { href: '/he/academics', label: 'לימודים', children: educationChildren },
       { href: '/he/industry', label: 'תעשייה' },
@@ -198,7 +198,7 @@ const footerContact = isHe
 
     <script>
       // Touch / click toggle for nav dropdowns. Desktop hover keeps working
-      // via CSS — this layer only matters when there's no hover capability or
+      // via CSS, this layer only matters when there's no hover capability or
       // when a user wants to keep the menu open by clicking.
       const supportsHover = window.matchMedia('(hover: hover)').matches;
 
@@ -208,7 +208,7 @@ const footerContact = isHe
 
         trigger.addEventListener('click', (e) => {
           // On hover-capable devices (desktop), let the link navigate normally
-          // — the dropdown was already visible on hover.
+          // (the dropdown was already visible on hover).
           if (supportsHover) return;
 
           // On touch / no-hover: first tap opens the menu, second tap navigates.

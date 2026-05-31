@@ -3,7 +3,7 @@ slug: matar
 name: 'MaTaR: Interfaces of Technology, Society & Networks'
 nameHe: 'מט"ר: ממשקי טכנולוגיה, רשתות וחברה'
 tagline: "A dual-major honors program training the people who'll shape what technology and AI do to society, not just the people who build them."
-taglineHe: "תוכנית מצטיינים דו-חוגית להכשרת מנהיגים שיעצבו את ההשפעה של טכנולוגיה ו-AI על החברה, לא רק את מי שבונים אותן."
+taglineHe: "תוכנית מצטיינים דו-חוגית להכשרת מנהיגים שיעצבו את ההשפעה של טכנולוגיה ו-AI על החברה."
 degreeLevel: bsc
 type: honors-track
 faculty: "Faculty of Science"

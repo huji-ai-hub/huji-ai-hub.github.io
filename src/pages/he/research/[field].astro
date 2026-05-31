@@ -53,7 +53,12 @@ const fieldFaculty = allFaculty
       ) : (
         <div class="labs-list">
           {fieldFaculty.map(member => (
-            <a href={`/he/faculty/${member.id}`} class="lab-row">
+            <a
+              href={member.data.website || `/he/faculty/${member.id}`}
+              class="lab-row"
+              target={member.data.website ? '_blank' : undefined}
+              rel={member.data.website ? 'noopener' : undefined}
+            >
               <div class="lab-avatar">
                 {member.data.photo ? (
                   <img src={member.data.photo} alt={member.data.name} />
@@ -63,7 +68,7 @@ const fieldFaculty = allFaculty
               </div>
               <div class="lab-info">
                 <h3>{member.data.lab}, {member.data.title} {member.data.name}</h3>
-                <p>{member.body || ''}</p>
+                <p dir="ltr">{member.body || ''}</p>
                 {member.data.website && (
                   <span class="lab-link">↗ אתר המעבדה</span>
                 )}
@@ -176,7 +181,8 @@ const fieldFaculty = allFaculty
   }
 
   .lab-info h3 { font-size: 1rem; font-weight: 600; margin-bottom: 0.4rem; }
-  .lab-info p { font-size: 0.88rem; color: var(--text-secondary); line-height: 1.85; margin-bottom: 0.5rem; }
+  /* Bios are in English: force LTR + left-align even on this RTL page. */
+  .lab-info p { font-size: 0.88rem; color: var(--text-secondary); line-height: 1.85; margin-bottom: 0.5rem; direction: ltr; text-align: left; }
 
   .lab-link {
     font-size: 0.82rem;

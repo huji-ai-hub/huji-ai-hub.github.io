@@ -65,7 +65,7 @@ const featuredNews = (await getCollection('news', (n) => n.data.featured))
       </div>
       <div class="news-grid">
         {featuredNews.map(n => (
-          <a href={`/news/${n.data.slug}`} class="news-card">
+          <a href={n.data.linkTo || `/news/${n.data.slug}`} class="news-card">
             {n.data.image && (
               <div class="news-img" style={`background-image: url('${n.data.image}');`}></div>
             )}
