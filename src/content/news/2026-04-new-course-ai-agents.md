@@ -11,6 +11,7 @@ tags:
   - academics
   - new-course
   - ai-agents
+linkTo: "/academics/"
 seoTitle: "New course: Programming with AI Agents | HUJI AI Hub"
 seoTitleHe: "קורס חדש: תכנות עם סוכני AI | מרכז AI האוניברסיטה העברית"
 seoDescription: "The Hebrew University adds a new computer science course on programming with AI coding agents. Students learn to build, evaluate, and supervise the agentic systems that are reshaping software work."

@@ -30,7 +30,12 @@ const sortedFaculty = faculty.sort((a, b) => (a.data.order ?? 99) - (b.data.orde
     <div class="container">
       <div class="faculty-grid">
         {sortedFaculty.map((member) => (
-          <a href={`/faculty/${member.id}`} class="faculty-card">
+          <a
+            href={member.data.website || `/faculty/${member.id}`}
+            class="faculty-card"
+            target={member.data.website ? '_blank' : undefined}
+            rel={member.data.website ? 'noopener' : undefined}
+          >
             <div class="avatar">
               {member.data.photo ? (
                 <img src={member.data.photo} alt={member.data.name} />

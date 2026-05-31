@@ -11,6 +11,7 @@ tags:
   - academics
   - undergraduate
   - ai-program
+linkTo: "/academics/"
 seoTitle: "New B.Sc. with AI Emphasis | HUJI AI Hub"
 seoTitleHe: "תוכנית חדשה: תואר ראשון עם הדגש בבינה מלאכותית | מרכז AI האוניברסיטה העברית"
 seoDescription: "The Hebrew University of Jerusalem opens a new B.Sc. with AI emphasis. Three years of mathematics, classical computer science, and deep AI specialization, designed for students who want to build the systems the world is starting to rely on."

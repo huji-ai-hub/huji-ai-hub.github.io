@@ -28,7 +28,16 @@ import { INDUSTRY, FACULTY_COMPANIES, INDUSTRY_PARTNERS } from '../../data/indus
         <p class="featured-source">{INDUSTRY.featured.sourceHe}</p>
         <a href="/he/research/biomed" class="featured-link">קראו עוד על המחקר של פרופ' נחמיאס ←</a>
       </div>
-      <div class="featured-img" style={`background-image: url('${INDUSTRY.featured.image}');`}></div>
+      <div class="featured-video">
+        <iframe
+          src={`https://www.youtube-nocookie.com/embed/${INDUSTRY.featured.youtubeId}`}
+          title={INDUSTRY.featured.titleHe}
+          frameborder="0"
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+          referrerpolicy="strict-origin-when-cross-origin"
+          allowfullscreen
+        ></iframe>
+      </div>
     </div>
   </section>
 
@@ -44,7 +53,17 @@ import { INDUSTRY, FACULTY_COMPANIES, INDUSTRY_PARTNERS } from '../../data/indus
       <div class="companies-block">
         <h3>חברות שצמחו מקהילת הסגל והבוגרים שלנו:</h3>
         <ul class="company-list">
-          {FACULTY_COMPANIES.map(c => <li>{c}</li>)}
+          {FACULTY_COMPANIES.map(c => (
+            <li>
+              {c.url ? (
+                <a href={c.url} target="_blank" rel="noopener">
+                  {c.logo ? <img src={c.logo} alt={c.name} loading="lazy" /> : <span>{c.name}</span>}
+                </a>
+              ) : (
+                c.logo ? <img src={c.logo} alt={c.name} loading="lazy" /> : <span>{c.name}</span>
+              )}
+            </li>
+          ))}
         </ul>
       </div>
     </div>
@@ -58,7 +77,17 @@ import { INDUSTRY, FACULTY_COMPANIES, INDUSTRY_PARTNERS } from '../../data/indus
       </p>
       <h3>בין השותפים שלנו:</h3>
       <ul class="company-list">
-        {INDUSTRY_PARTNERS.map(p => <li>{p}</li>)}
+        {INDUSTRY_PARTNERS.map(c => (
+          <li>
+            {c.url ? (
+              <a href={c.url} target="_blank" rel="noopener">
+                {c.logo ? <img src={c.logo} alt={c.name} loading="lazy" /> : <span>{c.name}</span>}
+              </a>
+            ) : (
+              c.logo ? <img src={c.logo} alt={c.name} loading="lazy" /> : <span>{c.name}</span>
+            )}
+          </li>
+        ))}
       </ul>
     </div>
   </section>
@@ -109,7 +138,7 @@ import { INDUSTRY, FACULTY_COMPANIES, INDUSTRY_PARTNERS } from '../../data/indus
           <p>
             אנו מברכים על הזדמנויות לחקור שיתופי פעולה במחקר, יוזמות חדשנות משותפות ושותפויות ארוכות טווח.
           </p>
-          <a href="mailto:webmaster@cs.huji.ac.il" class="cta-button">למידע נוסף על התוכנית</a>
+          <a href="https://www.cs.huji.ac.il/industrial-affiliates-program-iap" target="_blank" rel="noopener" class="cta-button">למידע נוסף על התוכנית</a>
         </div>
         <div class="iap-img" style={`background-image: url('${INDUSTRY.iapImage}');`}></div>
       </div>
@@ -156,6 +185,20 @@ import { INDUSTRY, FACULTY_COMPANIES, INDUSTRY_PARTNERS } from '../../data/indus
     background-position: center;
   }
 
+  /* Embedded YouTube player replacing the static featured image. */
+  .featured-video {
+    aspect-ratio: 16/9;
+    border-radius: var(--radius);
+    overflow: hidden;
+    background: #000;
+  }
+  .featured-video iframe {
+    width: 100%;
+    height: 100%;
+    border: 0;
+    display: block;
+  }
+
   .partnerships { background: var(--bg-secondary); padding: 3.5rem 0; }
   .partners, .collaboration, .global, .iap { padding: 3rem 0; }
 
@@ -173,11 +216,36 @@ import { INDUSTRY, FACULTY_COMPANIES, INDUSTRY_PARTNERS } from '../../data/indus
     padding: 0;
     display: flex;
     flex-wrap: wrap;
-    gap: 0.6rem;
-    margin-top: 0.5rem;
+    align-items: center;
+    gap: 2rem 2.5rem;
+    margin-top: 1rem;
   }
 
-  .company-list li {
+  /* Two render modes per company:
+       1. Logo image: <img> sized to a uniform height; auto width.
+       2. Fallback (logo file missing): the company name in a styled pill. */
+  .company-list li { display: flex; align-items: center; }
+
+  .company-list li > a,
+  .company-list li > span {
+    display: inline-flex;
+    align-items: center;
+    text-decoration: none;
+    color: inherit;
+  }
+
+  .company-list img {
+    height: 38px;
+    width: auto;
+    max-width: 160px;
+    object-fit: contain;
+    filter: grayscale(0.15);
+    transition: filter 0.15s, transform 0.15s;
+  }
+  .company-list a:hover img { filter: grayscale(0); transform: translateY(-1px); }
+
+  .company-list a span,
+  .company-list > li > span {
     padding: 0.4rem 0.9rem;
     background: var(--bg-card);
     border: 1px solid var(--border);
@@ -187,7 +255,8 @@ import { INDUSTRY, FACULTY_COMPANIES, INDUSTRY_PARTNERS } from '../../data/indus
     color: var(--text-primary);
   }
 
-  .partners .company-list li { background: var(--bg-secondary); }
+  .partners .company-list a span,
+  .partners .company-list > li > span { background: var(--bg-secondary); }
 
   .bullets { padding-inline-start: 1.25rem; max-width: 760px; }
   .bullets li { font-size: 0.9rem; color: var(--text-secondary); line-height: 1.95; margin-bottom: 0.3rem; }

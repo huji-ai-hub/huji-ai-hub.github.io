@@ -52,7 +52,12 @@ const fieldFaculty = allFaculty
       ) : (
         <div class="labs-list">
           {fieldFaculty.map(member => (
-            <a href={`/faculty/${member.id}`} class="lab-row">
+            <a
+              href={member.data.website || `/faculty/${member.id}`}
+              class="lab-row"
+              target={member.data.website ? '_blank' : undefined}
+              rel={member.data.website ? 'noopener' : undefined}
+            >
               <div class="lab-avatar">
                 {member.data.photo ? (
                   <img src={member.data.photo} alt={member.data.name} />

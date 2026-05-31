@@ -51,17 +51,17 @@ bodyHe: |
 
   ## למה דווקא עכשיו
 
-  הביולוגיה הפכה למדע עתיר נתונים. רצף DNA, צילומי תאים ברזולוציה גבוהה, מדידות
-  פיזיולוגיות מסטוטשים, מייצרים יותר מידע ממה שאפשר לנתח ידנית. הכלים שמפענחים
+  הביולוגיה הפכה למדע עתיר נתונים. רצף DNA, צילומי תאים ברזולוציה גבוהה, ומדידות
+  פיזיולוגיות, מייצרים יותר מידע ממה שאפשר לנתח ידנית. הכלים שמפענחים
   אותו (מודלי AI, סטטיסטיקה, שיטות חישוביות) הם הלב של המחקר הביו-רפואי המודרני.
 
   ## מה תלמדו
 
   שלוש שנים, 160 נ"ז, חלוקה ברורה בין יסודות מדעי המחשב לבין הביולוגיה והכימיה:
 
-  - **שנה א — יסודות (61 נ"ז).** מבוא ומבני נתונים ב-C/C++; חשבון אינפיניטסימלי, אלגברה לינארית, מתמטיקה דיסקרטית; כימיה כללית ואורגנית, גנטיקה, מבוא לביולוגיה.
-  - **שנה ב — ארגז כלים (48 נ"ז).** אלגוריתמים, מבוא ללמידת מכונה, תכנות מונחה עצמים, מתמטיקה שימושית וסטטיסטיקה; ביולוגיה מולקולרית, ביוכימיה של התא; קורס מתחילים בביולוגיה חישובית.
-  - **שנה ג — התמחות ומחקר (29 נ"ז + בחירה).** מודלים חישוביים, חישוביות וסיבוכיות, מערכות הפעלה, סדנת ביולוגיה חישובית, ביו-סטטיסטיקה מתקדמת, מחקר מודרך.
+  - **שנה א : יסודות (61 נ"ז).** מבוא ומבני נתונים ב-C/C++; חשבון אינפיניטסימלי, אלגברה לינארית, מתמטיקה דיסקרטית; כימיה כללית ואורגנית, גנטיקה, מבוא לביולוגיה.
+  - **שנה ב : ארגז כלים (48 נ"ז).** אלגוריתמים, מבוא ללמידת מכונה, תכנות מונחה עצמים, מתמטיקה שימושית וסטטיסטיקה; ביולוגיה מולקולרית, ביוכימיה של התא; קורס מתחילים בביולוגיה חישובית.
+  - **שנה ג : התמחות ומחקר (29 נ"ז + בחירה).** מודלים חישוביים, חישוביות וסיבוכיות, מערכות הפעלה, סדנת ביולוגיה חישובית, ביו-סטטיסטיקה מתקדמת, מחקר מודרך.
 ---
 
 A single-major program. Students take the full computer science curriculum and build a deep foundation in biology, chemistry, and biomedical statistics alongside it. The result: graduates who write the algorithms driving the next generation of drug discovery, genome analysis, personalized medicine, and synthetic biology.
@@ -74,6 +74,6 @@ Biology has become a data-rich science. DNA sequencing, high-resolution cell ima
 
 Three years, 160 credits, split cleanly between CS foundations and biology/chemistry:
 
-- **Year 1 — Foundations (61 credits).** Intro and data structures in C/C++; calculus, linear algebra, discrete mathematics; general and organic chemistry, genetics, intro to biology.
-- **Year 2 — Toolkit (48 credits).** Algorithms, intro to machine learning, OOP, applied math and statistics; molecular biology, cell biochemistry; intro to computational biology.
-- **Year 3 — Specialization and research (29 credits + electives).** Computational models, computability and complexity, operating systems, computational biology workshop, advanced biostatistics, directed research.
+- **Year 1 : Foundations (61 credits).** Intro and data structures in C/C++; calculus, linear algebra, discrete mathematics; general and organic chemistry, genetics, intro to biology.
+- **Year 2 : Toolkit (48 credits).** Algorithms, intro to machine learning, OOP, applied math and statistics; molecular biology, cell biochemistry; intro to computational biology.
+- **Year 3 : Specialization and research (29 credits + electives).** Computational models, computability and complexity, operating systems, computational biology workshop, advanced biostatistics, directed research.
