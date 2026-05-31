@@ -1,5 +1,5 @@
 ---
-name: "Omri Abend"
+name: "Omri Abenddd"
 title: "Prof."
 lab: "NLP and Cognitive Science"
 fields: ["language-cognition"]
