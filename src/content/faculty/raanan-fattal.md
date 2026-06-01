@@ -5,7 +5,7 @@ lab: "Fattal Lab"
 fields: ["machine-perception"]
 photo: "/photos/Fattal.png"
 website: "https://www.cs.huji.ac.il/w~raananf/"
-areas: ["Computational Imaging", "Generative Models", "Diffusion Models"]
+areas: ["Generative Models", "Diffusion Models","Deep Learning"]
 order: 12
 ---
 
