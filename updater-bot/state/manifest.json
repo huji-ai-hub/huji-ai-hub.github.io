@@ -1,4 +1,27 @@
 {
   "schema_version": 1,
-  "sources": {}
+  "sources": {
+    "email_inbox": {
+      "dismissed_ids": [],
+      "last_run": null,
+      "seen_ids": []
+    },
+    "faculty_personal": {
+      "dismissed_ids": [],
+      "last_run": null,
+      "seen_ids": []
+    },
+    "huji_main_news_he": {
+      "dismissed_ids": [],
+      "last_run": null,
+      "seen_ids": []
+    },
+    "yissum": {
+      "dismissed_ids": [],
+      "last_run": "2026-06-02T13:46:00.966614+00:00",
+      "seen_ids": [
+        "f522b02abb5d1cf1"
+      ]
+    }
+  }
 }

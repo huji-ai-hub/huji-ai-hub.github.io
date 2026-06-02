@@ -8,7 +8,7 @@ import { HOMEPAGE } from '../data/homepage';
 // Bot-generated items land as PRs and only show on the homepage once a human flips the flag.
 const featuredNews = (await getCollection('news', (n) => n.data.featured))
   .sort((a, b) => b.data.date.getTime() - a.data.date.getTime())
-  .slice(0, 3);
+  .slice(0, 8);
 ---
 
 <Base

@@ -241,7 +241,12 @@ def _render_news_markdown(
         "summary": _scrub(draft.summary),
         "summaryHe": _scrub(draft.summaryHe),
         "date": today_iso,
-        "featured": False,
+        # Default new bot items to featured=true so they surface on the
+        # homepage when the PR merges. The PR review IS the human gate;
+        # if a reviewer doesn't want it on the homepage, they un-feature
+        # it in the PR diff before merging. Previously this was False,
+        # which meant every accepted item required a manual flip later.
+        "featured": True,
         "tags": list(draft.tags or []),
         "sourceUrl": sourceUrl,
         "sourceName": sourceName,
