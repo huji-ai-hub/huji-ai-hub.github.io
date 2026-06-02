@@ -117,8 +117,14 @@ substantive HUJI research published in a major journal:
   - "HUJI astrophysicist proposes new theory of habitable worlds" (not AI)
   - "HUJI archaeology team dates ancient artifacts" (not AI)
   - "HUJI medical researcher publishes in Nature" (without AI angle)
-- The link is navigation, footer, page boilerplate, "Read more", "Subscribe",
-  contact info, calls to action, or social-media chrome.
+- The link TEXT is navigation, footer, page boilerplate, "Read more",
+  "Subscribe", contact info, calls to action. NOTE: this is about the
+  link-text/title content. The URL host is irrelevant. A LinkedIn URL is fine
+  if the title and snippet describe substantive AI content; Yissum (HUJI's
+  tech-transfer arm) routinely posts its updates as LinkedIn shares with the
+  real announcement text in the RSS description, and those count as first-party
+  HUJI content. Same for any other social-platform URL that wraps real HUJI
+  announcement text.
 - The item is a generic announcement (open house, holiday hours, building
   closure) unrelated to AI research or education.
 - The AI connection is speculative, not stated: e.g. "this neuroscience

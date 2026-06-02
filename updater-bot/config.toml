@@ -30,11 +30,15 @@ min_confidence = 0.5
 
 [llm]
 provider = "anthropic"
-# Cheap classifier for ambiguous yes/no questions (stale dates, relevance gating).
-classifier_model = "claude-haiku-4-5"
+# Classifier for AI-newsworthiness gating. Originally Haiku for cost; bumped to
+# Sonnet after observing Haiku misread Yissum LinkedIn-hosted RSS items as
+# "social-media chrome" and rejecting AI items with high confidence. Cost
+# delta is tiny (~$5/year for ~30 classify calls per weekly run); accuracy
+# matters more than the saving.
+classifier_model = "claude-sonnet-4-6"
 # Better model for content drafting and commit-message generation.
 content_model = "claude-sonnet-4-6"
-# Conservative defaults — adaptive thinking handles depth dynamically.
+# Conservative defaults: adaptive thinking handles depth dynamically.
 max_tokens = 4096
 # Retry the LLM call this many times on transient errors.
 max_retries = 3
