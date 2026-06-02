@@ -579,8 +579,9 @@ def _resolve_tracker_to_article(soup: BeautifulSoup) -> list[dict]:
 
     # Follow each tracker. Use browser UA + redirect-following. Time-bound
     # the whole batch to ~30s by capping per-request timeout to 8s.
-    import httpx
-    per_request_timeout = httpx.Timeout(8.0, connect=4.0)
+    # (We migrated from httpx to curl_cffi for Cloudflare bypass; the shim's
+    # timeout is now a plain seconds-as-float, not an httpx.Timeout object.)
+    per_request_timeout = 8.0
     with _http_client(browser_ua=True, timeout=per_request_timeout) as http:
         for tracker, img_src in unique_candidates:
             try:
