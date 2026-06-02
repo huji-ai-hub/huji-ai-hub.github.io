@@ -5,7 +5,7 @@ titleHe: הארווארד והאוניברסיטה העברית משתפות פ�
 summary: The Kempner Institute at Harvard and ELSC at the Hebrew University are launching a joint research collaboration to study intelligence in biological and artificial systems.
 summaryHe: מכון קמפנר בהארווארד ומרכז ELSC באוניברסיטה העברית בירושלים משיקים שיתוף פעולה מחקרי משותף לחקר אינטליגנציה במערכות ביולוגיות ומלאכותיות.
 date: '2026-06-02'
-featured: false
+featured: true
 tags:
 - partnership
 - research
