@@ -8,8 +8,8 @@ degreeLevel: bsc
 type: emphasis
 faculty: "Rachel and Selim Benin School of Computer Science and Engineering"
 facultyHe: 'בית הספר להנדסה ולמדעי המחשב ע"ש רחל וסלים בנין'
-officialWebsite: "https://www.cs.huji.ac.il/he/page/10573"
-registrationUrl: "https://www.cs.huji.ac.il/he/page/10573"
+officialWebsite: "https://www.cs.huji.ac.il/he/page/10931"
+registrationUrl: "https://www.cs.huji.ac.il/he/page/10931"
 image: "/images/pexels-googledeepmind-25626519.jpg"
 order: 1
 seoTitle: "B.Sc. Computer Science with AI Emphasis, Hebrew University"
