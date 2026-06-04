@@ -2,8 +2,8 @@
 slug: cs-ai-emphasis
 name: "B.Sc. in Computer Science with AI Emphasis"
 nameHe: "תואר ראשון במדעי המחשב עם הדגש בבינה מלאכותית"
-tagline: "The most comprehensive AI undergraduate track at the Hebrew University."
-taglineHe: "מסלול הלימודים המקיף ביותר ל-AI בתואר ראשון באוניברסיטה העברית."
+tagline: "The most comprehensive track for understanding and building AI tools at the Hebrew University."
+taglineHe: "מסלול הלימודים המקיף ביותר להבנה ופיתוח כלי AI באוניברסיטה העברית."
 degreeLevel: bsc
 type: emphasis
 faculty: "Rachel and Selim Benin School of Computer Science and Engineering"
