@@ -239,8 +239,9 @@ const programLd = programs.map((p) => ({
   .program-cards {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
-    gap: 1.25rem;
-    margin-bottom: 2.5rem;
+    gap: 1rem;
+    max-width: 720px;
+    margin: 0 auto 2.5rem;
     list-style: none;
     padding: 0;
   }
@@ -270,7 +271,7 @@ const programLd = programs.map((p) => ({
   .program-card:hover .arrow { transform: translateX(-3px); }
 
   .card-img {
-    aspect-ratio: 4/3;
+    aspect-ratio: 16/10;
     background-size: cover;
     background-position: center;
     background-color: var(--bg-secondary);
@@ -285,14 +286,14 @@ const programLd = programs.map((p) => ({
   }
 
   .card-name {
-    font-size: 1.4rem;
+    font-size: 1.15rem;
     font-weight: 600;
     color: var(--text-primary);
     line-height: 1.4;
   }
 
   .card-tagline {
-    font-size: 1.05rem;
+    font-size: 0.9rem;
     color: var(--text-secondary);
     line-height: 1.7;
     flex: 1;
