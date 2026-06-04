@@ -10,7 +10,7 @@ faculty: "Faculty of Science"
 facultyHe: "הפקולטה למדעי הטבע"
 officialWebsite: "https://matar.cs.huji.ac.il/he"
 image: "/images/pexels-tara-winstead-8386421.jpg"
-order: 2
+order: 3
 seoTitle: 'MaTaR (מט"ר), Technology, Society & AI Honors Program, Hebrew University'
 seoTitleHe: 'תוכנית מט"ר: ממשקי טכנולוגיה, רשתות וחברה, האוניברסיטה העברית'
 seoDescription: 'MaTaR (מט"ר) at the Hebrew University is a dual-major honors program at the intersection of technology, society, AI, economics, regulation, and ethics. Students earn one major within MaTaR and a second major from almost any other HUJI program. Minimum 134 credits, 3 to 4 years.'

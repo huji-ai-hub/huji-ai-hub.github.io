@@ -16,7 +16,7 @@ export const HOMEPAGE = {
     title: 'AI at the Hebrew University',
     titleHe: 'בינה מלאכותית באוניברסיטה העברית',
     body: 'Artificial Intelligence impacts every aspect of life. At the Hebrew University, we research and teach diverse disciplines in the foundations, applications, and implications of AI',
-    bodyHe: 'בינה מלאכותית משפיעה על כל תחום בחיינו. באוניברסיטה העברית אנו חוקרים ומלמדים תחומים מגוונים ביסודות, היישומים וההשלכות של בינה מלאכותית.',
+    bodyHe: 'הבינה המלאכותית משפיעה על כל תחום בחיינו. באוניברסיטה העברית אנו מלמדים וחוקרים מגוון תחומים הנוגעים ביסודות, ביישום ובהשלכות של בינה מלאכותית.',
   },
 
   pillars: [
@@ -48,12 +48,12 @@ export const HOMEPAGE = {
     title: 'Mastering the Tech of Tomorrow: Computer Science in the AI Era',
     titleHe: 'לשלוט בטכנולוגיה של מחר: מדעי המחשב בעידן ה-AI',
     body: [
-      "The new Computer Science program at the Hebrew University, featuring an AI specialization, is designed for students aspiring to understand how this generation's tools work, and to develop the next generation's tools. The program was developed by leading researchers, combining theoretical depth with practical application.",
-      'It provides a solid mathematical foundation and deep exposure to modern models, training graduates capable of analyzing, training, and critically examining complex systems. Here, you acquire the knowledge needed to lead R&D in a changing technological environment.',
+      "The new Computer Science program at the Hebrew University specializes in AI, designed for students aspiring to understand how this generation's tools work, and to develop the next generation's tools. The program was developed by leading researchers, combining theoretical depth with practical application across diverse fields.",
+      "It provides a solid mathematical foundation and exposure to modern deep models, training graduates capable of analyzing, training, adapting, and examining the implications of complex systems. Here, you acquire the knowledge needed to lead R&D in a changing technological environment.",
     ],
     bodyHe: [
-      'התוכנית החדשה למדעי המחשב באוניברסיטה העברית, הכוללת התמחות בבינה מלאכותית, מיועדת לסטודנטים השואפים להבין כיצד פועלים הכלים של הדור הנוכחי, ולפתח את הכלים של הדור הבא. התוכנית פותחה על ידי חוקרים מובילים, ומשלבת עומק תיאורטי עם יישום מעשי.',
-      'היא מספקת בסיס מתמטי מוצק וחשיפה מעמיקה למודלים מודרניים, ומכשירה בוגרים המסוגלים לנתח, לאמן ולבחון באופן ביקורתי מערכות מורכבות.',
+      'התוכנית החדשה למדעי המחשב באוניברסיטה העברית מתמחה בבינה מלאכותית ומיועדת לסטודנטים השואפים להבין כיצד פועלים הכלים של הדור הנוכחי, ולפתח את הכלים של הדור הבא. התוכנית פותחה על ידי חוקרים מובילים, ומשלבת עומק תיאורטי עם יישום מעשי במגוון תחומים.',
+      'היא מספקת בסיס מתמטי מוצק וחשיפה למודלים עמוקים מודרניים, ומכשירה בוגרים המסוגלים לנתח, לאמן, להתאים, ולבחון את ההשלכות של מערכות מורכבות.',
     ],
     cta: 'Details & Registration →',
     ctaHe: 'פרטים והרשמה ←',

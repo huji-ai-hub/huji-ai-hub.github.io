@@ -10,8 +10,8 @@ faculty: "Faculty of Science (Computer Science Department)"
 facultyHe: "הפקולטה למדעי הטבע (החוג למדעי המחשב)"
 officialWebsite: "https://www.cs.huji.ac.il/page/2150/"
 courseListUrl: "https://catalog.huji.ac.il/pages/wfrMaslulDetails.aspx?year=2025&faculty=12&entityId=521&chugId=521&degreeCode=71&maslulId=23080"
-image: "/images/pexels-googledeepmind-17483870.jpg"
-order: 3
+image: "/images/pexels-googledeepmind-25626519.jpg"
+order: 4
 seoTitle: "B.Sc. Computer Science & Computational Biology, Hebrew University"
 seoTitleHe: "תואר ראשון במדעי המחשב וביולוגיה חישובית, האוניברסיטה העברית"
 seoDescription: "A three-year, 160-credit single-major bachelor's program at the Hebrew University combining deep computer science training with molecular biology, biostatistics, and computational biology, for students aiming at AI-driven biomedical research, drug discovery, and bioinformatics."
