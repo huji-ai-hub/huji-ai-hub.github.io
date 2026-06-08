@@ -93,7 +93,7 @@ const featured = defineCollection({
 const pageContent = defineCollection({
   loader: glob({ pattern: '**/*.md', base: './src/content/pageContent' }),
   schema: z.object({
-    page: z.enum(['research', 'industry', 'academics', 'about', 'faculty', 'news']),
+    page: z.enum(['home', 'research', 'industry', 'academics', 'about', 'faculty', 'news']),
     heroTitle: z.string(),
     heroTitleHe: z.string(),
     heroBody: z.string(),
@@ -105,6 +105,33 @@ const pageContent = defineCollection({
     introBodyHe: z.string().optional(),
     // Optional hero banner background image
     heroImage: z.string().optional(),
+    // Homepage-only: the 3 pillar cards (Research / Academics / Industry).
+    // Each pillar links to a landing page; add/remove/reorder by editing
+    // this array.
+    pillars: z.array(z.object({
+      href: z.string(),
+      hrefHe: z.string(),
+      label: z.string(),
+      labelHe: z.string(),
+      image: z.string(),
+    })).optional(),
+    // Homepage-only: the "Mastering the Tech of Tomorrow" spotlight section.
+    // image + title + body paragraphs + CTA, bilingual.
+    spotlight: z.object({
+      image: z.string(),
+      title: z.string(),
+      titleHe: z.string(),
+      body: z.array(z.string()),         // each item = one rendered <p>
+      bodyHe: z.array(z.string()),
+      cta: z.string(),
+      ctaHe: z.string(),
+      ctaHref: z.string(),
+      ctaHrefHe: z.string(),
+    }).optional(),
+    // Homepage-only: heading above the news grid. (The cards themselves
+    // come from the `news` collection, filtered to `featured: true`.)
+    newsTitle: z.string().optional(),
+    newsTitleHe: z.string().optional(),
   }),
 });
 

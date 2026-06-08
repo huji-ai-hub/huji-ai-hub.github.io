@@ -1,7 +1,8 @@
 ---
 import Base from '../../layouts/Base.astro';
-import { getCollection } from 'astro:content';
-import { HOMEPAGE } from '../../data/homepage';
+import { getCollection, getEntry } from 'astro:content';
+
+const page = (await getEntry('pageContent', 'home'))!.data;
 
 const featuredNews = (await getCollection('news', (n) => n.data.featured))
   .sort((a, b) => b.data.date.getTime() - a.data.date.getTime())
@@ -13,15 +14,15 @@ const featuredNews = (await getCollection('news', (n) => n.data.featured))
   lang="he"
   description="מחקר, לימודים ושיתופי פעולה עם תעשייה בבינה מלאכותית, באוניברסיטה העברית בירושלים, בית הספר להנדסה ולמדעי המחשב ע&quot;ש רחל וסלים בנין."
 >
-  <section class="hero-banner" style={`background-image: url('${HOMEPAGE.heroImage}');`}>
+  <section class="hero-banner" style={`background-image: url('${page.heroImage}');`}>
     <div class="hero-overlay"></div>
   </section>
 
   <section class="hero-text">
     <div class="container">
       <div class="hero-split">
-        <h1>{HOMEPAGE.hero.titleHe}</h1>
-        <p>{HOMEPAGE.hero.bodyHe}</p>
+        <h1>{page.heroTitleHe}</h1>
+        <p>{page.heroBodyHe}</p>
       </div>
     </div>
   </section>
@@ -29,7 +30,7 @@ const featuredNews = (await getCollection('news', (n) => n.data.featured))
   <section class="pillars">
     <div class="container">
       <div class="pillar-grid">
-        {HOMEPAGE.pillars.map(p => (
+        {page.pillars.map(p => (
           <a href={p.hrefHe} class="pillar-card">
             <div class="pillar-img" style={`background-image: url('${p.image}');`}></div>
             <div class="pillar-label">
@@ -45,11 +46,11 @@ const featuredNews = (await getCollection('news', (n) => n.data.featured))
   <section class="program-spotlight">
     <div class="container">
       <div class="spotlight-split">
-        <div class="spotlight-img" style={`background-image: url('${HOMEPAGE.spotlight.image}');`}></div>
+        <div class="spotlight-img" style={`background-image: url('${page.spotlight.image}');`}></div>
         <div class="spotlight-content">
-          <h2>{HOMEPAGE.spotlight.titleHe}</h2>
-          {HOMEPAGE.spotlight.bodyHe.map(p => <p>{p}</p>)}
-          <a href={HOMEPAGE.spotlight.ctaHrefHe} class="cta-button">{HOMEPAGE.spotlight.ctaHe}</a>
+          <h2>{page.spotlight.titleHe}</h2>
+          {page.spotlight.bodyHe.map(p => <p>{p}</p>)}
+          <a href={page.spotlight.ctaHrefHe} class="cta-button">{page.spotlight.ctaHe}</a>
         </div>
       </div>
     </div>
@@ -58,7 +59,7 @@ const featuredNews = (await getCollection('news', (n) => n.data.featured))
   <section class="news">
     <div class="container">
       <div class="news-head">
-        <h2>{HOMEPAGE.newsTitleHe}</h2>
+        <h2>{page.newsTitleHe}</h2>
         <a href="/he/news" class="news-all">כל החדשות ←</a>
       </div>
       <div class="news-grid">

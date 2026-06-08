@@ -1,0 +1,40 @@
+---
+page: home
+heroImage: "/images/pexels-googledeepmind-17483874.jpg"
+heroTitle: "AI at the Hebrew University"
+heroTitleHe: "בינה מלאכותית באוניברסיטה העברית"
+heroBody: "Artificial Intelligence impacts every aspect of life. At the Hebrew University, we research and teach diverse disciplines in the foundations, applications, and implications of AI"
+heroBodyHe: "הבינה המלאכותית משפיעה על כל תחום בחיינו. באוניברסיטה העברית אנו מלמדים וחוקרים מגוון תחומים הנוגעים ביסודות, ביישום ובהשלכות של בינה מלאכותית."
+pillars:
+  - href: "/research"
+    hrefHe: "/he/research"
+    label: "Research"
+    labelHe: "מחקר"
+    image: "/images/pexels-googledeepmind-25630347.jpg"
+  - href: "/academics"
+    hrefHe: "/he/academics"
+    label: "Academics"
+    labelHe: "לימודים"
+    image: "/images/pexels-cottonbro-6153344.jpg"
+  - href: "/industry"
+    hrefHe: "/he/industry"
+    label: "Industry"
+    labelHe: "תעשייה"
+    image: "/images/pexels-tara-winstead-8386421.jpg"
+spotlight:
+  image: "/images/pexels-googledeepmind-18069696.jpg"
+  title: "Mastering the Tech of Tomorrow: Computer Science in the AI Era"
+  titleHe: "לשלוט בטכנולוגיה של מחר: מדעי המחשב בעידן ה-AI"
+  body:
+    - "The new Computer Science program at the Hebrew University specializes in AI, designed for students aspiring to understand how this generation's tools work, and to develop the next generation's tools. The program was developed by leading researchers, combining theoretical depth with practical application across diverse fields."
+    - "It provides a solid mathematical foundation and exposure to modern deep models, training graduates capable of analyzing, training, adapting, and examining the implications of complex systems. Here, you acquire the knowledge needed to lead R&D in a changing technological environment."
+  bodyHe:
+    - "התוכנית החדשה למדעי המחשב באוניברסיטה העברית מתמחה בבינה מלאכותית ומיועדת לסטודנטים השואפים להבין כיצד פועלים הכלים של הדור הנוכחי, ולפתח את הכלים של הדור הבא. התוכנית פותחה על ידי חוקרים מובילים, ומשלבת עומק תיאורטי עם יישום מעשי במגוון תחומים."
+    - "היא מספקת בסיס מתמטי מוצק וחשיפה למודלים עמוקים מודרניים, ומכשירה בוגרים המסוגלים לנתח, לאמן, להתאים, ולבחון את ההשלכות של מערכות מורכבות."
+  cta: "Details & Registration →"
+  ctaHe: "פרטים והרשמה ←"
+  ctaHref: "/academics"
+  ctaHrefHe: "/he/academics"
+newsTitle: "Latest in AI at Hebrew University"
+newsTitleHe: "חדש ב-AI באוניברסיטה העברית"
+---
