@@ -1,12 +1,26 @@
 ---
 import Base from '../../layouts/Base.astro';
-import { INDUSTRY, FACULTY_COMPANIES, INDUSTRY_PARTNERS } from '../../data/industry';
 import { getCollection, getEntry } from 'astro:content';
 
 const page = (await getEntry('pageContent', 'industry'))!.data;
+
 const featuredBlocks = (await getCollection('featured', e => e.data.page === 'industry'))
   .sort((a, b) => (a.data.order ?? 99) - (b.data.order ?? 99))
   .map(e => e.data);
+
+const talks = (await getCollection('featuredTalks', e => e.data.page === 'industry'))
+  .sort((a, b) => (a.data.order ?? 99) - (b.data.order ?? 99))
+  .map(e => e.data);
+
+const allCompanies = await getCollection('companies');
+const facultyCompanies = allCompanies
+  .filter(c => c.data.category === 'faculty')
+  .sort((a, b) => (a.data.order ?? 99) - (b.data.order ?? 99))
+  .map(c => c.data);
+const industryPartners = allCompanies
+  .filter(c => c.data.category === 'partner')
+  .sort((a, b) => (a.data.order ?? 99) - (b.data.order ?? 99))
+  .map(c => c.data);
 ---
 
 <Base
@@ -14,9 +28,11 @@ const featuredBlocks = (await getCollection('featured', e => e.data.page === 'in
   lang="he"
   description="חוקרי וחוקרות ה-AI של האוניברסיטה העברית הקימו ומובילים חברות בלמידת מכונה, עיבוד שפה טבעית, ראייה ממוחשבת, סייבר וביוטכנולוגיה. שיתופי פעולה עם תעשייה ותוכנית IAP."
 >
-  <section class="hero-banner" style={`background-image: url('${INDUSTRY.heroImage}');`}>
-    <div class="hero-overlay"></div>
-  </section>
+  {page.heroImage && (
+    <section class="hero-banner" style={`background-image: url('${page.heroImage}');`}>
+      <div class="hero-overlay"></div>
+    </section>
+  )}
 
   <section class="hero-text">
     <div class="container">
@@ -27,25 +43,29 @@ const featuredBlocks = (await getCollection('featured', e => e.data.page === 'in
     </div>
   </section>
 
-  <section class="featured">
-    <div class="container">
-      <div class="featured-content">
-        <h2>{INDUSTRY.featured.titleHe}</h2>
-        <p class="featured-source">{INDUSTRY.featured.sourceHe}</p>
-        <a href="/he/research/biomed" class="featured-link">קראו עוד על המחקר של פרופ' נחמיאס ←</a>
+  {talks.map(talk => (
+    <section class="featured">
+      <div class="container">
+        <div class="featured-content">
+          <h2>{talk.titleHe}</h2>
+          <p class="featured-source">{talk.sourceHe}</p>
+          {talk.linkHref && talk.linkLabelHe && (
+            <a href={talk.linkHref.startsWith('/') && !talk.linkHref.startsWith('/he') ? `/he${talk.linkHref}` : talk.linkHref} class="featured-link">{talk.linkLabelHe}</a>
+          )}
+        </div>
+        <div class="featured-video">
+          <iframe
+            src={`https://www.youtube-nocookie.com/embed/${talk.youtubeId}`}
+            title={talk.titleHe}
+            frameborder="0"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+            referrerpolicy="strict-origin-when-cross-origin"
+            allowfullscreen
+          ></iframe>
+        </div>
       </div>
-      <div class="featured-video">
-        <iframe
-          src={`https://www.youtube-nocookie.com/embed/${INDUSTRY.featured.youtubeId}`}
-          title={INDUSTRY.featured.titleHe}
-          frameborder="0"
-          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-          referrerpolicy="strict-origin-when-cross-origin"
-          allowfullscreen
-        ></iframe>
-      </div>
-    </div>
-  </section>
+    </section>
+  ))}
 
   <section class="partnerships">
     <div class="container">
@@ -59,7 +79,7 @@ const featuredBlocks = (await getCollection('featured', e => e.data.page === 'in
       <div class="companies-block">
         <h3>חברות שצמחו מקהילת הסגל והבוגרים שלנו:</h3>
         <ul class="company-list">
-          {FACULTY_COMPANIES.map(c => (
+          {facultyCompanies.map(c => (
             <li>
               {c.url ? (
                 <a href={c.url} target="_blank" rel="noopener">
@@ -83,7 +103,7 @@ const featuredBlocks = (await getCollection('featured', e => e.data.page === 'in
       </p>
       <h3>בין השותפים שלנו:</h3>
       <ul class="company-list">
-        {INDUSTRY_PARTNERS.map(c => (
+        {industryPartners.map(c => (
           <li>
             {c.url ? (
               <a href={c.url} target="_blank" rel="noopener">

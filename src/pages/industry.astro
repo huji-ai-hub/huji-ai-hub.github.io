@@ -1,21 +1,37 @@
 ---
 import Base from '../layouts/Base.astro';
-import { INDUSTRY, FACULTY_COMPANIES, INDUSTRY_PARTNERS } from '../data/industry';
 import { getCollection, getEntry } from 'astro:content';
 
 const page = (await getEntry('pageContent', 'industry'))!.data;
+
 const featuredBlocks = (await getCollection('featured', e => e.data.page === 'industry'))
   .sort((a, b) => (a.data.order ?? 99) - (b.data.order ?? 99))
   .map(e => e.data);
+
+const talks = (await getCollection('featuredTalks', e => e.data.page === 'industry'))
+  .sort((a, b) => (a.data.order ?? 99) - (b.data.order ?? 99))
+  .map(e => e.data);
+
+const allCompanies = await getCollection('companies');
+const facultyCompanies = allCompanies
+  .filter(c => c.data.category === 'faculty')
+  .sort((a, b) => (a.data.order ?? 99) - (b.data.order ?? 99))
+  .map(c => c.data);
+const industryPartners = allCompanies
+  .filter(c => c.data.category === 'partner')
+  .sort((a, b) => (a.data.order ?? 99) - (b.data.order ?? 99))
+  .map(c => c.data);
 ---
 
 <Base
   title="Industry | HUJI AI Hub"
   description="HUJI AI faculty and alumni have founded and lead companies across machine learning, NLP, computer vision, cybersecurity, and biotech. Industry partnerships and the Innovation Acceleration Program (IAP)."
 >
-  <section class="hero-banner" style={`background-image: url('${INDUSTRY.heroImage}');`}>
-    <div class="hero-overlay"></div>
-  </section>
+  {page.heroImage && (
+    <section class="hero-banner" style={`background-image: url('${page.heroImage}');`}>
+      <div class="hero-overlay"></div>
+    </section>
+  )}
 
   <section class="hero-text">
     <div class="container">
@@ -26,25 +42,29 @@ const featuredBlocks = (await getCollection('featured', e => e.data.page === 'in
     </div>
   </section>
 
-  <section class="featured">
-    <div class="container">
-      <div class="featured-content">
-        <h2>{INDUSTRY.featured.title}</h2>
-        <p class="featured-source">{INDUSTRY.featured.source}</p>
-        <a href="/research/biomed" class="featured-link">Learn more about Prof. Nahmias's research →</a>
+  {talks.map(talk => (
+    <section class="featured">
+      <div class="container">
+        <div class="featured-content">
+          <h2>{talk.title}</h2>
+          <p class="featured-source">{talk.source}</p>
+          {talk.linkHref && talk.linkLabel && (
+            <a href={talk.linkHref} class="featured-link">{talk.linkLabel}</a>
+          )}
+        </div>
+        <div class="featured-video">
+          <iframe
+            src={`https://www.youtube-nocookie.com/embed/${talk.youtubeId}`}
+            title={talk.title}
+            frameborder="0"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+            referrerpolicy="strict-origin-when-cross-origin"
+            allowfullscreen
+          ></iframe>
+        </div>
       </div>
-      <div class="featured-video">
-        <iframe
-          src={`https://www.youtube-nocookie.com/embed/${INDUSTRY.featured.youtubeId}`}
-          title={INDUSTRY.featured.title}
-          frameborder="0"
-          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-          referrerpolicy="strict-origin-when-cross-origin"
-          allowfullscreen
-        ></iframe>
-      </div>
-    </div>
-  </section>
+    </section>
+  ))}
 
   <section class="partnerships">
     <div class="container">
@@ -59,7 +79,7 @@ const featuredBlocks = (await getCollection('featured', e => e.data.page === 'in
       <div class="companies-block">
         <h3>Companies that have emerged from our faculty and alumni community:</h3>
         <ul class="company-list">
-          {FACULTY_COMPANIES.map(c => (
+          {facultyCompanies.map(c => (
             <li>
               {c.url ? (
                 <a href={c.url} target="_blank" rel="noopener">
@@ -84,7 +104,7 @@ const featuredBlocks = (await getCollection('featured', e => e.data.page === 'in
       </p>
       <h3>Our partners include:</h3>
       <ul class="company-list">
-        {INDUSTRY_PARTNERS.map(c => (
+        {industryPartners.map(c => (
           <li>
             {c.url ? (
               <a href={c.url} target="_blank" rel="noopener">

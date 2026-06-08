@@ -85,7 +85,8 @@ const featured = defineCollection({
   }),
 });
 
-// Per-landing-page editable text (hero title/body + optional secondary intro).
+// Per-landing-page editable text (hero title/body + optional secondary intro
+// + optional hero banner image).
 // One markdown file per landing page. Schema is intentionally permissive so
 // that pages with extra sections (like /research's vision block) can use the
 // optional intro fields without forcing other pages to declare them empty.
@@ -102,6 +103,47 @@ const pageContent = defineCollection({
     introTitleHe: z.string().optional(),
     introBody: z.string().optional(),
     introBodyHe: z.string().optional(),
+    // Optional hero banner background image
+    heroImage: z.string().optional(),
+  }),
+});
+
+// Companies (HUJI faculty-founded + general industry partners).
+// One markdown file per company. The `category` field tells the system which
+// section of /industry to render it under:
+//   - faculty:  "Faculty-Founded Companies" grid
+//   - partner:  "Industry Partners" grid
+// Add a new company = drop a new file. To make the logo appear, drop a
+// transparent PNG or SVG into /public/logos/<filename> and set `logo` to
+// that path. Without a logo file, the company shows as a styled name pill.
+const companies = defineCollection({
+  loader: glob({ pattern: '**/*.md', base: './src/content/companies' }),
+  schema: z.object({
+    name: z.string(),
+    category: z.enum(['faculty', 'partner']),
+    logo: z.string().optional(),
+    url: z.string().url().optional(),
+    order: z.number().default(99),
+  }),
+});
+
+// Featured talks (video blocks). One markdown file per talk.
+// Rendered as a section on the page named in `page`. Currently used on
+// /industry for the headlining "How AI is Revolutionizing Drug Development"
+// talk by Prof. Yaakov Nahmias. Add another talk = drop a new file.
+const featuredTalks = defineCollection({
+  loader: glob({ pattern: '**/*.md', base: './src/content/featuredTalks' }),
+  schema: z.object({
+    page: z.enum(['research', 'industry', 'academics', 'about']),
+    title: z.string(),                           // talk title (EN)
+    titleHe: z.string(),                         // talk title (HE)
+    source: z.string(),                          // attribution line, e.g. "WIRED Briefings · Featured talk"
+    sourceHe: z.string(),
+    youtubeId: z.string(),                       // the bit after watch?v= in a YouTube URL
+    linkLabel: z.string().optional(),            // optional follow-up link, e.g. "Learn more about Prof. Nahmias's research →"
+    linkLabelHe: z.string().optional(),
+    linkHref: z.string().optional(),             // internal path or external URL
+    order: z.number().default(99),
   }),
 });
 
@@ -214,4 +256,4 @@ const news = defineCollection({
   }),
 });
 
-export const collections = { faculty, labs, fields, featured, pageContent, programs, news };
+export const collections = { faculty, labs, fields, featured, pageContent, companies, featuredTalks, programs, news };
