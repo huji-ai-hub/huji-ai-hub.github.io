@@ -1,11 +1,10 @@
 ---
-name: "Omri Abenddd"
+name: "Omri Abend"
 title: "Prof."
 lab: "NLP and Cognitive Science"
 fields: ["language-cognition"]
 areas: ["Semantic Representation", "Language Acquisition", "Bayesian Modeling"]
 order: 23
-photo: "/photos/Abend.png"
 website: "https://www.cs.huji.ac.il/~oabend/"
 ---
 
