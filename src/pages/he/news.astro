@@ -1,9 +1,11 @@
 ---
 import Base from '../../layouts/Base.astro';
-import { getCollection } from 'astro:content';
+import { getCollection, getEntry } from 'astro:content';
 
 const items = (await getCollection('news'))
   .sort((a, b) => b.data.date.getTime() - a.data.date.getTime());
+
+const page = (await getEntry('pageContent', 'news'))!.data;
 
 const pageTitle = 'חדשות | מרכז AI האוניברסיטה העברית';
 const pageDescription =
@@ -17,8 +19,8 @@ function formatDateHe(d: Date): string {
 <Base title={pageTitle} description={pageDescription} lang="he">
   <section class="hero-text">
     <div class="container">
-      <h1>חדשות</h1>
-      <p>עדכונים ממרכז ה-AI: תוכניות לימוד חדשות, מחקרים של חברי סגל, עסקאות תעשייה.</p>
+      <h1>{page.heroTitleHe}</h1>
+      <p>{page.heroBodyHe}</p>
     </div>
   </section>
 

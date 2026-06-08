@@ -1,7 +1,8 @@
 ---
 import Base from '../layouts/Base.astro';
-import { getCollection } from 'astro:content';
-import { HOMEPAGE } from '../data/homepage';
+import { getCollection, getEntry } from 'astro:content';
+
+const page = (await getEntry('pageContent', 'home'))!.data;
 
 // Featured news items live in the `news` content collection.
 // Editors add a new file under src/content/news/ with `featured: true` to surface it here.
@@ -15,15 +16,15 @@ const featuredNews = (await getCollection('news', (n) => n.data.featured))
   title="HUJI AI Hub | Artificial Intelligence at the Hebrew University"
   description="Research, academic programs, and industry collaboration in artificial intelligence at the Hebrew University of Jerusalem's Rachel and Selim Benin School of Computer Science and Engineering."
 >
-  <section class="hero-banner" style={`background-image: url('${HOMEPAGE.heroImage}');`}>
+  <section class="hero-banner" style={`background-image: url('${page.heroImage}');`}>
     <div class="hero-overlay"></div>
   </section>
 
   <section class="hero-text">
     <div class="container">
       <div class="hero-split">
-        <h1>{HOMEPAGE.hero.title}</h1>
-        <p>{HOMEPAGE.hero.body}</p>
+        <h1>{page.heroTitle}</h1>
+        <p>{page.heroBody}</p>
       </div>
     </div>
   </section>
@@ -31,7 +32,7 @@ const featuredNews = (await getCollection('news', (n) => n.data.featured))
   <section class="pillars">
     <div class="container">
       <div class="pillar-grid">
-        {HOMEPAGE.pillars.map(p => (
+        {page.pillars.map(p => (
           <a href={p.href} class="pillar-card">
             <div class="pillar-img" style={`background-image: url('${p.image}');`}></div>
             <div class="pillar-label">
@@ -47,11 +48,11 @@ const featuredNews = (await getCollection('news', (n) => n.data.featured))
   <section class="program-spotlight">
     <div class="container">
       <div class="spotlight-split">
-        <div class="spotlight-img" style={`background-image: url('${HOMEPAGE.spotlight.image}');`}></div>
+        <div class="spotlight-img" style={`background-image: url('${page.spotlight.image}');`}></div>
         <div class="spotlight-content">
-          <h2>{HOMEPAGE.spotlight.title}</h2>
-          {HOMEPAGE.spotlight.body.map(p => <p>{p}</p>)}
-          <a href={HOMEPAGE.spotlight.ctaHref} class="cta-button">{HOMEPAGE.spotlight.cta}</a>
+          <h2>{page.spotlight.title}</h2>
+          {page.spotlight.body.map(p => <p>{p}</p>)}
+          <a href={page.spotlight.ctaHref} class="cta-button">{page.spotlight.cta}</a>
         </div>
       </div>
     </div>
@@ -60,7 +61,7 @@ const featuredNews = (await getCollection('news', (n) => n.data.featured))
   <section class="news">
     <div class="container">
       <div class="news-head">
-        <h2>{HOMEPAGE.newsTitle}</h2>
+        <h2>{page.newsTitle}</h2>
         <a href="/news" class="news-all">All news →</a>
       </div>
       <div class="news-grid">

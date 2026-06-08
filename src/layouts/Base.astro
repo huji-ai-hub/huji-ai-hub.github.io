@@ -1,6 +1,5 @@
 ---
 import { getCollection } from 'astro:content';
-import { FIELDS } from '../data/fields';
 
 interface Props {
   title: string;
@@ -83,8 +82,13 @@ const educationChildren = programsForNav.map((p) => ({
   description: isHe ? p.taglineHe : p.tagline,
 }));
 
-// Build the Research dropdown children from the 8 fields.
-const researchChildren = FIELDS.map((f) => ({
+// Build the Research dropdown children from the fields collection so adding
+// a new field markdown populates the menu automatically.
+const fieldsForNav = (await getCollection('fields'))
+  .sort((a, b) => (a.data.order ?? 99) - (b.data.order ?? 99))
+  .map((f) => f.data);
+
+const researchChildren = fieldsForNav.map((f) => ({
   href: `${prefix}/research/${f.slug}`,
   label: isHe ? f.titleHe : f.title,
   description: isHe ? f.subtitleHe : f.subtitle,

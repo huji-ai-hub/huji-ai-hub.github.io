@@ -25,13 +25,152 @@ const faculty = defineCollection({
   }),
 });
 
+// Lab spotlights, one markdown file per lab.
+// Rendered as the "Spotlight: Our Labs" grid on /research and /he/research.
+// Add a new lab = drop a new file in src/content/labs/ with the same shape.
 const labs = defineCollection({
   loader: glob({ pattern: '**/*.md', base: './src/content/labs' }),
   schema: z.object({
+    name: z.string(),                       // English display name, e.g. "Schwartz Lab"
+    nameHe: z.string(),                     // Hebrew display name
+    description: z.string(),                // one-line summary for the card (EN)
+    descriptionHe: z.string(),              // one-line summary for the card (HE)
+    image: z.string(),                      // path under /public, e.g. "/images/labs/schwartzman.png"
+    url: z.string().url(),                  // external lab website
+    order: z.number().default(99),          // grid order, lower numbers first
+  }),
+});
+
+// Research fields. One markdown file per field under src/content/fields/.
+// Rendered as the "Fields of Research" grid on /research, AND each field has
+// its own detail page at /research/<slug>. The markdown body holds the
+// long-form English description; bodyHe holds the long-form Hebrew.
+const fields = defineCollection({
+  loader: glob({ pattern: '**/*.md', base: './src/content/fields' }),
+  schema: z.object({
+    slug: z.string(),                       // URL path, e.g. "machine-perception"
+    title: z.string(),
+    titleHe: z.string(),
+    subtitle: z.string(),                   // one-line summary for the field detail page
+    subtitleHe: z.string(),
+    intro: z.string(),                      // 1-2 sentence intro shown on /research card
+    introHe: z.string(),
+    gradient: z.string().optional(),        // CSS gradient fallback when no image
+    image: z.string().optional(),           // path under /public
+    order: z.number().default(99),
+    bodyHe: z.string().default(''),         // long-form Hebrew body for detail page (optional)
+  }),
+});
+
+// Highlighted "featured" blocks on landing pages.
+// One markdown file per block. The `page` field tells the system which page
+// to render it on. Add a new featured block = drop a new file with the right
+// page slug.
+//
+// Examples: "Beyond Human Vision: The Machine Perception Group" on /research,
+// "Industrial Affiliates Program" on /industry.
+const featured = defineCollection({
+  loader: glob({ pattern: '**/*.md', base: './src/content/featured' }),
+  schema: z.object({
+    page: z.enum(['research', 'industry', 'academics', 'about']),
+    title: z.string(),
+    titleHe: z.string(),
+    body: z.string(),                       // 1-3 sentences (EN)
+    bodyHe: z.string(),                     // 1-3 sentences (HE)
+    image: z.string(),                      // path under /public
+    ctaLabel: z.string(),                   // button text (EN), e.g. "Read more →"
+    ctaLabelHe: z.string(),                 // button text (HE)
+    ctaHref: z.string(),                    // where the button goes (external URL or internal /path)
+    order: z.number().default(99),
+  }),
+});
+
+// Per-landing-page editable text (hero title/body + optional secondary intro
+// + optional hero banner image).
+// One markdown file per landing page. Schema is intentionally permissive so
+// that pages with extra sections (like /research's vision block) can use the
+// optional intro fields without forcing other pages to declare them empty.
+const pageContent = defineCollection({
+  loader: glob({ pattern: '**/*.md', base: './src/content/pageContent' }),
+  schema: z.object({
+    page: z.enum(['home', 'research', 'industry', 'academics', 'about', 'faculty', 'news']),
+    heroTitle: z.string(),
+    heroTitleHe: z.string(),
+    heroBody: z.string(),
+    heroBodyHe: z.string(),
+    // Optional secondary intro/vision section
+    introTitle: z.string().optional(),
+    introTitleHe: z.string().optional(),
+    introBody: z.string().optional(),
+    introBodyHe: z.string().optional(),
+    // Optional hero banner background image
+    heroImage: z.string().optional(),
+    // Homepage-only: the 3 pillar cards (Research / Academics / Industry).
+    // Each pillar links to a landing page; add/remove/reorder by editing
+    // this array.
+    pillars: z.array(z.object({
+      href: z.string(),
+      hrefHe: z.string(),
+      label: z.string(),
+      labelHe: z.string(),
+      image: z.string(),
+    })).optional(),
+    // Homepage-only: the "Mastering the Tech of Tomorrow" spotlight section.
+    // image + title + body paragraphs + CTA, bilingual.
+    spotlight: z.object({
+      image: z.string(),
+      title: z.string(),
+      titleHe: z.string(),
+      body: z.array(z.string()),         // each item = one rendered <p>
+      bodyHe: z.array(z.string()),
+      cta: z.string(),
+      ctaHe: z.string(),
+      ctaHref: z.string(),
+      ctaHrefHe: z.string(),
+    }).optional(),
+    // Homepage-only: heading above the news grid. (The cards themselves
+    // come from the `news` collection, filtered to `featured: true`.)
+    newsTitle: z.string().optional(),
+    newsTitleHe: z.string().optional(),
+  }),
+});
+
+// Companies (HUJI faculty-founded + general industry partners).
+// One markdown file per company. The `category` field tells the system which
+// section of /industry to render it under:
+//   - faculty:  "Faculty-Founded Companies" grid
+//   - partner:  "Industry Partners" grid
+// Add a new company = drop a new file. To make the logo appear, drop a
+// transparent PNG or SVG into /public/logos/<filename> and set `logo` to
+// that path. Without a logo file, the company shows as a styled name pill.
+const companies = defineCollection({
+  loader: glob({ pattern: '**/*.md', base: './src/content/companies' }),
+  schema: z.object({
     name: z.string(),
-    lead: z.string(),
-    website: z.string().url().optional(),
-    order: z.number().optional(),
+    category: z.enum(['faculty', 'partner']),
+    logo: z.string().optional(),
+    url: z.string().url().optional(),
+    order: z.number().default(99),
+  }),
+});
+
+// Featured talks (video blocks). One markdown file per talk.
+// Rendered as a section on the page named in `page`. Currently used on
+// /industry for the headlining "How AI is Revolutionizing Drug Development"
+// talk by Prof. Yaakov Nahmias. Add another talk = drop a new file.
+const featuredTalks = defineCollection({
+  loader: glob({ pattern: '**/*.md', base: './src/content/featuredTalks' }),
+  schema: z.object({
+    page: z.enum(['research', 'industry', 'academics', 'about']),
+    title: z.string(),                           // talk title (EN)
+    titleHe: z.string(),                         // talk title (HE)
+    source: z.string(),                          // attribution line, e.g. "WIRED Briefings · Featured talk"
+    sourceHe: z.string(),
+    youtubeId: z.string(),                       // the bit after watch?v= in a YouTube URL
+    linkLabel: z.string().optional(),            // optional follow-up link, e.g. "Learn more about Prof. Nahmias's research →"
+    linkLabelHe: z.string().optional(),
+    linkHref: z.string().optional(),             // internal path or external URL
+    order: z.number().default(99),
   }),
 });
 
@@ -144,4 +283,4 @@ const news = defineCollection({
   }),
 });
 
-export const collections = { faculty, labs, programs, news };
+export const collections = { faculty, labs, fields, featured, pageContent, companies, featuredTalks, programs, news };

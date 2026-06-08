@@ -3,7 +3,7 @@ name: "Dina Schneidman"
 title: "Prof."
 lab: "Schneidman Lab"
 fields: ["biomed"]
-photo: "/photos/Schneidman.jpeg"
+photo: "/photos/Schneidman.jpg"
 website: "https://www.cs.huji.ac.il/~dina/"
 areas: ["Protein Structure", "Antibody Design", "Therapeutic AI"]
 order: 42

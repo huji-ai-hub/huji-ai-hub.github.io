@@ -1,5 +1,8 @@
 ---
 import Base from '../layouts/Base.astro';
+import { getEntry } from 'astro:content';
+
+const page = (await getEntry('pageContent', 'about'))!.data;
 ---
 
 <Base
@@ -13,11 +16,8 @@ import Base from '../layouts/Base.astro';
   <section class="hero-text">
     <div class="container">
       <div class="hero-split">
-        <h1>About the AI Hub</h1>
-        <p>
-          The Hebrew University's center for artificial intelligence research,
-          education, and industry collaboration.
-        </p>
+        <h1>{page.heroTitle}</h1>
+        <p>{page.heroBody}</p>
       </div>
     </div>
   </section>

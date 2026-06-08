@@ -1,6 +1,26 @@
 ---
 import Base from '../../layouts/Base.astro';
-import { INDUSTRY, FACULTY_COMPANIES, INDUSTRY_PARTNERS } from '../../data/industry';
+import { getCollection, getEntry } from 'astro:content';
+
+const page = (await getEntry('pageContent', 'industry'))!.data;
+
+const featuredBlocks = (await getCollection('featured', e => e.data.page === 'industry'))
+  .sort((a, b) => (a.data.order ?? 99) - (b.data.order ?? 99))
+  .map(e => e.data);
+
+const talks = (await getCollection('featuredTalks', e => e.data.page === 'industry'))
+  .sort((a, b) => (a.data.order ?? 99) - (b.data.order ?? 99))
+  .map(e => e.data);
+
+const allCompanies = await getCollection('companies');
+const facultyCompanies = allCompanies
+  .filter(c => c.data.category === 'faculty')
+  .sort((a, b) => (a.data.order ?? 99) - (b.data.order ?? 99))
+  .map(c => c.data);
+const industryPartners = allCompanies
+  .filter(c => c.data.category === 'partner')
+  .sort((a, b) => (a.data.order ?? 99) - (b.data.order ?? 99))
+  .map(c => c.data);
 ---
 
 <Base
@@ -8,38 +28,44 @@ import { INDUSTRY, FACULTY_COMPANIES, INDUSTRY_PARTNERS } from '../../data/indus
   lang="he"
   description="חוקרי וחוקרות ה-AI של האוניברסיטה העברית הקימו ומובילים חברות בלמידת מכונה, עיבוד שפה טבעית, ראייה ממוחשבת, סייבר וביוטכנולוגיה. שיתופי פעולה עם תעשייה ותוכנית IAP."
 >
-  <section class="hero-banner" style={`background-image: url('${INDUSTRY.heroImage}');`}>
-    <div class="hero-overlay"></div>
-  </section>
+  {page.heroImage && (
+    <section class="hero-banner" style={`background-image: url('${page.heroImage}');`}>
+      <div class="hero-overlay"></div>
+    </section>
+  )}
 
   <section class="hero-text">
     <div class="container">
       <div class="hero-split">
-        <h1>{INDUSTRY.hero.titleHe}</h1>
-        <p>{INDUSTRY.hero.bodyHe}</p>
+        <h1>{page.heroTitleHe}</h1>
+        <p>{page.heroBodyHe}</p>
       </div>
     </div>
   </section>
 
-  <section class="featured">
-    <div class="container">
-      <div class="featured-content">
-        <h2>{INDUSTRY.featured.titleHe}</h2>
-        <p class="featured-source">{INDUSTRY.featured.sourceHe}</p>
-        <a href="/he/research/biomed" class="featured-link">קראו עוד על המחקר של פרופ' נחמיאס ←</a>
+  {talks.map(talk => (
+    <section class="featured">
+      <div class="container">
+        <div class="featured-content">
+          <h2>{talk.titleHe}</h2>
+          <p class="featured-source">{talk.sourceHe}</p>
+          {talk.linkHref && talk.linkLabelHe && (
+            <a href={talk.linkHref.startsWith('/') && !talk.linkHref.startsWith('/he') ? `/he${talk.linkHref}` : talk.linkHref} class="featured-link">{talk.linkLabelHe}</a>
+          )}
+        </div>
+        <div class="featured-video">
+          <iframe
+            src={`https://www.youtube-nocookie.com/embed/${talk.youtubeId}`}
+            title={talk.titleHe}
+            frameborder="0"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+            referrerpolicy="strict-origin-when-cross-origin"
+            allowfullscreen
+          ></iframe>
+        </div>
       </div>
-      <div class="featured-video">
-        <iframe
-          src={`https://www.youtube-nocookie.com/embed/${INDUSTRY.featured.youtubeId}`}
-          title={INDUSTRY.featured.titleHe}
-          frameborder="0"
-          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-          referrerpolicy="strict-origin-when-cross-origin"
-          allowfullscreen
-        ></iframe>
-      </div>
-    </div>
-  </section>
+    </section>
+  ))}
 
   <section class="partnerships">
     <div class="container">
@@ -53,7 +79,7 @@ import { INDUSTRY, FACULTY_COMPANIES, INDUSTRY_PARTNERS } from '../../data/indus
       <div class="companies-block">
         <h3>חברות שצמחו מקהילת הסגל והבוגרים שלנו:</h3>
         <ul class="company-list">
-          {FACULTY_COMPANIES.map(c => (
+          {facultyCompanies.map(c => (
             <li>
               {c.url ? (
                 <a href={c.url} target="_blank" rel="noopener">
@@ -77,7 +103,7 @@ import { INDUSTRY, FACULTY_COMPANIES, INDUSTRY_PARTNERS } from '../../data/indus
       </p>
       <h3>בין השותפים שלנו:</h3>
       <ul class="company-list">
-        {INDUSTRY_PARTNERS.map(c => (
+        {industryPartners.map(c => (
           <li>
             {c.url ? (
               <a href={c.url} target="_blank" rel="noopener">
@@ -123,27 +149,20 @@ import { INDUSTRY, FACULTY_COMPANIES, INDUSTRY_PARTNERS } from '../../data/indus
     </div>
   </section>
 
-  <section class="iap">
-    <div class="container">
-      <div class="iap-split">
-        <div>
-          <h2>תוכנית השותפים התעשייתיים (IAP)</h2>
-          <p>
-            חברות המעוניינות במסגרת מובנית לשיתוף פעולה מתמשך מוזמנות להצטרף ל
-            <strong>תוכנית השותפים התעשייתיים (IAP)</strong> של בית הספר.
-          </p>
-          <p>
-            התוכנית מספקת גישה לפעילויות מחקר, אירועים אקדמיים, הזדמנויות גיוס וערוצי שיתוף פעולה נוספים.
-          </p>
-          <p>
-            אנו מברכים על הזדמנויות לחקור שיתופי פעולה במחקר, יוזמות חדשנות משותפות ושותפויות ארוכות טווח.
-          </p>
-          <a href="https://www.cs.huji.ac.il/industrial-affiliates-program-iap" target="_blank" rel="noopener" class="cta-button">למידע נוסף על התוכנית</a>
+  {featuredBlocks.map(block => (
+    <section class="iap">
+      <div class="container">
+        <div class="iap-split">
+          <div>
+            <h2>{block.titleHe}</h2>
+            <p>{block.bodyHe}</p>
+            <a href={block.ctaHref} target="_blank" rel="noopener" class="cta-button">{block.ctaLabelHe}</a>
+          </div>
+          <div class="iap-img" style={`background-image: url('${block.image}');`}></div>
         </div>
-        <div class="iap-img" style={`background-image: url('${INDUSTRY.iapImage}');`}></div>
       </div>
-    </div>
-  </section>
+    </section>
+  ))}
 </Base>
 
 <style>
