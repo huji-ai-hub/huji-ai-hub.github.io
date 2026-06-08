@@ -3,7 +3,7 @@ name: "Amir Feder"
 title: "Dr."
 lab: "Feder Lab"
 fields: ["language-cognition"]
-photo: "/photos/Feder.png"
+photo: "/photos/Feder.jpg"
 areas: ["NLP", "Causal Inference", "Decision Making"]
 order: 21
 ---

@@ -3,7 +3,7 @@ name: "Shmuel Peleg"
 title: "Prof."
 lab: "Peleg Lab"
 fields: ["machine-perception"]
-photo: "/photos/Peleg.gif"
+photo: "/photos/Peleg.jpg"
 website: "https://www.cs.huji.ac.il/~peleg/"
 areas: ["Video Understanding", "Super-Resolution", "Egocentric Video"]
 order: 16

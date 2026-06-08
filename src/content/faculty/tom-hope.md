@@ -3,7 +3,7 @@ name: "Tom Hope"
 title: "Dr."
 lab: "Hope Lab"
 fields: ["language-cognition", "biomed", "multi-agent"]
-photo: "/photos/Hope.png"
+photo: "/photos/Hope.jpg"
 areas: ["LLM Agents", "Scientific Discovery", "Medical AI"]
 order: 24
 ---

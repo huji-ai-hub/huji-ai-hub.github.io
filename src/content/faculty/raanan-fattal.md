@@ -3,7 +3,7 @@ name: "Raanan Fattal"
 title: "Prof."
 lab: "Fattal Lab"
 fields: ["machine-perception"]
-photo: "/photos/Fattal.png"
+photo: "/photos/Fattal.jpg"
 website: "https://www.cs.huji.ac.il/w~raananf/"
 areas: ["Generative Models", "Diffusion Models","Deep Learning"]
 order: 12

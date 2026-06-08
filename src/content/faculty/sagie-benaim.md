@@ -3,7 +3,7 @@ name: "Sagie Benaim"
 title: "Dr."
 lab: "Benaim Lab"
 fields: ["machine-perception"]
-photo: "/photos/Benaim.png"
+photo: "/photos/Benaim.jpg"
 website: "https://sagiebenaim.github.io/"
 areas: ["3D Reconstruction", "Generative Models", "Video Synthesis"]
 order: 13

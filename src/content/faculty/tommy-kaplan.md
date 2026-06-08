@@ -3,7 +3,7 @@ name: "Tommy Kaplan"
 title: "Prof."
 lab: "Kaplan Lab"
 fields: ["biomed"]
-photo: "/photos/Kaplan.png"
+photo: "/photos/Kaplan.jpg"
 areas: ["DNA Methylation", "Cell-Free DNA", "Clinical AI"]
 order: 44
 ---

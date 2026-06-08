@@ -3,7 +3,7 @@ name: "Michael Werman"
 title: "Prof."
 lab: "Werman Lab"
 fields: ["machine-perception"]
-photo: "/photos/Werman.png"
+photo: "/photos/Werman.jpg"
 website: "https://www.cs.huji.ac.il/~werman/"
 areas: ["Computer Vision", "Point Cloud Analysis", "Geometric Algorithms"]
 order: 14

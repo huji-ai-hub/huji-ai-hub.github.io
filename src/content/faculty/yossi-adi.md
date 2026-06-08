@@ -3,7 +3,7 @@ name: "Yossi Adi"
 title: "Dr."
 lab: "Adi Lab"
 fields: ["machine-perception"]
-photo: "/photos/Adi.png"
+photo: "/photos/Adi.jpg"
 website: "https://www.cs.huji.ac.il/~adiyoss/"
 areas: ["Spoken Language Models", "Speech Processing", "Audio Generation"]
 order: 11

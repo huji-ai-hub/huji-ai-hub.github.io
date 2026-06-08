@@ -3,7 +3,7 @@ name: "Amir Gilad"
 title: "Dr."
 lab: "Gilad Lab"
 fields: ["data-science"]
-photo: "/photos/Gilad_Lab.png"
+photo: "/photos/Gilad.jpg"
 areas: ["Data Quality", "Differential Privacy", "ML Fairness"]
 order: 70
 ---

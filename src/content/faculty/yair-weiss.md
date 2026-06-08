@@ -3,7 +3,7 @@ name: "Yair Weiss"
 title: "Prof."
 lab: "Weiss Lab"
 fields: ["machine-perception"]
-photo: "/photos/Weiss.png"
+photo: "/photos/Weiss.jpg"
 website: "https://www.cs.huji.ac.il/~yweiss/"
 areas: ["Computer Vision", "Probabilistic Models", "Bayesian Inference"]
 order: 15
