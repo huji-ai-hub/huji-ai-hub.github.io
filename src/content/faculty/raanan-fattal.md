@@ -4,7 +4,7 @@ title: "Prof."
 lab: "Fattal Lab"
 fields: ["machine-perception"]
 photo: "/photos/Fattal.jpg"
-website: "https://www.cs.huji.ac.il/w~raananf/"
+website: "http://www.cs.huji.ac.il/~raananf"
 areas: ["Generative Models", "Diffusion Models","Deep Learning"]
 order: 12
 ---

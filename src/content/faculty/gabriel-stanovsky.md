@@ -1,6 +1,6 @@
 ---
 name: "Gabriel Stanovsky"
-title: "Dr."
+title: "Prof."
 lab: "SLAB"
 fields: ["language-cognition"]
 areas: ["NLP", "Multilingual Modeling", "Document Understanding"]
