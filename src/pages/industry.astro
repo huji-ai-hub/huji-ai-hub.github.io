@@ -1,6 +1,12 @@
 ---
 import Base from '../layouts/Base.astro';
 import { INDUSTRY, FACULTY_COMPANIES, INDUSTRY_PARTNERS } from '../data/industry';
+import { getCollection, getEntry } from 'astro:content';
+
+const page = (await getEntry('pageContent', 'industry'))!.data;
+const featuredBlocks = (await getCollection('featured', e => e.data.page === 'industry'))
+  .sort((a, b) => (a.data.order ?? 99) - (b.data.order ?? 99))
+  .map(e => e.data);
 ---
 
 <Base
@@ -14,8 +20,8 @@ import { INDUSTRY, FACULTY_COMPANIES, INDUSTRY_PARTNERS } from '../data/industry
   <section class="hero-text">
     <div class="container">
       <div class="hero-split">
-        <h1>{INDUSTRY.hero.title}</h1>
-        <p>{INDUSTRY.hero.body}</p>
+        <h1>{page.heroTitle}</h1>
+        <p>{page.heroBody}</p>
       </div>
     </div>
   </section>
@@ -125,29 +131,20 @@ import { INDUSTRY, FACULTY_COMPANIES, INDUSTRY_PARTNERS } from '../data/industry
     </div>
   </section>
 
-  <section class="iap">
-    <div class="container">
-      <div class="iap-split">
-        <div>
-          <h2>Industrial Affiliates Program (IAP)</h2>
-          <p>
-            Companies interested in a structured framework for ongoing collaboration are invited
-            to join the School's <strong>Industrial Affiliates Program (IAP)</strong>.
-          </p>
-          <p>
-            The program provides access to research activities, academic events, recruitment
-            opportunities, and additional collaboration channels.
-          </p>
-          <p>
-            We welcome opportunities to explore research collaborations, joint innovation
-            initiatives, and long-term partnerships.
-          </p>
-          <a href="https://www.cs.huji.ac.il/industrial-affiliates-program-iap" target="_blank" rel="noopener" class="cta-button">Learn more about the program</a>
+  {featuredBlocks.map(block => (
+    <section class="iap">
+      <div class="container">
+        <div class="iap-split">
+          <div>
+            <h2>{block.title}</h2>
+            <p>{block.body}</p>
+            <a href={block.ctaHref} target="_blank" rel="noopener" class="cta-button">{block.ctaLabel}</a>
+          </div>
+          <div class="iap-img" style={`background-image: url('${block.image}');`}></div>
         </div>
-        <div class="iap-img" style={`background-image: url('${INDUSTRY.iapImage}');`}></div>
       </div>
-    </div>
-  </section>
+    </section>
+  ))}
 </Base>
 
 <style>

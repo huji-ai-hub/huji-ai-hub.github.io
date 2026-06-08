@@ -25,13 +25,83 @@ const faculty = defineCollection({
   }),
 });
 
+// Lab spotlights, one markdown file per lab.
+// Rendered as the "Spotlight: Our Labs" grid on /research and /he/research.
+// Add a new lab = drop a new file in src/content/labs/ with the same shape.
 const labs = defineCollection({
   loader: glob({ pattern: '**/*.md', base: './src/content/labs' }),
   schema: z.object({
-    name: z.string(),
-    lead: z.string(),
-    website: z.string().url().optional(),
-    order: z.number().optional(),
+    name: z.string(),                       // English display name, e.g. "Schwartz Lab"
+    nameHe: z.string(),                     // Hebrew display name
+    description: z.string(),                // one-line summary for the card (EN)
+    descriptionHe: z.string(),              // one-line summary for the card (HE)
+    image: z.string(),                      // path under /public, e.g. "/images/labs/schwartzman.png"
+    url: z.string().url(),                  // external lab website
+    order: z.number().default(99),          // grid order, lower numbers first
+  }),
+});
+
+// Research fields. One markdown file per field under src/content/fields/.
+// Rendered as the "Fields of Research" grid on /research, AND each field has
+// its own detail page at /research/<slug>. The markdown body holds the
+// long-form English description; bodyHe holds the long-form Hebrew.
+const fields = defineCollection({
+  loader: glob({ pattern: '**/*.md', base: './src/content/fields' }),
+  schema: z.object({
+    slug: z.string(),                       // URL path, e.g. "machine-perception"
+    title: z.string(),
+    titleHe: z.string(),
+    subtitle: z.string(),                   // one-line summary for the field detail page
+    subtitleHe: z.string(),
+    intro: z.string(),                      // 1-2 sentence intro shown on /research card
+    introHe: z.string(),
+    gradient: z.string().optional(),        // CSS gradient fallback when no image
+    image: z.string().optional(),           // path under /public
+    order: z.number().default(99),
+    bodyHe: z.string().default(''),         // long-form Hebrew body for detail page (optional)
+  }),
+});
+
+// Highlighted "featured" blocks on landing pages.
+// One markdown file per block. The `page` field tells the system which page
+// to render it on. Add a new featured block = drop a new file with the right
+// page slug.
+//
+// Examples: "Beyond Human Vision: The Machine Perception Group" on /research,
+// "Industrial Affiliates Program" on /industry.
+const featured = defineCollection({
+  loader: glob({ pattern: '**/*.md', base: './src/content/featured' }),
+  schema: z.object({
+    page: z.enum(['research', 'industry', 'academics', 'about']),
+    title: z.string(),
+    titleHe: z.string(),
+    body: z.string(),                       // 1-3 sentences (EN)
+    bodyHe: z.string(),                     // 1-3 sentences (HE)
+    image: z.string(),                      // path under /public
+    ctaLabel: z.string(),                   // button text (EN), e.g. "Read more →"
+    ctaLabelHe: z.string(),                 // button text (HE)
+    ctaHref: z.string(),                    // where the button goes (external URL or internal /path)
+    order: z.number().default(99),
+  }),
+});
+
+// Per-landing-page editable text (hero title/body + optional secondary intro).
+// One markdown file per landing page. Schema is intentionally permissive so
+// that pages with extra sections (like /research's vision block) can use the
+// optional intro fields without forcing other pages to declare them empty.
+const pageContent = defineCollection({
+  loader: glob({ pattern: '**/*.md', base: './src/content/pageContent' }),
+  schema: z.object({
+    page: z.enum(['research', 'industry', 'academics', 'about', 'faculty', 'news']),
+    heroTitle: z.string(),
+    heroTitleHe: z.string(),
+    heroBody: z.string(),
+    heroBodyHe: z.string(),
+    // Optional secondary intro/vision section
+    introTitle: z.string().optional(),
+    introTitleHe: z.string().optional(),
+    introBody: z.string().optional(),
+    introBodyHe: z.string().optional(),
   }),
 });
 
@@ -144,4 +214,4 @@ const news = defineCollection({
   }),
 });
 
-export const collections = { faculty, labs, programs, news };
+export const collections = { faculty, labs, fields, featured, pageContent, programs, news };

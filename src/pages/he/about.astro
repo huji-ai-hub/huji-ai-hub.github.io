@@ -1,5 +1,8 @@
 ---
 import Base from '../../layouts/Base.astro';
+import { getEntry } from 'astro:content';
+
+const page = (await getEntry('pageContent', 'about'))!.data;
 ---
 
 <Base
@@ -14,10 +17,8 @@ import Base from '../../layouts/Base.astro';
   <section class="hero-text">
     <div class="container">
       <div class="hero-split">
-        <h1>אודות מרכז ה-AI</h1>
-        <p>
-          המרכז לבינה מלאכותית של האוניברסיטה העברית, מחקר, הוראה ושיתופי פעולה עם התעשייה.
-        </p>
+        <h1>{page.heroTitleHe}</h1>
+        <p>{page.heroBodyHe}</p>
       </div>
     </div>
   </section>

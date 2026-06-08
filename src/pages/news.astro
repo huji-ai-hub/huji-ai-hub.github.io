@@ -1,10 +1,12 @@
 ---
 import Base from '../layouts/Base.astro';
-import { getCollection } from 'astro:content';
+import { getCollection, getEntry } from 'astro:content';
 
 // All news items, newest first.
 const items = (await getCollection('news'))
   .sort((a, b) => b.data.date.getTime() - a.data.date.getTime());
+
+const page = (await getEntry('pageContent', 'news'))!.data;
 
 const pageTitle = 'News | HUJI AI Hub';
 const pageDescription =
@@ -18,8 +20,8 @@ function formatDate(d: Date): string {
 <Base title={pageTitle} description={pageDescription}>
   <section class="hero-text">
     <div class="container">
-      <h1>News</h1>
-      <p>Updates from across the HUJI AI Hub: new programs, faculty research, industry deals.</p>
+      <h1>{page.heroTitle}</h1>
+      <p>{page.heroBody}</p>
     </div>
   </section>
 

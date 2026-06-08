@@ -1,9 +1,11 @@
 ---
 import Base from '../layouts/Base.astro';
-import { getCollection, render } from 'astro:content';
+import { getCollection, getEntry, render } from 'astro:content';
 
 const programs = (await getCollection('programs'))
   .sort((a, b) => a.data.order - b.data.order);
+
+const page = (await getEntry('pageContent', 'academics'))!.data;
 
 const rendered = await Promise.all(
   programs.map(async (p) => {
@@ -51,16 +53,8 @@ const programLd = programs.map((p) => ({
   <section class="hero-text">
     <div class="container">
       <div class="hero-split">
-        <h1>Educational programs in AI</h1>
-        <p>
-          AI was born in computer science, but today AI tools don't stay in the lab. They
-          are reshaping every field of science and changing computer science itself from
-          the ground up. The link between developing intelligent technology and applying
-          it has never been tighter. From here, the university now offers a broad spectrum
-          of programs covering this transformation across disciplines, from AI combined
-          with computer science through the social sciences, life sciences, and cognitive
-          studies.
-        </p>
+        <h1>{page.heroTitle}</h1>
+        <p>{page.heroBody}</p>
       </div>
     </div>
   </section>

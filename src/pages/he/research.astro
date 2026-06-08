@@ -1,6 +1,20 @@
 ---
 import Base from '../../layouts/Base.astro';
-import { FIELDS } from '../../data/fields';
+import { getCollection, getEntry } from 'astro:content';
+
+const fieldEntries = (await getCollection('fields'))
+  .sort((a, b) => (a.data.order ?? 99) - (b.data.order ?? 99))
+  .map(e => e.data);
+
+const labEntries = (await getCollection('labs'))
+  .sort((a, b) => (a.data.order ?? 99) - (b.data.order ?? 99))
+  .map(e => e.data);
+
+const featuredBlocks = (await getCollection('featured', e => e.data.page === 'research'))
+  .sort((a, b) => (a.data.order ?? 99) - (b.data.order ?? 99))
+  .map(e => e.data);
+
+const page = (await getEntry('pageContent', 'research'))!.data;
 ---
 
 <Base
@@ -15,33 +29,28 @@ import { FIELDS } from '../../data/fields';
   <section class="hero-text">
     <div class="container">
       <div class="hero-split">
-        <h1>חזית מחקר הבינה המלאכותית</h1>
-        <p>
-          פיצוח ה"קופסה השחורה" ופיתוח המודלים שיעצבו את העשורים הבאים.
-        </p>
+        <h1>{page.heroTitleHe}</h1>
+        <p>{page.heroBodyHe}</p>
       </div>
     </div>
   </section>
 
-  <section class="vision">
-    <div class="container">
-      <div class="vision-inner">
-        <h2>החזון המחקרי שלנו</h2>
-        <p>
-          לצד פיתוח יישומי AI קיימים, החוקרים שלנו מתמודדים עם שאלות המחר.
-          המחקר שלנו מגשר בין יסודות תיאורטיים להשפעה בעולם האמיתי, מהבנת
-          האופן שבו רשתות נוירונים לומדות, ועד בניית מערכות שתופסות, חושבות ופועלות
-          בסביבות מורכבות.
-        </p>
+  {page.introTitleHe && (
+    <section class="vision">
+      <div class="container">
+        <div class="vision-inner">
+          <h2>{page.introTitleHe}</h2>
+          <p>{page.introBodyHe}</p>
+        </div>
       </div>
-    </div>
-  </section>
+    </section>
+  )}
 
   <section class="fields">
     <div class="container">
       <h2>תחומי מחקר</h2>
       <div class="fields-grid">
-        {FIELDS.map(field => (
+        {fieldEntries.map(field => (
           <a href={`/he/research/${field.slug}`} class="field-card">
             <div class="field-img" style={field.image ? `background-image: url('${field.image}');` : `background: ${field.gradient};`}></div>
             <div class="field-label">
@@ -54,63 +63,36 @@ import { FIELDS } from '../../data/fields';
     </div>
   </section>
 
-  <section class="featured-group">
-    <div class="container">
-      <div class="featured-split">
-        <div>
-          <h2>מעבר לראיית האדם: קבוצת התפיסה הממוחשבת</h2>
-          <p>
-            קבוצת התפיסה הממוחשבת בבית הספר להנדסה ולמדעי המחשב מפתחת אלגוריתמים ושיטות שיאפשרו
-            למחשבים להגיע לרמת הביצוע יוצאת הדופן של בני אדם, ובמקרים מסוימים אף לעלות עליה.
-          </p>
-          <a href="https://vision.huji.ac.il/main/" class="cta-button" target="_blank" rel="noopener">
-            קראו עוד ←
-          </a>
+  {featuredBlocks.map(block => (
+    <section class="featured-group">
+      <div class="container">
+        <div class="featured-split">
+          <div>
+            <h2>{block.titleHe}</h2>
+            <p>{block.bodyHe}</p>
+            <a href={block.ctaHref} class="cta-button" target="_blank" rel="noopener">
+              {block.ctaLabelHe}
+            </a>
+          </div>
+          <div class="featured-img" style={`background-image: url('${block.image}');`}></div>
         </div>
-        <div class="featured-img" style="background-image: url('/images/pexels-googledeepmind-25626512.jpg');"></div>
       </div>
-    </div>
-  </section>
+    </section>
+  ))}
 
   <section class="labs">
     <div class="container">
       <h2>זרקור: המעבדות שלנו</h2>
       <div class="labs-grid">
-        <a href="https://schwartz-lab-huji.github.io/" class="lab-card" target="_blank">
-          <div class="lab-img" style="background-image: url('/images/labs/schwartzman.png');"></div>
-          <div class="lab-label">
-            <span>מעבדת שוורץ</span>
-            <span class="lab-desc">הנגשת טכנולוגיות הבנת טקסט</span>
-          </div>
-        </a>
-        <a href="https://www.katz-lab.com/about" class="lab-card" target="_blank">
-          <div class="lab-img" style="background-image: url('/images/labs/katz.png');"></div>
-          <div class="lab-label">
-            <span>מעבדת כץ</span>
-            <span class="lab-desc">אימות נכונות מערכות שנוצרו על ידי AI</span>
-          </div>
-        </a>
-        <a href="https://www.cs.huji.ac.il/~josko/casmip-lab/" class="lab-card" target="_blank">
-          <div class="lab-img" style="background-image: url('/images/labs/CASMIP.png');"></div>
-          <div class="lab-label">
-            <span>מעבדת CASMIP</span>
-            <span class="lab-desc">ניתוח בעזרת מחשב ועיבוד תמונות רפואיות</span>
-          </div>
-        </a>
-        <a href="https://www.cs.huji.ac.il/~dina/" class="lab-card" target="_blank">
-          <div class="lab-img" style="background-image: url('/images/labs/schneidman.jpg');"></div>
-          <div class="lab-label">
-            <span>מעבדת שניידמן</span>
-            <span class="lab-desc">מידול מבנה משולב</span>
-          </div>
-        </a>
-        <a href="https://www.cs.huji.ac.il/~adiyoss/slprl/index.html" class="lab-card" target="_blank">
-          <div class="lab-img" style="background-image: url('/images/labs/SLP.png');"></div>
-          <div class="lab-label">
-            <span>מעבדת SLP</span>
-            <span class="lab-desc">עיבוד שפה דבורה</span>
-          </div>
-        </a>
+        {labEntries.map(lab => (
+          <a href={lab.url} class="lab-card" target="_blank">
+            <div class="lab-img" style={`background-image: url('${lab.image}');`}></div>
+            <div class="lab-label">
+              <span>{lab.nameHe}</span>
+              <span class="lab-desc">{lab.descriptionHe}</span>
+            </div>
+          </a>
+        ))}
       </div>
     </div>
   </section>

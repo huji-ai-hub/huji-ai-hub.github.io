@@ -1,6 +1,12 @@
 ---
 import Base from '../../layouts/Base.astro';
 import { INDUSTRY, FACULTY_COMPANIES, INDUSTRY_PARTNERS } from '../../data/industry';
+import { getCollection, getEntry } from 'astro:content';
+
+const page = (await getEntry('pageContent', 'industry'))!.data;
+const featuredBlocks = (await getCollection('featured', e => e.data.page === 'industry'))
+  .sort((a, b) => (a.data.order ?? 99) - (b.data.order ?? 99))
+  .map(e => e.data);
 ---
 
 <Base
@@ -15,8 +21,8 @@ import { INDUSTRY, FACULTY_COMPANIES, INDUSTRY_PARTNERS } from '../../data/indus
   <section class="hero-text">
     <div class="container">
       <div class="hero-split">
-        <h1>{INDUSTRY.hero.titleHe}</h1>
-        <p>{INDUSTRY.hero.bodyHe}</p>
+        <h1>{page.heroTitleHe}</h1>
+        <p>{page.heroBodyHe}</p>
       </div>
     </div>
   </section>
@@ -123,27 +129,20 @@ import { INDUSTRY, FACULTY_COMPANIES, INDUSTRY_PARTNERS } from '../../data/indus
     </div>
   </section>
 
-  <section class="iap">
-    <div class="container">
-      <div class="iap-split">
-        <div>
-          <h2>תוכנית השותפים התעשייתיים (IAP)</h2>
-          <p>
-            חברות המעוניינות במסגרת מובנית לשיתוף פעולה מתמשך מוזמנות להצטרף ל
-            <strong>תוכנית השותפים התעשייתיים (IAP)</strong> של בית הספר.
-          </p>
-          <p>
-            התוכנית מספקת גישה לפעילויות מחקר, אירועים אקדמיים, הזדמנויות גיוס וערוצי שיתוף פעולה נוספים.
-          </p>
-          <p>
-            אנו מברכים על הזדמנויות לחקור שיתופי פעולה במחקר, יוזמות חדשנות משותפות ושותפויות ארוכות טווח.
-          </p>
-          <a href="https://www.cs.huji.ac.il/industrial-affiliates-program-iap" target="_blank" rel="noopener" class="cta-button">למידע נוסף על התוכנית</a>
+  {featuredBlocks.map(block => (
+    <section class="iap">
+      <div class="container">
+        <div class="iap-split">
+          <div>
+            <h2>{block.titleHe}</h2>
+            <p>{block.bodyHe}</p>
+            <a href={block.ctaHref} target="_blank" rel="noopener" class="cta-button">{block.ctaLabelHe}</a>
+          </div>
+          <div class="iap-img" style={`background-image: url('${block.image}');`}></div>
         </div>
-        <div class="iap-img" style={`background-image: url('${INDUSTRY.iapImage}');`}></div>
       </div>
-    </div>
-  </section>
+    </section>
+  ))}
 </Base>
 
 <style>

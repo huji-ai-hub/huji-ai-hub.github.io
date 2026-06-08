@@ -1,6 +1,20 @@
 ---
 import Base from '../layouts/Base.astro';
-import { FIELDS } from '../data/fields';
+import { getCollection, getEntry } from 'astro:content';
+
+const fieldEntries = (await getCollection('fields'))
+  .sort((a, b) => (a.data.order ?? 99) - (b.data.order ?? 99))
+  .map(e => e.data);
+
+const labEntries = (await getCollection('labs'))
+  .sort((a, b) => (a.data.order ?? 99) - (b.data.order ?? 99))
+  .map(e => e.data);
+
+const featuredBlocks = (await getCollection('featured', e => e.data.page === 'research'))
+  .sort((a, b) => (a.data.order ?? 99) - (b.data.order ?? 99))
+  .map(e => e.data);
+
+const page = (await getEntry('pageContent', 'research'))!.data;
 ---
 
 <Base
@@ -14,32 +28,28 @@ import { FIELDS } from '../data/fields';
   <section class="hero-text">
     <div class="container">
       <div class="hero-split">
-        <h1>The Frontiers of AI Research</h1>
-        <p>
-          Unlocking the "black box" and developing the models that will shape the coming decades.
-        </p>
+        <h1>{page.heroTitle}</h1>
+        <p>{page.heroBody}</p>
       </div>
     </div>
   </section>
 
-  <section class="vision">
-    <div class="container">
-      <div class="vision-inner">
-        <h2>Our Research Vision</h2>
-        <p>
-          Alongside developing existing AI applications, our researchers tackle the questions of tomorrow.
-          Our research bridges theoretical foundations and real-world impact, from understanding how neural
-          networks learn, to building systems that perceive, reason, and act in complex environments.
-        </p>
+  {page.introTitle && (
+    <section class="vision">
+      <div class="container">
+        <div class="vision-inner">
+          <h2>{page.introTitle}</h2>
+          <p>{page.introBody}</p>
+        </div>
       </div>
-    </div>
-  </section>
+    </section>
+  )}
 
   <section class="fields">
     <div class="container">
       <h2>Fields of Research</h2>
       <div class="fields-grid">
-        {FIELDS.map(field => (
+        {fieldEntries.map(field => (
           <a href={`/research/${field.slug}`} class="field-card">
             <div class="field-img" style={field.image ? `background-image: url('${field.image}');` : `background: ${field.gradient};`}></div>
             <div class="field-label">
@@ -52,64 +62,36 @@ import { FIELDS } from '../data/fields';
     </div>
   </section>
 
-  <section class="featured-group">
-    <div class="container">
-      <div class="featured-split">
-        <div>
-          <h2>Beyond Human Vision: The Machine Perception Group</h2>
-          <p>
-            The Machine Perception Group at the School of Computer Science and Engineering develops
-            algorithms and methods that will allow computers to reach the remarkable performance
-            of humans, and in some cases even surpass human ability.
-          </p>
-          <a href="https://vision.huji.ac.il/main/" class="cta-button" target="_blank" rel="noopener">
-            Read more →
-          </a>
+  {featuredBlocks.map(block => (
+    <section class="featured-group">
+      <div class="container">
+        <div class="featured-split">
+          <div>
+            <h2>{block.title}</h2>
+            <p>{block.body}</p>
+            <a href={block.ctaHref} class="cta-button" target="_blank" rel="noopener">
+              {block.ctaLabel}
+            </a>
+          </div>
+          <div class="featured-img" style={`background-image: url('${block.image}');`}></div>
         </div>
-        <div class="featured-img" style="background-image: url('/images/pexels-googledeepmind-25626512.jpg');"></div>
       </div>
-    </div>
-  </section>
+    </section>
+  ))}
 
   <section class="labs">
     <div class="container">
       <h2>Spotlight: Our Labs</h2>
       <div class="labs-grid">
-        <a href="https://schwartz-lab-huji.github.io/" class="lab-card" target="_blank">
-          <div class="lab-img" style="background-image: url('/images/labs/schwartzman.png');"></div>
-          <div class="lab-label">
-            <span>Schwartz Lab</span>
-            <span class="lab-desc">Making text understanding technology widely accessible</span>
-          </div>
-        </a>
-        <a href="https://www.katz-lab.com/about" class="lab-card" target="_blank">
-          <div class="lab-img" style="background-image: url('/images/labs/katz.png');"></div>
-          <div class="lab-label">
-            <span>Katz Lab</span>
-            <span class="lab-desc">Verifying the correctness of AI-created systems</span>
-          </div>
-        </a>
-        <a href="https://www.cs.huji.ac.il/~josko/casmip-lab/" class="lab-card" target="_blank">
-          <div class="lab-img" style="background-image: url('/images/labs/CASMIP.png');"></div>
-          <div class="lab-label">
-            <span>CASMIP Lab</span>
-            <span class="lab-desc">Computer Aided Surgery and Medical Image Processing</span>
-          </div>
-        </a>
-        <a href="https://www.cs.huji.ac.il/~dina/" class="lab-card" target="_blank">
-          <div class="lab-img" style="background-image: url('/images/labs/schneidman.jpg');"></div>
-          <div class="lab-label">
-            <span>Schneidman Lab</span>
-            <span class="lab-desc">Integrative Structure Modeling</span>
-          </div>
-        </a>
-        <a href="https://www.cs.huji.ac.il/~adiyoss/slprl/index.html" class="lab-card" target="_blank">
-          <div class="lab-img" style="background-image: url('/images/labs/SLP.png');"></div>
-          <div class="lab-label">
-            <span>SLP Research Lab</span>
-            <span class="lab-desc">Spoken Language Processing</span>
-          </div>
-        </a>
+        {labEntries.map(lab => (
+          <a href={lab.url} class="lab-card" target="_blank">
+            <div class="lab-img" style={`background-image: url('${lab.image}');`}></div>
+            <div class="lab-label">
+              <span>{lab.name}</span>
+              <span class="lab-desc">{lab.description}</span>
+            </div>
+          </a>
+        ))}
       </div>
     </div>
   </section>

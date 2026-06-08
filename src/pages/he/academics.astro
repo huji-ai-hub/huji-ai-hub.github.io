@@ -1,12 +1,14 @@
 ---
 import Base from '../../layouts/Base.astro';
-import { getCollection } from 'astro:content';
+import { getCollection, getEntry } from 'astro:content';
 import { marked } from 'marked';
 
 marked.setOptions({ gfm: true, breaks: false });
 
 const programs = (await getCollection('programs'))
   .sort((a, b) => a.data.order - b.data.order);
+
+const page = (await getEntry('pageContent', 'academics'))!.data;
 
 const rendered = programs.map((p) => ({
   program: p,
@@ -53,15 +55,8 @@ const programLd = programs.map((p) => ({
   <section class="hero-text">
     <div class="container">
       <div class="hero-split">
-        <h1>תוכניות לימוד בבינה מלאכותית</h1>
-        <p>
-          הבינה המלאכותית נולדה במדעי המחשב, אך כיום כלי ה-AI אינם נשארים במעבדה. הם
-          מעצבים מחדש את כל תחומי המדע, ומשנים מן היסוד גם את מדעי המחשב עצמם. הקשר בין
-          פיתוח טכנולוגיה חכמה לבין היישום שלה מעולם לא היה הדוק יותר. בדיוק מכאן,
-          האוניברסיטה מציעה כיום ספקטרום רחב של תוכניות לימוד המכסות את המהפכה הזו במגוון
-          תחומים, החל מלימודי AI בשילוב עם מדעי המחשב ועד לשילובם עם מדעי החברה דרך מדעי
-          החיים ולימודי הקוגניציה.
-        </p>
+        <h1>{page.heroTitleHe}</h1>
+        <p>{page.heroBodyHe}</p>
       </div>
     </div>
   </section>

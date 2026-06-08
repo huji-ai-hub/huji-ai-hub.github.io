@@ -1,9 +1,11 @@
 ---
 import Base from '../../../layouts/Base.astro';
-import { getCollection } from 'astro:content';
+import { getCollection, getEntry } from 'astro:content';
 
 const faculty = await getCollection('faculty');
 const sortedFaculty = faculty.sort((a, b) => (a.data.order ?? 99) - (b.data.order ?? 99));
+
+const page = (await getEntry('pageContent', 'faculty'))!.data;
 ---
 
 <Base
@@ -18,10 +20,8 @@ const sortedFaculty = faculty.sort((a, b) => (a.data.order ?? 99) - (b.data.orde
   <section class="hero-text">
     <div class="container">
       <div class="hero-split">
-        <h1>סגל AI</h1>
-        <p>
-          חוקרים ומרצים העוסקים בבינה המלאכותית באוניברסיטה העברית.
-        </p>
+        <h1>{page.heroTitleHe}</h1>
+        <p>{page.heroBodyHe}</p>
       </div>
     </div>
   </section>

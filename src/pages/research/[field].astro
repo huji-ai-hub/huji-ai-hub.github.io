@@ -1,12 +1,12 @@
 ---
 import Base from '../../layouts/Base.astro';
 import { getCollection } from 'astro:content';
-import { FIELDS } from '../../data/fields';
 
 export async function getStaticPaths() {
-  return FIELDS.map(field => ({
-    params: { field: field.slug },
-    props: { field },
+  const fields = await getCollection('fields');
+  return fields.map(entry => ({
+    params: { field: entry.data.slug },
+    props: { field: entry.data },
   }));
 }
 
