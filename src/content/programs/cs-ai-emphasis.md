@@ -2,8 +2,8 @@
 slug: cs-ai-emphasis
 name: "B.Sc. in Computer Science with AI Emphasis"
 nameHe: "תואר ראשון במדעי המחשב עם הדגש בבינה מלאכותית"
-tagline: "The most comprehensive track for understanding and building AI tools at the Hebrew University."
-taglineHe: "מסלול הלימודים המקיף ביותר להבנה ופיתוח כלי AI באוניברסיטה העברית."
+tagline: "A comprehensive track combining Computer Science with Artificial Intelligence at the Hebrew University."
+taglineHe: "מסלול הלימודים יסודי המשלב מדעי מחשב עם בינה מלאכותית באוניברסיטה העברית."
 degreeLevel: bsc
 type: emphasis
 faculty: "Rachel and Selim Benin School of Computer Science and Engineering"
@@ -14,8 +14,8 @@ image: "/images/pexels-googledeepmind-17483870.jpg"
 order: 2
 seoTitle: "B.Sc. Computer Science with AI Emphasis, Hebrew University"
 seoTitleHe: "תואר ראשון במדעי המחשב עם הדגש ב-AI, האוניברסיטה העברית"
-seoDescription: "The Hebrew University's flagship undergraduate AI program. Three years of mathematical foundations, classical computer science, and advanced AI specialization. For students who want to understand how AI systems actually work, not just how to use them."
-seoDescriptionHe: "התוכנית המובילה של האוניברסיטה העברית לתואר ראשון בבינה מלאכותית. שלוש שנים של יסודות מתמטיים, מדעי המחשב הקלאסיים, והתמחות מתקדמת ב-AI. מיועדת לסטודנטים שרוצים להבין איך מערכות AI באמת עובדות, לא רק להשתמש בהן."
+seoDescription: "The Hebrew University's flagship undergraduate AI program. Three years of mathematical foundations, classical computer science, and advanced AI specialization. For students who want to deepen their knowladge in oth the theoretical and practical sides of developing and utilizing machine learning and AI models."
+seoDescriptionHe: "תוכנית דגל לתואר ראשון במדמ״ח ובינה מלאכותית של האוניברסיטה העברית. שלוש שנים של יסודות מתמטיים, מדעי המחשב הקלאסיים והתמחות בבינה מלאכותית. מיועדת לסטודנטים המעוניינים להעמיק את הידע שלהם הן בצד התיאורטי והן בצד המעשי של פיתוח ויישום מודלים של למידת מכונה ובינה מלאכותית."
 keywords:
   - AI degree Hebrew University
   - computer science AI specialization Israel
@@ -36,8 +36,8 @@ highlights:
   - { label: "Track type", value: "AI emphasis", labelHe: "סוג מסלול", valueHe: "הדגש AI" }
   - { label: "School", value: "CS & Engineering", labelHe: "בית ספר", valueHe: 'הנדסה ומדעי המחשב' }
 
-whoItsFor: "Students with strong analytical instincts and real curiosity about how systems work under the hood. No prior programming experience required, readiness for serious math and abstract thinking is."
-whoItsForHe: "סטודנטים עם יכולות אנליטיות חזקות וסקרנות אמיתית להבין איך הדברים עובדים מתחת למכסה המנוע. אין צורך בניסיון תכנותי קודם, צריך מוכנות לעבודה רצינית במתמטיקה ובחשיבה אבסטרקטית."
+whoItsFor: "Students with strong analytical abilities and curiosity about how AI systems work under the hood. No prior programming experience required, readiness for serious math and abstract thinking is."
+whoItsForHe: "סטודנטים עם יכולות אנליטיות חזקות וסקרנות  להבין איך הבינה המלאכותית עובדת. אין צורך בניסיון תכנותי קודם, צריך מוכנות לעבודה רצינית במתמטיקה ובחשיבה אבסטרקטית."
 
 whatComesAfter: "M.Sc. and Ph.D. programs at HUJI and at leading institutions abroad, or research and engineering roles at companies on the AI frontier, from Google and Meta to Israeli startups. The alumni network is active and useful."
 whatComesAfterHe: "תואר שני ושלישי באוניברסיטה העברית או במוסדות מובילים בעולם, או תפקידי מחקר ופיתוח בחברות בחזית ה-AI, מ-Google ו-Meta ועד סטארטאפים ישראליים. קהילת הבוגרים פעילה ומסייעת."
