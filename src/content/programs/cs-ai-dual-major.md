@@ -3,7 +3,7 @@ slug: cs-ai-dual-major
 name: "B.Sc. in Artificial Intelligence, Dual-Major Track"
 nameHe: "תואר ראשון בבינה מלאכותית, מסלול דו חוגי"
 tagline: "The most comprehensive AI undergraduate program at the Hebrew University."
-taglineHe: "התואר המקיף ביותר ללימוד יסודות הבינה המלאכותית ויישומיה במדעי המחשב."
+taglineHe: "התואר המקיף ביותר ללימוד יסודות הבינה המלאכותית ויישומיה."
 degreeLevel: bsc
 type: major
 faculty: "Rachel and Selim Benin School of Computer Science and Engineering"
@@ -37,8 +37,8 @@ highlights:
   - { label: "Track type", value: "Dual-major", labelHe: "סוג מסלול", valueHe: "דו חוגי" }
   - { label: "School", value: "CS & Engineering", labelHe: "בית ספר", valueHe: 'הנדסה ומדעי המחשב' }
 
-whoItsFor: "Students with strong analytical instincts and real curiosity about how systems work under the hood. No prior programming experience required, readiness for serious math and abstract thinking is."
-whoItsForHe: "סטודנטים עם יכולות אנליטיות חזקות וסקרנות אמיתית להבין איך הדברים עובדים מתחת למכסה המנוע. אין צורך בניסיון תכנותי קודם, צריך מוכנות לעבודה רצינית במתמטיקה ובחשיבה אבסטרקטית."
+whoItsFor: "Students with strong analytical abilities and  curiosity about how AI systems work. No prior programming experience required, readiness for serious math and abstract thinking is."
+whoItsForHe: "סטודנטים עם יכולות אנליטיות חזקות וסקרנות אמיתית להבין איך מודלי בינה מלאכותית עובדים. אין צורך בניסיון תכנותי קודם, צריך מוכנות לעבודה רצינית במתמטיקה ובחשיבה אבסטרקטית."
 
 whatComesAfter: "M.Sc. and Ph.D. programs at HUJI and at leading institutions abroad, or research and engineering roles at companies on the AI frontier, from Google and Meta to Israeli startups. The alumni network is active and useful."
 whatComesAfterHe: "תואר שני ושלישי באוניברסיטה העברית או במוסדות מובילים בעולם, או תפקידי מחקר ופיתוח בחברות בחזית ה-AI, מ-Google ו-Meta ועד סטארטאפים ישראליים. קהילת הבוגרים פעילה ומסייעת."
