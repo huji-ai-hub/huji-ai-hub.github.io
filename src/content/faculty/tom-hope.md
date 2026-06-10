@@ -1,6 +1,8 @@
 ---
 name: "Tom Hope"
+nameHe: "תום הופ"
 title: "Dr."
+titleHe: "ד״ר"
 lab: "Hope Lab"
 fields: ["language-cognition", "biomed", "multi-agent"]
 photo: "/photos/Hope.jpg"

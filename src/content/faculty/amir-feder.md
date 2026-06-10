@@ -1,6 +1,8 @@
 ---
 name: "Amir Feder"
+nameHe: "אמיר פדר"
 title: "Dr."
+titleHe: "ד״ר"
 lab: "Feder Lab"
 fields: ["language-cognition"]
 photo: "/photos/Feder.jpg"

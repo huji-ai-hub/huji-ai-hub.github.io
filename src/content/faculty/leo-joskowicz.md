@@ -1,6 +1,8 @@
 ---
 name: "Leo Joskowicz"
+nameHe: "לאו יוסקוביץ"
 title: "Prof."
+titleHe: "פרופ׳"
 lab: "Joskowicz Lab (CASMIP)"
 fields: ["biomed"]
 photo: "/photos/Joskowicz.jpg"

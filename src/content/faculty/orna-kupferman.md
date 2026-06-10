@@ -1,6 +1,8 @@
 ---
 name: "Orna Kupferman"
+nameHe: "אורנה קופרמן"
 title: "Prof."
+titleHe: "פרופ׳"
 lab: "Kupferman Lab"
 fields: ["multi-agent"]
 areas: ["Formal Methods", "Verification", "Game Theory"]

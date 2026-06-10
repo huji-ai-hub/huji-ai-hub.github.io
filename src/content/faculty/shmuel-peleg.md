@@ -1,6 +1,8 @@
 ---
 name: "Shmuel Peleg"
+nameHe: "שמואל פלג"
 title: "Prof. (Emeritus)"
+titleHe: "פרופ׳ (אמריטוס)"
 lab: "Peleg Lab"
 fields: ["machine-perception"]
 photo: "/photos/Peleg.jpg"

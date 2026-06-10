@@ -1,6 +1,8 @@
 ---
 name: "Yair Weiss"
+nameHe: "יאיר וייס"
 title: "Prof."
+titleHe: "פרופ׳"
 lab: "Weiss Lab"
 fields: ["machine-perception"]
 photo: "/photos/Weiss.jpg"

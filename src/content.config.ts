@@ -4,8 +4,10 @@ import { glob } from 'astro/loaders';
 const faculty = defineCollection({
   loader: glob({ pattern: '**/*.md', base: './src/content/faculty' }),
   schema: z.object({
-    name: z.string(),
-    title: z.string(),
+    name: z.string(),                       // English display name
+    nameHe: z.string().optional(),          // Hebrew display name (sourced from cs.huji.ac.il/he/people/faculty)
+    title: z.string(),                      // English title, e.g. "Prof." / "Dr." / "Prof. (Emeritus)"
+    titleHe: z.string().optional(),         // Hebrew title, e.g. "פרופ׳" / "ד״ר" / "פרופ׳ (אמריטוס)"
     lab: z.string(),
     fields: z.array(z.enum([
       'machine-perception',

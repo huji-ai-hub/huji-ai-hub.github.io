@@ -1,6 +1,8 @@
 ---
 name: "Noam Nisan"
+nameHe: "נעם ניסן"
 title: "Prof."
+titleHe: "פרופ׳"
 lab: "Learning in Markets and Games"
 fields: ["multi-agent"]
 areas: ["Algorithmic Game Theory", "Market Design", "Strategic Learning"]

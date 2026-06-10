@@ -1,6 +1,8 @@
 ---
 name: "Oded Schwartz"
+nameHe: "עודד שוורץ"
 title: "Prof."
+titleHe: "פרופ׳"
 lab: "Schwartz Lab"
 fields: ["cyber-crypto"]
 areas: ["Matrix Multiplication", "AI Acceleration", "Algorithms"]

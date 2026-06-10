@@ -1,6 +1,8 @@
 ---
 name: "Yedid Hoshen"
+nameHe: "ידיד חשן"
 title: "Prof."
+titleHe: "פרופ׳"
 lab: "Hoshen Lab"
 fields: ["machine-perception"]
 photo: "/photos/Hoshen.jpg"

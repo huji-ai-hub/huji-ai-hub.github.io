@@ -1,6 +1,8 @@
 ---
 name: "Michael Werman"
+nameHe: "מיכאל וורמן"
 title: "Prof. (Emeritus)"
+titleHe: "פרופ׳ (אמריטוס)"
 lab: "Werman Lab"
 fields: ["machine-perception"]
 photo: "/photos/Werman.jpg"

@@ -1,6 +1,8 @@
 ---
 name: "Tommy Kaplan"
+nameHe: "תומר קפלן"
 title: "Prof."
+titleHe: "פרופ׳"
 lab: "Kaplan Lab"
 fields: ["biomed"]
 photo: "/photos/Kaplan.jpg"

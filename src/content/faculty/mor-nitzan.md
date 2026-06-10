@@ -1,6 +1,8 @@
 ---
 name: "Mor Nitzan"
+nameHe: "מור ארזי-ניצן"
 title: "Prof."
+titleHe: "פרופ׳"
 lab: "Nitzan Lab"
 fields: ["biomed"]
 photo: "/photos/Nitzan.jpg"

@@ -13,7 +13,9 @@ export async function getStaticPaths() {
 const { member } = Astro.props;
 const { Content } = await render(member);
 
-const description = `${member.data.name}, ${member.data.title}, האוניברסיטה העברית בירושלים. ${member.data.lab}.`;
+const heName = member.data.nameHe || member.data.name;
+const heTitle = member.data.titleHe || member.data.title;
+const description = `${heName}, ${heTitle}, האוניברסיטה העברית בירושלים. ${member.data.lab}.`;
 
 const sameAs = [member.data.website, member.data.scholar].filter(Boolean);
 
@@ -39,7 +41,7 @@ const personSchema = {
 ---
 
 <Base
-  title={`${member.data.name} | מרכז AI`}
+  title={`${heName} | מרכז AI`}
   lang="he"
   description={description}
   pageType="profile"
@@ -58,8 +60,8 @@ const personSchema = {
           )}
         </div>
         <div>
-          <h1>{member.data.name}</h1>
-          <p class="title">{member.data.title}</p>
+          <h1>{heName}</h1>
+          <p class="title">{heTitle}</p>
           <p class="lab">{member.data.lab}</p>
           <div class="links">
             {member.data.website && <a href={member.data.website} target="_blank">↗ אתר אישי</a>}

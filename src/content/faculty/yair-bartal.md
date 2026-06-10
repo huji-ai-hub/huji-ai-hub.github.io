@@ -1,6 +1,8 @@
 ---
 name: "Yair Bartal"
+nameHe: "יאיר ברטל"
 title: "Prof."
+titleHe: "פרופ׳"
 lab: "Bartal Lab"
 fields: ["human-centered"]
 areas: ["VR for Mental Health", "Clinical AI", "Human-Computer Interaction"]

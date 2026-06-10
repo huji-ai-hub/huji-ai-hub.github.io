@@ -1,6 +1,8 @@
 ---
 name: "Katrina Ligett"
+nameHe: "קתרינה ליגת"
 title: "Prof."
+titleHe: "פרופ׳"
 lab: "Ligett Lab"
 fields: ["multi-agent"]
 areas: ["Differential Privacy", "Algorithmic Fairness", "AI Policy"]

@@ -1,6 +1,8 @@
 ---
 name: "Yossi Adi"
+nameHe: "יוסף עדי"
 title: "Dr."
+titleHe: "ד״ר"
 lab: "Adi Lab"
 fields: ["machine-perception"]
 photo: "/photos/Adi.jpg"

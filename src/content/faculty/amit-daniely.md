@@ -1,6 +1,8 @@
 ---
 name: "Amit Daniely"
+nameHe: "עמית דניאלי"
 title: "Prof."
+titleHe: "פרופ׳"
 lab: "Daniely Lab"
 fields: ["foundations-of-learning"]
 areas: ["Learning Theory", "ML Foundations"]
