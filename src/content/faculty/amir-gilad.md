@@ -1,6 +1,8 @@
 ---
 name: "Amir Gilad"
+nameHe: "אמיר גלעד"
 title: "Dr."
+titleHe: "ד״ר"
 lab: "Gilad Lab"
 fields: ["data-science"]
 photo: "/photos/Gilad.jpg"

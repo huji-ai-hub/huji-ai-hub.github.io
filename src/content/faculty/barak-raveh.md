@@ -1,6 +1,8 @@
 ---
 name: "Barak Raveh"
+nameHe: "ברק רווה"
 title: "Dr."
+titleHe: "ד״ר"
 lab: "Raveh Lab"
 fields: ["biomed"]
 areas: ["Dynamic Biological Systems", "Computational Biology", "Multi-Scale Modeling"]

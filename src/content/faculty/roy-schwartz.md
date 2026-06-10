@@ -1,6 +1,8 @@
 ---
 name: "Roy Schwartz"
+nameHe: "רועי-מרדכי שוורץ"
 title: "Prof."
+titleHe: "פרופ׳"
 lab: "Schwartz NLP Lab"
 fields: ["language-cognition"]
 photo: "/photos/Schwartz_Roy.jpg"

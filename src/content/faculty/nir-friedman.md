@@ -1,6 +1,8 @@
 ---
 name: "Nir Friedman"
+nameHe: "ניר פרידמן"
 title: "Prof."
+titleHe: "פרופ׳"
 lab: "Friedman Lab"
 fields: ["biomed"]
 areas: ["Gene Regulation", "Probabilistic Models", "Computational Biology"]

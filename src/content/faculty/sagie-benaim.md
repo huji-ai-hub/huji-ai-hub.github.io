@@ -1,6 +1,8 @@
 ---
 name: "Sagie Benaim"
+nameHe: "שגיא שלום בן נעים"
 title: "Dr."
+titleHe: "ד״ר"
 lab: "Benaim Lab"
 fields: ["machine-perception"]
 photo: "/photos/Benaim.jpg"

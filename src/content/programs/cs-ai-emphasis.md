@@ -11,7 +11,7 @@ facultyHe: 'בית הספר להנדסה ולמדעי המחשב ע"ש רחל ו
 officialWebsite: "https://www.cs.huji.ac.il/he/page/10573"
 registrationUrl: "https://www.cs.huji.ac.il/he/page/10573"
 image: "/images/pexels-googledeepmind-17483870.jpg"
-order: 2
+order: 4
 seoTitle: "B.Sc. Computer Science with AI Emphasis, Hebrew University"
 seoTitleHe: "תואר ראשון במדעי המחשב עם הדגש ב-AI, האוניברסיטה העברית"
 seoDescription: "An undergraduate program in computer science focused on machine-learning and AI studies. Three years of mathematical foundations, classical computer science, machine-learning and advanced AI courses. For students who want to understand how AI systems actually work, not just how to use them."

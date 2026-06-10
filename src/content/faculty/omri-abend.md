@@ -1,6 +1,8 @@
 ---
 name: "Omri Abend"
+nameHe: "עמרי אבנד"
 title: "Prof."
+titleHe: "פרופ׳"
 lab: "NLP and Cognitive Science"
 fields: ["language-cognition"]
 areas: ["Semantic Representation", "Language Acquisition", "Bayesian Modeling"]

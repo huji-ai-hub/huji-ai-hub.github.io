@@ -1,6 +1,8 @@
 ---
 name: "Raanan Fattal"
+nameHe: "רענן פטאל"
 title: "Prof."
+titleHe: "פרופ׳"
 lab: "Fattal Lab"
 fields: ["machine-perception"]
 photo: "/photos/Fattal.jpg"

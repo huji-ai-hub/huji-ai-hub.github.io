@@ -1,6 +1,8 @@
 ---
 name: "Guy Katz"
+nameHe: "גיא כץ"
 title: "Prof."
+titleHe: "פרופ׳"
 lab: "Katz Lab"
 fields: ["cyber-crypto"]
 photo: "/photos/Katz.jpg"

@@ -1,6 +1,8 @@
 ---
 name: "Gil Segev"
+nameHe: "גיל שגב"
 title: "Prof."
+titleHe: "פרופ׳"
 lab: "Segev Lab"
 fields: ["cyber-crypto"]
 areas: ["Cryptography", "ML Security", "Privacy"]

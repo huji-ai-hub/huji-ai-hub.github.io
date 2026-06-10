@@ -1,6 +1,8 @@
 ---
 name: "Yaakov Nahmias"
+nameHe: "יעקב נחמיאס"
 title: "Prof."
+titleHe: "פרופ׳"
 lab: "Nahmias Lab"
 fields: ["biomed"]
 areas: ["Tissue Dynamics", "Drug Development", "Hybrid Models"]

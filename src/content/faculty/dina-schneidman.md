@@ -1,6 +1,8 @@
 ---
 name: "Dina Schneidman"
+nameHe: "דינה שניידמן"
 title: "Prof."
+titleHe: "פרופ׳"
 lab: "Schneidman Lab"
 fields: ["biomed"]
 photo: "/photos/Schneidman.jpg"

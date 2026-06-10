@@ -44,8 +44,8 @@ const page = (await getEntry('pageContent', 'faculty'))!.data;
               )}
             </div>
             <div class="info">
-              <h3>{member.data.name}</h3>
-              <p class="ftitle">{member.data.title}</p>
+              <h3>{member.data.nameHe || member.data.name}</h3>
+              <p class="ftitle">{member.data.titleHe || member.data.title}</p>
               <p class="flab">{member.data.lab}</p>
               {member.data.areas && member.data.areas.length > 0 && (
                 <div class="areas">

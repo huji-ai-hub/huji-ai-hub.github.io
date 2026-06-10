@@ -1,6 +1,8 @@
 ---
 name: "Dafna Shahaf"
+nameHe: "דפנה שחף"
 title: "Prof."
+titleHe: "פרופ׳"
 lab: "Hyadata Lab"
 fields: ["data-science"]
 areas: ["Data Science", "Human Cognition", "Knowledge Discovery"]

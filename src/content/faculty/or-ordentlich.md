@@ -1,6 +1,8 @@
 ---
 name: "Or Ordentlich"
+nameHe: "אור אורדנטליך"
 title: "Prof."
+titleHe: "פרופ׳"
 lab: "Ordentlich Lab"
 fields: ["foundations-of-learning"]
 areas: ["LLM Quantization", "Efficient Inference", "Information Theory"]

@@ -1,6 +1,8 @@
 ---
 name: "Ido Sivan Sevilla"
+nameHe: "עידו סיון סביליה"
 title: "Dr."
+titleHe: "ד״ר"
 lab: "Sivan Sevilla Lab"
 fields: ["human-centered"]
 areas: ["AI Governance", "AI Accountability", "Public Sector AI"]

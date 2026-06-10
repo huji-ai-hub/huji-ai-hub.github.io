@@ -1,6 +1,8 @@
 ---
 name: "Daphna Weinshall"
+nameHe: "דפנה וינשל"
 title: "Prof."
+titleHe: "פרופ׳"
 lab: "Weinshall Lab"
 fields: ["machine-perception"]
 photo: "/photos/Weinshall.jpg"
