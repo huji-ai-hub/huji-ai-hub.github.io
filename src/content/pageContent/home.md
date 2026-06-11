@@ -24,13 +24,13 @@ pillars:
 spotlight:
   image: "/images/pexels-googledeepmind-18069696.jpg"
   title: "Mastering the Tech of Tomorrow: Computer Science in the AI Era"
-  titleHe: "לשלוט בטכנולוגיה של מחר: מדעי המחשב בעידן ה-AI"
+  titleHe: "לשלוט בטכנולוגיה של מחר: מדעי המחשב בעידן הבינה המלאכותית"
   body:
-    - "The new Computer Science program at the Hebrew University specializes in AI, designed for students aspiring to understand how this generation's tools work, and to develop the next generation's tools. The program was developed by leading researchers, combining theoretical depth with practical application across diverse fields."
-    - "It provides a solid mathematical foundation and exposure to modern deep models, training graduates capable of analyzing, training, adapting, and examining the implications of complex systems. Here, you acquire the knowledge needed to lead R&D in a changing technological environment."
+    - "The new Artificial Intelligence programs at the Hebrew University are designed for students who want to go beyond using today's AI—to understanding how it works and building the tools of tomorrow. Developed by leading researchers, the curriculum bridges theoretical depth with practical application across diverse fields. It provides a rigorous mathematical foundation alongside hands-on experience with modern deep learning models."
+    - "Graduates leave fully equipped to analyze, train, adapt, and evaluate complex AI systems, acquiring the exact expertise needed to lead R&D in a rapidly evolving technological landscape."
   bodyHe:
-    - "התוכנית החדשה למדעי המחשב באוניברסיטה העברית מתמחה בבינה מלאכותית ומיועדת לסטודנטים השואפים להבין כיצד פועלים הכלים של הדור הנוכחי, ולפתח את הכלים של הדור הבא. התוכנית פותחה על ידי חוקרים מובילים, ומשלבת עומק תיאורטי עם יישום מעשי במגוון תחומים."
-    - "היא מספקת בסיס מתמטי מוצק וחשיפה למודלים עמוקים מודרניים, ומכשירה בוגרים המסוגלים לנתח, לאמן, להתאים, ולבחון את ההשלכות של מערכות מורכבות."
+    - "תוכניות הבינה המלאכותית החדשות באוניברסיטה העברית מיועדות לסטודנטים שרוצים ללכת מעבר לשימוש בבינה המלאכותית של היום – ולהבין כיצד היא פועלת ולפתח את הכלים של המחר. תוכנית הלימודים, שפותחה על ידי חוקרים מובילים, מגשרת בין עומק תיאורטי ליישום מעשי במגוון רחב של תחומים. היא מעניקה בסיס מתמטי איתן לצד ניסיון מעשי עם מודלים מודרניים של למידה עמוקה."
+    -  "הבוגרים מסיימים את לימודיהם כשהם מצוידים במלוא הכלים לנתח, לאמן, להתאים ולהעריך מערכות בינה מלאכותית מורכבות, ורוכשים את המומחיות המדויקת הנדרשת להובלת מחקר ופיתוח (מו"פ) בנוף טכנולוגי המשתנה במהירות."
   cta: "Details & Registration →"
   ctaHe: "פרטים והרשמה ←"
   ctaHref: "/academics"
