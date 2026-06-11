@@ -1,9 +1,9 @@
 ---
 slug: cs-ai-dual-major
 name: "B.Sc. in Artificial Intelligence, Dual-Major Track"
-nameHe: "תואר ראשון בבינה מלאכותית, מסלול דו חוגי"
+nameHe: "תואר ראשון בבינה מלאכותית, מסלול דו חוגי*"
 tagline: "The most comprehensive AI undergraduate program at the Hebrew University."
-taglineHe: "התואר המקיף ביותר ללימוד יסודות הבינה המלאכותית ויישומיה."
+taglineHe: "הענקת התואר מותנית באישור המועצה להשכלה גבוהה .התואר המקיף ביותר ללימוד יסודות הבינה המלאכותית ויישומיה*."
 degreeLevel: bsc
 type: major
 faculty: "Rachel and Selim Benin School of Computer Science and Engineering"
