@@ -26,11 +26,11 @@ spotlight:
   title: "Mastering the Tech of Tomorrow: Computer Science in the AI Era"
   titleHe: "לשלוט בטכנולוגיה של מחר: מדעי המחשב בעידן הבינה המלאכותית"
   body:
-    - "The new Artificial Intelligence programs at the Hebrew University are designed for students who want to go beyond using today's AI—to understanding how it works and building the tools of tomorrow. Developed by leading researchers, the curriculum bridges theoretical depth with practical application across diverse fields. It provides a rigorous mathematical foundation alongside hands-on experience with modern deep learning models."
+    - "The new Artificial Intelligence programs at the Hebrew University are designed for students who want to go beyond using today's AI: to understand how it works and build the tools of tomorrow. Developed by leading researchers, the curriculum bridges theoretical depth with practical application across diverse fields. It provides a rigorous mathematical foundation alongside hands-on experience with modern deep learning models."
     - "Graduates leave fully equipped to analyze, train, adapt, and evaluate complex AI systems, acquiring the exact expertise needed to lead R&D in a rapidly evolving technological landscape."
   bodyHe:
-    - "תוכניות הבינה המלאכותית החדשות באוניברסיטה העברית מיועדות לסטודנטים שרוצים ללכת מעבר לשימוש בבינה המלאכותית של היום – ולהבין כיצד היא פועלת ולפתח את הכלים של המחר. תוכנית הלימודים, שפותחה על ידי חוקרים מובילים, מגשרת בין עומק תיאורטי ליישום מעשי במגוון רחב של תחומים. היא מעניקה בסיס מתמטי איתן לצד ניסיון מעשי עם מודלים מודרניים של למידה עמוקה."
-    -  "הבוגרים מסיימים את לימודיהם כשהם מצוידים במלוא הכלים לנתח, לאמן, להתאים ולהעריך מערכות בינה מלאכותית מורכבות, ורוכשים את המומחיות המדויקת הנדרשת להובלת מחקר ופיתוח (מו"פ) בנוף טכנולוגי המשתנה במהירות."
+    - "תוכניות הבינה המלאכותית החדשות באוניברסיטה העברית מיועדות לסטודנטים שרוצים ללכת מעבר לשימוש בבינה המלאכותית של היום: להבין כיצד היא פועלת ולפתח את הכלים של המחר. תוכנית הלימודים, שפותחה על ידי חוקרים מובילים, מגשרת בין עומק תיאורטי ליישום מעשי במגוון רחב של תחומים. היא מעניקה בסיס מתמטי איתן לצד ניסיון מעשי עם מודלים מודרניים של למידה עמוקה."
+    - "הבוגרים מסיימים את לימודיהם כשהם מצוידים במלוא הכלים לנתח, לאמן, להתאים ולהעריך מערכות בינה מלאכותית מורכבות, ורוכשים את המומחיות המדויקת הנדרשת להובלת מחקר ופיתוח (מו״פ) בנוף טכנולוגי המשתנה במהירות."
   cta: "Details & Registration →"
   ctaHe: "פרטים והרשמה ←"
   ctaHref: "/academics"
