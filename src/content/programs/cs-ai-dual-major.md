@@ -1,8 +1,8 @@
 ---
 slug: cs-ai-dual-major
-name: "B.Sc. in Artificial Intelligence, Dual-Major Track"
+name: "B.Sc. in Artificial Intelligence, Dual-Major Track*"
 nameHe: "תואר ראשון בבינה מלאכותית, מסלול דו חוגי"
-tagline: "The most comprehensive AI undergraduate program at the Hebrew University."
+tagline: "The most comprehensive AI undergraduate program at the Hebrew University. * The awarding of the degree is subject to the approval of the Council for Higher Education."
 taglineHe: "התואר המקיף ביותר ללימוד יסודות הבינה המלאכותית ויישומיה."
 degreeLevel: bsc
 type: major
