@@ -133,6 +133,10 @@ const programLd = programs.map((p) => ({
               </div>
             )}
 
+            {p.data.pendingApproval && (
+              <p class="pending-approval">{p.data.pendingApproval}</p>
+            )}
+
             <footer class="panel-footer">
               {p.data.officialWebsite && (
                 <a href={p.data.officialWebsite} target="_blank" rel="noopener" class="cta-button">
@@ -473,6 +477,15 @@ const programLd = programs.map((p) => ({
     color: var(--text-secondary);
     line-height: 1.7;
     margin: 0;
+  }
+
+  .pending-approval {
+    margin-top: 1.5rem;
+    font-size: 0.82rem;
+    font-style: italic;
+    color: var(--text-muted);
+    border-inline-start: 3px solid var(--border);
+    padding-inline-start: 0.75rem;
   }
 
   .panel-footer {
