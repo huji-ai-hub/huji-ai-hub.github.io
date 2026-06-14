@@ -14,7 +14,7 @@ image: "/images/pexels-googledeepmind-25630347.jpg"
 order: 1
 seoTitle: "B.Sc. in Artificial Intelligence, Hebrew University"
 seoTitleHe: "תואר ראשון בבינה מלאכותית, מסלול דו חוגי, האוניברסיטה העברית"
-seoDescription: "A three-year AI track spanning foundational mathematics, core computer science, machine and deep learning. The track covers advanced deep learning courses, and their application across multipel fields including NLP, computer vision, and computational biology. Designed for students who want to understand the theory behind these models, learn to adapt them to new applications, and design the next generation of AI models. The combination with another track opens a unique oppotuinity to apply AI to other domains of science."
+seoDescription: "A three-year AI track spanning foundational mathematics, core computer science, machine and deep learning. The track covers advanced deep learning courses, and their application across multiple fields including NLP, computer vision, and computational biology. Designed for students who want to understand the theory behind these models, learn to adapt them to new applications, and design the next generation of AI models. The combination with another track opens a unique opportunity to apply AI to other domains of science."
 seoDescriptionHe: "מסלול תלת-שנתי בבינה מלאכותית המקיף יסודות מתמטיים, לימודי ליבה במדעי המחשב, למידת מכונה ולמידה עמוקה. המסלול כולל קורסים מתקדמים בלמידה עמוקה ויישומיהם במגוון תחומים, לרבות עיבוד שפה טבעית (NLP), ראייה ממוחשבת וביולוגיה חישובית. מיועד לסטודנטים המעוניינים להבין את התיאוריה שמאחורי מודלים אלו, ללמוד כיצד להתאים אותם ליישומים חדשים, ולפתח את הדור הבא של מודלי בינה מלאכותית. השילוב עם מסלול לימודים נוסף מאפשר הזדמנות ייחודית להשמיש בינה מלאכותית לתחומי מדע נוספים."
 keywords:
   - AI degree Hebrew University
@@ -65,5 +65,5 @@ In a world where AI tools write code, summarize documents, and suggest answers i
 Three years, from foundations to the AI frontier:
 
 - **Year 1: Foundations.** Mathematics (Calculus and linear algebra), probability, introductory computer science course.
-- **Year 2: Toolkit.** Fundemental computer scinece (algorithms, computational complexity), statistics, foundations of machine and deep learning (neural networks).
+- **Year 2: Toolkit.** Fundamental computer science (algorithms, computational complexity), statistics, foundations of machine and deep learning (neural networks).
 - **Year 3: Specialization and research.** Advanced AI course in various domains: intelligence systems, computer vision, NLP, reinforcement learning, AI safety. Electives by direction. Option to join faculty research labs as a research assistant while still in undergrad.
