@@ -1,7 +1,7 @@
 ---
 slug: "2026-04-cs-ai-program"
-title: "New B.Sc. with AI Emphasis launches at HUJI"
-titleHe: "תוכנית B.Sc. עם הדגש AI נפתחה באוניברסיטה העברית"
+title: "New Artificial Intelligence B.Sc. programs launched at HUJI"
+titleHe: "תוכניות חדשות לתואר ראשון בבינה מלאכותית הושקו באוניברסיטה העברית"
 summary: "The Hebrew University's School of Computer Science opens a dedicated AI emphasis track for B.Sc. students, combining mathematical foundations with deep training in modern machine learning."
 summaryHe: "ביה\"ס למדעי המחשב באוניברסיטה העברית פותח מסלול הדגש ייעודי ב-AI לתואר ראשון, המשלב יסודות מתמטיים והכשרה מעמיקה בלמידת מכונה מודרנית."
 date: 2026-04-12
