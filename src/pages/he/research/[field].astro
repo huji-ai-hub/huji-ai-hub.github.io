@@ -15,6 +15,10 @@ const allFaculty = await getCollection('faculty');
 const fieldFaculty = allFaculty
   .filter(m => (m.data.fields ?? []).includes(field.slug as any))
   .sort((a, b) => (a.data.order ?? 99) - (b.data.order ?? 99));
+
+// When a field's Hebrew title starts with a Latin letter (e.g. "AI ברפואה"),
+// the Hebrew prefix "ב" needs a maqaf so it reads "ב-AI" rather than "בAI".
+const labsPrefix = /^[A-Za-z]/.test(field.titleHe) ? 'ב-' : 'ב';
 ---
 
 <Base
@@ -47,7 +51,7 @@ const fieldFaculty = allFaculty
 
   <section class="labs-section">
     <div class="container">
-      <h2>מעבדות ב{field.titleHe}</h2>
+      <h2>מעבדות {labsPrefix}{field.titleHe}</h2>
       {fieldFaculty.length === 0 ? (
         <p class="empty">טרם הוקצו מעבדות לתחום זה.</p>
       ) : (
