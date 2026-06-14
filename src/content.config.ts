@@ -228,6 +228,12 @@ const programs = defineCollection({
     whatComesAfter: z.string().optional(),
     whatComesAfterHe: z.string().optional(),
 
+    // Optional disclaimer rendered as a small italic note above the panel
+    // footer. Use for legal / accreditation status (e.g. "degree pending
+    // Council for Higher Education approval"). Set both EN + HE when used.
+    pendingApproval: z.string().optional(),
+    pendingApprovalHe: z.string().optional(),
+
     // Long-form body, Hebrew lives in frontmatter (YAML literal block) so the
     // markdown body field can stay clean for the English text. Editors who only
     // know one language can edit just one side without confusing themselves.

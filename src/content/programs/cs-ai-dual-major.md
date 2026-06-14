@@ -43,6 +43,9 @@ whoItsForHe: "סטודנטים עם יכולות אנליטיות חזקות ו�
 whatComesAfter: "M.Sc. and Ph.D. programs at HUJI and at leading institutions abroad, or research and engineering roles at companies on the AI frontier, from Google and Meta to Israeli startups. The alumni network is active and useful."
 whatComesAfterHe: "תואר שני ושלישי באוניברסיטה העברית או במוסדות מובילים בעולם, או תפקידי מחקר ופיתוח בחברות בחזית ה-AI, מ-Google ו-Meta ועד סטארטאפים ישראליים. קהילת הבוגרים פעילה ומסייעת." 
 
+pendingApproval: "Awarding of the degree is subject to approval by the Council for Higher Education."
+pendingApprovalHe: "הענקת התואר מותנית באישור המועצה להשכלה גבוהה."
+
 bodyHe: |
   בעולם שבו כלי AI כותבים קוד, מסכמים מסמכים ומציעים תשובות בלחיצת כפתור, השאלה
   הנכונה אינה "האם עדיין כדאי ללמוד מדעי המחשב". השאלה היא מי יבנה, ינתח ויפקח על
