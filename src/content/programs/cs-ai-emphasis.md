@@ -37,7 +37,7 @@ highlights:
   - { label: "School", value: "CS & Engineering", labelHe: "בית ספר", valueHe: 'הנדסה ומדעי המחשב' }
 
 whoItsFor: "Students with strong analytical instincts and curiosity about how AI systems work. No prior programming experience required, readiness for serious math and abstract thinking is."
-whoItsForHe: ".סטודנטים עם יכולות אנליטיות חזקות וסקרנות להבין איך מודלי בינה נלאכותית עובדים. אין צורך בניסיון תכנותי קודם, צריך מוכנות לעבודה רצינית במתמטיקה ובחשיבה אבסטרקטית"
+whoItsForHe: "סטודנטים עם יכולות אנליטיות חזקות וסקרנות להבין איך מודלי בינה מלאכותית עובדים. אין צורך בניסיון תכנותי קודם, צריך מוכנות לעבודה רצינית במתמטיקה ובחשיבה אבסטרקטית."
 
 whatComesAfter: "M.Sc. and Ph.D. programs at HUJI or at leading institutions abroad, or research and engineering roles at companies on the AI frontier, from Google and Meta to Israeli startups. The alumni network is active and useful."
 whatComesAfterHe: "תואר שני ושלישי באוניברסיטה העברית או במוסדות מובילים בעולם, או תפקידי מחקר ופיתוח בחברות בחזית ה-AI, מ-Google ו-Meta ועד סטארטאפים ישראליים. קהילת הבוגרים פעילה ומסייעת."
@@ -64,5 +64,5 @@ In a world where AI tools write code, summarize documents, and suggest answers i
 Three years, from foundations to the AI frontier:
 
 - **Year 1 : Foundations.** Mathematics (calculus, linear algebra, discrete mathematics), probability, computer science (data structures, intro to programming).
-- **Year 2 : Toolkit.** Foundtions of computer Science (algorithms, computational complexity), statistics, foundations of machine learning and deep leaning (neural networks).
+- **Year 2 : Toolkit.** Foundations of computer science (algorithms, computational complexity), statistics, foundations of machine learning and deep learning (neural networks).
 - **Year 3 : Specialization and research.** Advanced artificial intelligence course: computer vision, NLP, reinforcement learning, AI safety. Electives by direction. Option to join faculty research labs as a research assistant while still in undergrad.
