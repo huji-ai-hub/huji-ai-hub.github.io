@@ -13,8 +13,10 @@
     },
     "huji_main_news_he": {
       "dismissed_ids": [],
-      "last_run": null,
-      "seen_ids": []
+      "last_run": "2026-08-24T03:54:40.455121+00:00",
+      "seen_ids": [
+        "d042b23f3cc0dce1"
+      ]
     },
     "yissum": {
       "dismissed_ids": [],
