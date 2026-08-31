@@ -15,9 +15,9 @@ The site replaces an older Drupal-based version. The design goal was that anyone
 |---|---|
 | Edit a faculty bio | `src/content/faculty/<slug>.md`. Open it on github.com, click the pencil, edit, commit |
 | Add a new faculty member | Create a new `src/content/faculty/<their-name>.md` (copy an existing one as a template) and add their photo to `public/photos/` |
-| Change a homepage section | `src/data/homepage.ts` |
-| Add or edit a research field | `src/data/fields.ts` |
-| Update industry-page content | `src/data/industry.ts` |
+| Change homepage text | `src/content/pageContent/home.md` |
+| Add or edit a research field | `src/content/fields/<slug>.md` |
+| Update industry-page text | `src/content/pageContent/industry.md` (and `src/content/companies/<name>.md` for partners) |
 | Update the page header / footer / language toggle | `src/layouts/Base.astro` |
 | Add a new top-level page | New `.astro` file under `src/pages/` (and a parallel one under `src/pages/he/`) |
 | See what the site builds to | `npm run build` (output in `dist/`) |
@@ -31,13 +31,12 @@ The site replaces an older Drupal-based version. The design goal was that anyone
 edit a file → commit → open pull request → review → merge to main → automatic build → live in ~90 seconds
 ```
 
-There are three ways to do the "edit a file" step, depending on who you are:
+There are two ways to do the "edit a file" step, depending on who you are:
 
 1. **In the browser.** Open the file on github.com, click the pencil icon, edit in the GitHub UI, save. GitHub creates the commit and prompts you to open a pull request. No software to install.
 2. **On your computer.** Clone the repo, edit any file in your text editor of choice, commit, push. Suitable for someone who edits frequently or wants to preview locally first.
-3. **Via the auto-update bot.** A scheduled agent runs weekly (Monday 03:00 UTC, plus manual triggers from the Actions tab). It pulls candidate news from the HUJI main news sitemap, a curated email inbox (`huji.ai.hub.bot.inbox@gmail.com`, where humans forward newsletters and Scholar alerts), and each faculty member's personal site, then asks Claude to classify what's AI-relevant and draft bilingual cards. Every run opens a pull request for human review. Nothing reaches the live site without a merge. See `output/updater-bot-design.md` for the architecture and `output/bot-handover.md` for credentials and operational notes.
 
-In all three cases, no CMS login, no admin panel, no database. The repository is the content source of truth.
+In both cases, no CMS login, no admin panel, no database. The repository is the content source of truth.
 
 ---
 
@@ -46,12 +45,16 @@ In all three cases, no CMS login, no admin panel, no database. The repository is
 ```
 site/
 ├── src/
-│   ├── content/
+│   ├── content/                ← ALL editable content, one markdown file per item
 │   │   ├── faculty/            ← One markdown file per faculty member
-│   │   ├── labs/               ← One markdown file per lab (currently sparse)
-│   │   ├── news/               ← News cards (mostly bot-drafted, human-merged)
-│   │   └── programs/           ← Academic programs (rendered as tabs on /academics)
-│   ├── data/                   ← Structured page content (homepage, research fields, industry data)
+│   │   ├── fields/             ← Research fields (the grid + per-field pages)
+│   │   ├── programs/           ← Academic programs (rendered as tabs on /academics)
+│   │   ├── companies/          ← Industry partners + faculty-founded companies
+│   │   ├── featured/           ← Featured blocks on landing pages
+│   │   ├── featuredTalks/      ← Video talk blocks
+│   │   ├── labs/               ← Lab spotlight cards
+│   │   ├── pageContent/        ← Editable hero/landing text per page (home, research, industry…)
+│   │   └── news/               ← News cards
 │   ├── pages/                  ← Routes, each .astro file becomes a URL
 │   │   ├── faculty/
 │   │   ├── research/
@@ -65,16 +68,14 @@ site/
 │   ├── photos/                 ← Faculty headshots
 │   ├── favicon.svg
 │   └── robots.txt
-├── updater-bot/                ← The weekly news bot (Python). See its own README inside.
 ├── .github/workflows/
-│   ├── deploy.yml              ← Builds and publishes to GitHub Pages on every push to main
-│   └── updater.yml             ← Weekly cron + manual trigger for the news bot
+│   └── deploy.yml              ← Builds and publishes to GitHub Pages on every push to main
 ├── astro.config.mjs            ← Build configuration (one-line site URL)
 ├── package.json                ← Dependencies (3 packages: Astro core + sitemap integration + marked)
 └── README.md                   ← This file
 ```
 
-**Content vs code.** Content lives under `src/content/`, `src/data/`, and `public/`. Code lives under `src/pages/`, `src/layouts/`, and `src/components/`. They share a repository but they're cleanly separated by folder, with different change patterns. A content edit doesn't touch any code; a code change doesn't touch any content. The build runs in either case.
+**Content vs code.** Content lives under `src/content/` (markdown) and `public/` (images). Code lives under `src/pages/`, `src/layouts/`, and `src/components/`. They share a repository but they're cleanly separated by folder, with different change patterns. A content edit doesn't touch any code; a code change doesn't touch any content. The build runs in either case. (Every piece of editable text now lives in markdown under `src/content/`; there is no longer a `src/data/` folder of TypeScript files.)
 
 This is the standard pattern for content sites with the modern static-site frameworks (Astro, Next.js, Hugo, Eleventy). The older approach of separating into two systems, code in one place and content in a CMS database, solved a problem (rebuilding code was once expensive) that doesn't exist anymore. A static-site build runs in seconds; the operational cost of a database (backups, migrations, version compatibility, hosting) is no longer justified for a site that doesn't need user accounts or runtime-generated pages.
 
@@ -85,7 +86,7 @@ This is the standard pattern for content sites with the modern static-site frame
 | Piece | Choice | Why |
 |---|---|---|
 | Static-site generator | [Astro](https://astro.build) | Best current tool for content sites with multiple contributors. Markdown-first. Native Hebrew/RTL support. Zero JavaScript shipped to the browser unless explicitly added. |
-| Content storage | Markdown + TypeScript data files in the repository | Anyone can edit with a text editor. AI agents can write to markdown trivially. No CMS API required. |
+| Content storage | Markdown files in the repository (`src/content/`) | Anyone can edit with a text editor. AI agents can write to markdown trivially. No CMS API required. |
 | Hosting | [Cloudflare Pages](https://pages.cloudflare.com) | Per-pull-request preview URLs out of the box, free, fast CDN. Output is plain static files, so the host is interchangeable if needed. |
 | Repository host | github.com | Outside HUJI institutional control, won't disappear if internal infrastructure changes. Standard tooling, free unlimited collaborators, GitHub Actions native. |
 | Permissions | GitHub branch protection | Edits go through pull requests; only repo collaborators can merge. No site-level login required. |
@@ -96,7 +97,7 @@ This is the standard pattern for content sites with the modern static-site frame
 
 Every English route at `/foo` has a parallel Hebrew route at `/he/foo`. The `Base.astro` layout sets `<html lang="he" dir="rtl">` for Hebrew pages and the corresponding `lang/dir` for English. Hebrew uses the Heebo font; English uses Inter. Each page's English ↔ Hebrew counterpart is linked in the head via `<link rel="alternate" hreflang="...">` so search engines route language-specific queries correctly.
 
-Faculty content is currently shared between languages: one markdown file per person, with English bios. Adding Hebrew bios is a content change (add a `bioHe` frontmatter field, conditionally render in the Hebrew template); structurally supported, awaiting a translation pass.
+Faculty content is one markdown file per person, shared between languages. Each file already carries the Hebrew name and title (`nameHe`, `titleHe`), sourced from the CS school's Hebrew faculty page, so faculty render correctly on the Hebrew side. Bios are still English-only; adding Hebrew bios is a content change (add a `bioHe` frontmatter field, conditionally render in the Hebrew template), structurally supported and awaiting a translation pass.
 
 ---
 
