@@ -2,7 +2,7 @@
 page: home
 heroImage: "/images/pexels-googledeepmind-17483874.jpg"
 heroTitle: "AI at the Hebrew University"
-heroTitleHe: "טסט בינה מלאכותית באוניברסיטה העברית"
+heroTitleHe: "בינה מלאכותית באוניברסיטה העברית"
 heroBody: "Artificial Intelligence impacts every aspect of life. At the Hebrew University, we research and teach diverse disciplines in the foundations, applications, and implications of AI"
 heroBodyHe: "הבינה המלאכותית משפיעה על כל תחום בחיינו. באוניברסיטה העברית אנו מלמדים וחוקרים מגוון תחומים הנוגעים ביסודות, ביישום ובהשלכות של בינה מלאכותית."
 pillars:
